@@ -28,15 +28,15 @@ export function EventsPageContent() {
   }, []);
 
   return (
-    <div className="relative min-h-screen">
+    <div className="cinematic-backdrop relative min-h-screen">
       {/* Hero */}
-      <section className="relative flex min-h-[90vh] items-center overflow-hidden pt-24">
+      <section className="relative flex min-h-[88dvh] items-center overflow-hidden pt-24 sm:min-h-[94vh]">
         <div className="absolute inset-0">
           <Image
             src={menuImages.events}
             alt="Voice of Sheesh"
             fill
-            className="object-cover"
+            className="object-cover image-cinematic"
             priority
             sizes="100vw"
           />
@@ -48,7 +48,7 @@ export function EventsPageContent() {
 
         {/* Corner annotations */}
         <div className="absolute top-8 left-6 sm:left-10 font-[family-name:var(--font-accent)] text-[8px] tracking-[0.25em] text-[#d4af37]/60 uppercase pointer-events-none">
-          CAM · 03 STAGE
+          CAM / 03 STAGE
         </div>
         <div className="absolute top-8 right-6 sm:right-10 font-[family-name:var(--font-accent)] text-[8px] tracking-[0.25em] text-white/30 uppercase pointer-events-none">
           LIVE BROADCAST
@@ -73,7 +73,7 @@ export function EventsPageContent() {
             className="font-[family-name:var(--font-display)] text-4xl sm:text-6xl lg:text-7xl leading-tight tracking-wide text-white uppercase"
           >
             Voice of Sheesh
-            <span className="mt-2 block text-gold-gradient">Season 1 · Coming Soon</span>
+            <span className="mt-2 block text-gold-gradient">Season 1 / Coming Soon</span>
           </motion.h1>
 
           <motion.p
@@ -97,7 +97,7 @@ export function EventsPageContent() {
             </div>
             <div className="flex items-center gap-1.5">
               <Calendar className="size-3.5 text-[#d4af37]/60" />
-              <span className="font-[family-name:var(--font-accent)] text-[9px] tracking-[0.2em] text-white/50 uppercase">Season 1 · 2026</span>
+              <span className="font-[family-name:var(--font-accent)] text-[9px] tracking-[0.2em] text-white/50 uppercase">Season 1 / 2026</span>
             </div>
           </motion.div>
 
@@ -161,7 +161,7 @@ export function EventsPageContent() {
                   whileInView={{ opacity: 1, y: 0 }}
                   viewport={{ once: true }}
                   transition={{ delay: i * 0.1, duration: 0.8 }}
-                  className="group overflow-hidden rounded-2xl border border-[#d4af37]/10 bg-[#0a0a0c] transition-all duration-700 hover:border-[#d4af37]/30 hover:shadow-[0_12px_40px_rgba(212,175,55,0.08)] card-lift"
+                  className="cinematic-frame card-lift group overflow-hidden rounded-2xl bg-[#0a0a0c] transition-all duration-700 hover:border-[#d4af37]/30 hover:shadow-[0_12px_40px_rgba(212,175,55,0.08)]"
                 >
                   <div className="relative aspect-[16/10] overflow-hidden">
                     <Image
@@ -222,7 +222,7 @@ export function EventsPageContent() {
           {!loading && events.length === 0 && (
             <div className="mt-16 text-center">
               <p className="font-[family-name:var(--font-body)] text-white/35">
-                No events published yet — check back soon.
+                No events published yet - check back soon.
               </p>
             </div>
           )}

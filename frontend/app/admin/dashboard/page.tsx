@@ -146,7 +146,7 @@ export default function AdminDashboardPage() {
                     {r.guestName}
                   </p>
                   <p className="text-xs text-white/40">
-                    {r.date} · {r.time} · {r.partySize} guests
+                    {r.date} / {r.time} / {r.partySize} guests
                   </p>
                 </div>
                 <StatusChip status={r.status} />

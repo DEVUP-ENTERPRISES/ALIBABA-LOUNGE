@@ -46,7 +46,7 @@ export function MagneticButton({
   const { scrollTo } = useSmoothScroll();
   const ref = useMagnetic<HTMLAnchorElement & HTMLButtonElement>(0.25);
   const baseClass = cn(
-    "relative inline-flex cursor-pointer items-center justify-center gap-2 overflow-hidden rounded-full px-8 py-3.5 text-sm font-medium tracking-[0.15em] uppercase transition-all duration-500",
+    "luxury-focus-ring relative inline-flex min-h-12 cursor-pointer items-center justify-center gap-2 overflow-hidden rounded-full px-7 py-3 text-xs font-medium tracking-[0.14em] uppercase transition-all duration-500 sm:px-8 sm:py-3.5 sm:text-sm",
     variants[variant],
     className
   );

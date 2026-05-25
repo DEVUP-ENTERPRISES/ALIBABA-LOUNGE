@@ -53,7 +53,7 @@ export default function AdminCateringPage() {
               <tr key={row.id} className="border-b border-white/[0.04]">
                 <td className="px-4 py-3 text-white">{row.name}</td>
                 <td className="px-4 py-3 text-white/50">
-                  {row.eventDate ?? "—"}
+                  {row.eventDate ?? "-"}
                 </td>
                 <td className="px-4 py-3">
                   <StatusChip status={row.status} />
@@ -84,7 +84,7 @@ export default function AdminCateringPage() {
           <div className="space-y-3 text-sm text-white/70">
             <p className="text-lg text-white">{selected.name}</p>
             <p>
-              {selected.email} · {selected.phone}
+              {selected.email} / {selected.phone}
             </p>
             <p className="rounded-xl border border-white/[0.06] bg-white/[0.02] p-4">
               {selected.details}

@@ -8,21 +8,21 @@ import { menuImages } from "@/lib/menu-images";
 const highlights = [
   {
     title: "Immersive Atmosphere",
-    desc: "Layered amber lighting, ambient soundscapes, and velvet shadows — an otherworldly lounge experience after dark.",
+    desc: "Layered amber lighting, ambient soundscapes, and velvet shadows - an otherworldly lounge experience after dark.",
     image: menuImages.lounge,
-    icon: "✦",
+    icon: "*",
   },
   {
     title: "Nightlife Energy",
     desc: "Live performances, curated playlists, and VIP corners for unforgettable Dallas evenings.",
     image: menuImages.events,
-    icon: "◈",
+    icon: "o",
   },
   {
     title: "Hospitality First",
-    desc: "White-glove service meets warm Texas hospitality — every guest treated like royalty.",
+    desc: "White-glove service meets warm Texas hospitality - every guest treated like royalty.",
     image: menuImages.experience,
-    icon: "❋",
+    icon: "+",
   },
 ];
 
@@ -36,7 +36,7 @@ export function ExperienceSection() {
         <SectionHeading
           eyebrow="The Experience"
           title="A World Beyond Dining"
-          subtitle="Step into a cinematic realm where every detail — from the first bite to the last cloud — is orchestrated for luxury."
+          subtitle="Step into a cinematic realm where every detail - from the first bite to the last cloud - is orchestrated for luxury."
         />
 
         <div className="mt-10 sm:mt-12 grid items-stretch gap-6 lg:grid-cols-2">
@@ -113,7 +113,7 @@ export function ExperienceSection() {
               className="grid grid-cols-3 gap-3 mt-1"
             >
               {[
-                { value: "7PM–3AM", label: "Hours" },
+                { value: "7PM-3AM", label: "Hours" },
                 { value: "VIP", label: "Seating" },
                 { value: "Live", label: "Events" },
               ].map((s) => (

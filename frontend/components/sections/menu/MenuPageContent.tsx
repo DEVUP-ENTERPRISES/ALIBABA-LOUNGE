@@ -2,7 +2,7 @@
 
 import { useEffect, useMemo, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { Search } from "lucide-react";
+import { ChefHat, Flame, Search, Sparkles } from "lucide-react";
 import Image from "next/image";
 import { SectionHeading } from "@/components/ui/SectionHeading";
 import { MenuItemCard } from "@/components/ui/MenuItemCard";
@@ -94,23 +94,46 @@ export function MenuPageContent() {
   }, [menuItems, category, subFilter, search]);
 
   return (
-    <div className="relative min-h-screen overflow-x-hidden pt-24 pb-20 pb-mobile-cta md:pt-28 md:pb-24">
+    <div className="cinematic-backdrop relative min-h-screen overflow-x-hidden pt-24 pb-20 pb-mobile-cta md:pt-28 md:pb-24">
       <FloatingParticles count={10} className="hidden opacity-30 md:block" />
       <SmokeOverlay className="opacity-40" />
 
-      <div className="relative mx-auto mb-12 max-w-7xl px-4 sm:px-6 md:mb-16 md:px-12 lg:px-20">
-        <div className="relative aspect-[2/1] min-h-[180px] overflow-hidden rounded-2xl md:aspect-[21/9] md:min-h-[220px] md:rounded-3xl">
+      <div className="relative mx-auto mb-10 max-w-7xl px-4 sm:px-6 md:mb-14 md:px-12 lg:px-20">
+        <div className="cinematic-frame relative min-h-[360px] overflow-hidden rounded-2xl md:min-h-[430px] md:rounded-3xl">
           <Image
             src={categoryHero[category]}
             alt=""
             fill
-            className="object-cover"
+            className="object-cover image-cinematic"
             priority
             sizes="100vw"
           />
           <div className="absolute inset-0 bg-gradient-to-r from-[#050505] via-[#050505]/75 to-[#050505]/25" />
           <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_left,rgba(212,175,55,0.12),transparent_60%)]" />
           <div className="absolute inset-0 film-grain" />
+          <div className="absolute inset-0 flex items-end p-6 sm:p-10 md:p-12">
+            <motion.div
+              key={category}
+              initial={{ opacity: 0, y: 18 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.55, ease: [0.16, 1, 0.3, 1] }}
+              className="max-w-2xl"
+            >
+              <div className="mb-4 inline-flex items-center gap-2 rounded-full border border-[#d4af37]/30 bg-[#050505]/55 px-4 py-1.5 backdrop-blur-md">
+                <Sparkles className="size-3 text-[#d4af37]" />
+                <span className="font-[family-name:var(--font-accent)] text-[8px] tracking-[0.26em] text-[#d4af37] uppercase">
+                  Curated Discovery
+                </span>
+              </div>
+              <h1 className="font-[family-name:var(--font-display)] text-4xl leading-none text-white sm:text-6xl md:text-7xl">
+                Menu as an
+                <span className="block text-gold-gradient">Evening Ritual</span>
+              </h1>
+              <p className="mt-5 max-w-xl font-[family-name:var(--font-body)] text-sm leading-relaxed text-white/62 sm:text-base">
+                Explore signature plates, private shisha blends, craft drinks, and late-night desserts through a cinematic menu built for discovery.
+              </p>
+            </motion.div>
+          </div>
         </div>
       </div>
 
@@ -118,20 +141,20 @@ export function MenuPageContent() {
         <SectionHeading
           eyebrow="Our Menu"
           title="Curated Indulgence"
-          subtitle="Elevated plates, signature hookah blends, craft drinks, and decadent desserts — every item presented with cinematic luxury."
+          subtitle="Elevated plates, signature hookah blends, craft drinks, and decadent desserts - every item presented with cinematic luxury."
         />
 
-        <div className="relative mx-auto mt-10 max-w-lg">
+        <div className="relative mx-auto mt-10 max-w-2xl">
           <Search className="absolute top-1/2 left-4 size-4 -translate-y-1/2 text-[#d4af37]/50" />
           <Input
             placeholder="Search menu..."
             value={search}
             onChange={(e) => setSearch(e.target.value)}
-            className="pl-11"
+            className="h-14 rounded-2xl pl-11"
           />
         </div>
 
-        <div className="mt-8 flex flex-wrap justify-center gap-2 sm:gap-3">
+        <div className="sticky top-[72px] z-20 -mx-4 mt-8 flex justify-start gap-2 overflow-x-auto border-y border-white/[0.06] bg-[#050505]/78 px-4 py-3 backdrop-blur-2xl sm:mx-0 sm:flex-wrap sm:justify-center sm:border-0 sm:bg-transparent sm:p-0 sm:backdrop-blur-0">
           {menuCategories.map((cat) => (
             <button
               key={cat.id}
@@ -141,7 +164,7 @@ export function MenuPageContent() {
                 setSubFilter("all");
               }}
               className={cn(
-                "rounded-full border px-4 py-2 font-[family-name:var(--font-accent)] text-[9px] tracking-[0.18em] uppercase transition-all duration-300 sm:px-6 sm:py-2.5 sm:text-[10px]",
+                "shrink-0 rounded-full border px-4 py-2 font-[family-name:var(--font-accent)] text-[9px] tracking-[0.18em] uppercase transition-all duration-300 sm:px-6 sm:py-2.5 sm:text-[10px]",
                 category === cat.id
                   ? "border-[#d4af37] bg-[#d4af37]/15 text-[#d4af37] glow-gold"
                   : "border-white/10 text-white/50 hover:border-[#d4af37]/40 hover:text-white"
@@ -183,9 +206,10 @@ export function MenuPageContent() {
           </p>
         )}
 
-        <p className="mt-6 text-center font-[family-name:var(--font-body)] text-sm text-white/35">
-          {loading ? "Loading menu..." : `${filtered.length} ${filtered.length === 1 ? "item" : "items"}`}
-        </p>
+        <div className="mx-auto mt-6 flex w-fit items-center gap-2 rounded-full border border-white/[0.08] bg-white/[0.03] px-4 py-2 font-[family-name:var(--font-body)] text-sm text-white/42">
+          {loading ? <Flame className="size-3.5 animate-pulse text-[#d4af37]" /> : <ChefHat className="size-3.5 text-[#d4af37]/70" />}
+          <span>{loading ? "Preparing the menu..." : `${filtered.length} ${filtered.length === 1 ? "item" : "items"}`}</span>
+        </div>
 
         <motion.div
           layout
@@ -208,9 +232,13 @@ export function MenuPageContent() {
         </motion.div>
 
         {!loading && filtered.length === 0 && (
-          <p className="mt-16 text-center font-[family-name:var(--font-body)] text-white/40">
-            No items match your search.
-          </p>
+          <div className="mx-auto mt-16 max-w-md rounded-2xl border border-[#d4af37]/12 bg-white/[0.03] p-8 text-center">
+            <ChefHat className="mx-auto size-8 text-[#d4af37]/45" />
+            <p className="mt-4 font-[family-name:var(--font-display)] text-2xl text-white">No match found</p>
+            <p className="mt-2 font-[family-name:var(--font-body)] text-sm text-white/42">
+              Try another category or search for a signature dish.
+            </p>
+          </div>
         )}
       </div>
     </div>

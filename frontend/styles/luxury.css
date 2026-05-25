@@ -1,7 +1,7 @@
 @layer utilities {
   /* ── Brand gradients ── */
   .text-gold-gradient {
-    background: linear-gradient(135deg, #f5e6c8 0%, #d4af37 35%, #b8860b 65%, #f5e6c8 100%);
+    background: linear-gradient(135deg, #fff6dc 0%, #d4af37 34%, #a97812 64%, #f8e8bd 100%);
     -webkit-background-clip: text;
     background-clip: text;
     color: transparent;
@@ -31,10 +31,11 @@
 
   /* ── Glass morphism ── */
   .glass-luxury {
-    background: rgba(12, 12, 14, 0.55);
-    backdrop-filter: blur(24px) saturate(1.4);
-    -webkit-backdrop-filter: blur(24px) saturate(1.4);
-    border: 1px solid rgba(212, 175, 55, 0.12);
+    background: linear-gradient(145deg, rgba(18, 18, 20, 0.72), rgba(8, 8, 9, 0.56));
+    backdrop-filter: blur(24px) saturate(1.35);
+    -webkit-backdrop-filter: blur(24px) saturate(1.35);
+    border: 1px solid rgba(212, 175, 55, 0.14);
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.055), 0 18px 55px rgba(0, 0, 0, 0.24);
   }
 
   .glass-ultra {
@@ -111,6 +112,47 @@
     background: radial-gradient(ellipse at center, transparent 45%, rgba(0, 0, 0, 0.65) 100%);
   }
 
+  .cinematic-backdrop {
+    background:
+      linear-gradient(180deg, rgba(5, 5, 5, 0.82), rgba(5, 5, 5, 0) 18%, rgba(5, 5, 5, 0.72) 100%),
+      radial-gradient(120% 65% at 50% -12%, rgba(212, 175, 55, 0.12), transparent 58%),
+      radial-gradient(70% 45% at 0% 42%, rgba(160, 117, 25, 0.08), transparent 60%),
+      radial-gradient(70% 45% at 100% 58%, rgba(245, 230, 200, 0.045), transparent 62%),
+      #050505;
+  }
+
+  .cinematic-frame {
+    position: relative;
+    overflow: hidden;
+    border: 1px solid rgba(212, 175, 55, 0.13);
+    background: linear-gradient(145deg, rgba(255, 255, 255, 0.035), rgba(255, 255, 255, 0.012));
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.06), 0 22px 70px rgba(0, 0, 0, 0.36);
+  }
+
+  .cinematic-frame::after {
+    content: "";
+    position: absolute;
+    inset: 12px;
+    pointer-events: none;
+    border: 1px solid rgba(255, 255, 255, 0.045);
+    border-radius: inherit;
+  }
+
+  .gold-hairline {
+    background: linear-gradient(90deg, transparent, rgba(212, 175, 55, 0.55), rgba(245, 230, 200, 0.22), transparent);
+    height: 1px;
+  }
+
+  .luxury-focus-ring {
+    outline: none;
+    transition: border-color 220ms ease, box-shadow 220ms ease, background-color 220ms ease;
+  }
+
+  .luxury-focus-ring:focus-visible {
+    border-color: rgba(212, 175, 55, 0.72);
+    box-shadow: 0 0 0 4px rgba(212, 175, 55, 0.12), 0 0 28px rgba(212, 175, 55, 0.12);
+  }
+
   /* ── Dividers ── */
   .line-gold {
     background: linear-gradient(90deg, transparent, rgba(212, 175, 55, 0.8), transparent);
@@ -130,11 +172,11 @@
 
   /* ── Spacing ── */
   .section-padding {
-    @apply px-5 py-16 sm:px-8 md:px-12 md:py-20 lg:px-20 lg:py-24;
+    @apply px-5 py-14 sm:px-8 sm:py-16 md:px-12 md:py-20 lg:px-20 lg:py-24;
   }
 
   .section-padding-xl {
-    @apply px-5 py-20 sm:px-8 sm:py-24 md:px-12 md:py-28 lg:px-20 lg:py-36;
+    @apply px-5 py-16 sm:px-8 sm:py-24 md:px-12 md:py-28 lg:px-20 lg:py-36;
   }
 
   /* ── Scrollbar ── */
@@ -154,7 +196,7 @@
   }
 
   .image-cinematic {
-    filter: contrast(1.08) saturate(1.12) brightness(0.93);
+    filter: contrast(1.1) saturate(1.08) brightness(0.9);
   }
 
   /* ── Shadows ── */
@@ -229,5 +271,22 @@
     .animate-float, .animate-pulse-gold, .animate-marquee, .animate-marquee-fast,
     .animate-spin-slow, .animate-flicker { animation: none; }
     .shimmer-gold { animation: none; }
+  }
+
+  @media (max-width: 767px) {
+    .glass-luxury,
+    .glass-ultra,
+    .glass-smoke {
+      backdrop-filter: blur(16px) saturate(1.15);
+      -webkit-backdrop-filter: blur(16px) saturate(1.15);
+    }
+
+    .cinematic-frame::after {
+      inset: 8px;
+    }
+
+    .card-lift:hover {
+      transform: none;
+    }
   }
 }

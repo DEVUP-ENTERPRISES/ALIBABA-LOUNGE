@@ -63,19 +63,18 @@ const letterVariants = {
 
 export function HeroSection() {
   return (
-    <section className="relative flex min-h-[100dvh] w-full flex-col items-center justify-center overflow-hidden bg-[#050505]">
+    <section className="relative flex min-h-[92dvh] w-full flex-col items-center justify-center overflow-hidden bg-[#050505] sm:min-h-[100dvh]">
       {/* Video bg */}
       <div className="absolute inset-0 z-0 bg-black">
         <HeroBackgroundVideo />
-        <div className="absolute inset-0 z-20 bg-gradient-to-b from-black/65 via-black/10 to-[#050505] pointer-events-none" />
+        <div className="absolute inset-0 z-20 bg-gradient-to-b from-black/72 via-black/12 to-[#050505] pointer-events-none" />
         <div className="absolute inset-0 z-20 bg-gradient-to-r from-[#050505]/55 via-transparent to-[#050505]/55 pointer-events-none" />
         <div className="absolute inset-0 z-20 bg-[radial-gradient(ellipse_at_center,transparent_25%,rgba(0,0,0,0.55)_100%)] pointer-events-none" />
+        <div className="absolute inset-x-0 bottom-0 z-20 h-40 bg-[linear-gradient(to_top,#050505,transparent)] pointer-events-none" />
       </div>
 
       {/* Gold bottom glow */}
-      <div className="absolute bottom-0 left-1/2 z-20 h-56 w-[500px] -translate-x-1/2 rounded-full opacity-15 blur-[90px] pointer-events-none"
-        style={{ background: "radial-gradient(circle, rgba(212,175,55,0.55), transparent 70%)" }}
-      />
+      <div className="absolute inset-x-0 bottom-0 z-20 h-44 bg-[radial-gradient(60%_85%_at_50%_100%,rgba(212,175,55,0.14),transparent_70%)] pointer-events-none" />
 
       {/* Main content */}
       <div className="relative z-30 flex w-full max-w-[1400px] flex-col items-center px-5 sm:px-8 mt-14 lg:mt-20">
@@ -92,7 +91,7 @@ export function HeroSection() {
             <span className="relative inline-flex size-1.5 rounded-full bg-[#d4af37]" />
           </span>
           <span className="font-[family-name:var(--font-accent)] text-[9px] tracking-[0.45em] text-[#d4af37] uppercase">
-            Now Open · Dallas, TX
+            Now Open / Dallas, TX
           </span>
         </motion.div>
 
@@ -109,9 +108,8 @@ export function HeroSection() {
             <motion.span
               key={i}
               variants={letterVariants}
-              className="font-[family-name:var(--font-display)] font-light uppercase inline-block select-none tracking-[0.1em] leading-none text-white"
+              className="inline-block select-none font-[family-name:var(--font-display)] text-6xl font-light uppercase leading-none tracking-normal text-white sm:text-8xl md:text-9xl lg:text-[10rem] xl:text-[11.5rem]"
               style={{
-                fontSize: "clamp(3.5rem, 14vw, 11.5rem)",
                 textShadow: "0 0 60px rgba(212,175,55,0.12), 0 8px 40px rgba(0,0,0,0.6)",
               }}
               whileHover={{
@@ -130,7 +128,7 @@ export function HeroSection() {
           initial={{ opacity: 0, letterSpacing: "0.15em" }}
           animate={{ opacity: 1, letterSpacing: "0.55em" }}
           transition={{ delay: 0.9, duration: 1.3, ease: [0.16, 1, 0.3, 1] }}
-          className="font-[family-name:var(--font-accent)] text-[10px] sm:text-sm md:text-base text-[#f5e6c8]/75 uppercase mt-2 sm:mt-4 mb-7 sm:mb-10 md:mb-12"
+          className="mt-2 mb-7 font-[family-name:var(--font-accent)] text-[10px] tracking-[0.26em] text-[#f5e6c8]/75 uppercase sm:mt-4 sm:mb-10 sm:text-sm sm:tracking-[0.42em] md:mb-12 md:text-base"
         >
           Eatery & Lounge
         </motion.p>
@@ -143,7 +141,7 @@ export function HeroSection() {
           className="flex flex-col items-center gap-6 sm:gap-8 max-w-lg text-center"
         >
           <p className="font-[family-name:var(--font-body)] text-sm sm:text-[15px] text-white/70 leading-relaxed tracking-wide px-2">
-            Dallas's premier culinary destination — gourmet Mediterranean‑desi cuisine, signature private shisha blends, and absolute sensory luxury.
+            Dallas&apos;s premier culinary destination - gourmet Mediterranean-desi cuisine, signature private shisha blends, and absolute sensory luxury.
           </p>
 
           <div className="flex flex-col sm:flex-row items-center gap-3 w-full sm:w-auto">
@@ -165,7 +163,7 @@ export function HeroSection() {
             {[
               { value: "50K+", label: "Guests" },
               { value: "100+", label: "Hookah Blends" },
-              { value: "4.9★", label: "Rated" },
+              { value: "4.9", label: "Rated" },
             ].map((s, i) => (
               <div key={i} className="flex flex-col items-center gap-0.5">
                 <span className="font-[family-name:var(--font-display)] text-base sm:text-xl text-[#d4af37]">{s.value}</span>

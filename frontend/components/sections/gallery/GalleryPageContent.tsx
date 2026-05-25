@@ -3,6 +3,7 @@
 import Image from "next/image";
 import { useEffect, useMemo, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
+import { Camera, X } from "lucide-react";
 import { SectionHeading } from "@/components/ui/SectionHeading";
 import { galleryApi } from "@/lib/admin/data-api";
 import type { GalleryImage } from "@/lib/admin/types";
@@ -40,7 +41,7 @@ export function GalleryPageContent() {
   }, [activeCategory, images]);
 
   return (
-    <div className="relative min-h-screen pt-24 pb-20 pb-mobile-cta overflow-hidden">
+    <div className="cinematic-backdrop relative min-h-screen overflow-hidden pt-24 pb-20 pb-mobile-cta">
       <FloatingParticles count={14} className="opacity-25" />
       <div className="absolute inset-0 bg-[radial-gradient(ellipse_80%_40%_at_50%_10%,rgba(212,175,55,0.05),transparent_65%)]" />
       <div className="film-grain absolute inset-0" />
@@ -86,7 +87,7 @@ export function GalleryPageContent() {
         </motion.p>
 
         {/* Masonry grid */}
-        <motion.div layout className="mt-10 columns-1 gap-4 sm:columns-2 lg:columns-3 sm:gap-5">
+        <motion.div layout className="mt-10 columns-1 gap-4 sm:columns-2 sm:gap-5 lg:columns-3">
           <AnimatePresence mode="popLayout">
             {filtered.map((image, index) => (
               <motion.figure
@@ -96,7 +97,7 @@ export function GalleryPageContent() {
                 animate={{ opacity: 1, scale: 1 }}
                 exit={{ opacity: 0, scale: 0.94 }}
                 transition={{ delay: index * 0.03, duration: 0.5 }}
-                className="group mb-4 sm:mb-5 break-inside-avoid overflow-hidden rounded-2xl border border-[#d4af37]/10 bg-white/[0.02] cursor-pointer transition-all duration-700 hover:border-[#d4af37]/30 hover:shadow-[0_12px_40px_rgba(212,175,55,0.08)]"
+                className="cinematic-frame group mb-4 break-inside-avoid cursor-pointer overflow-hidden rounded-2xl bg-white/[0.02] transition-all duration-700 hover:border-[#d4af37]/30 hover:shadow-[0_12px_40px_rgba(212,175,55,0.08)] sm:mb-5"
                 onClick={() => setLightbox(image)}
               >
                 <div className="relative overflow-hidden" style={{ aspectRatio: index % 5 === 0 ? "4/5" : "4/3" }}>
@@ -112,7 +113,8 @@ export function GalleryPageContent() {
 
                   {/* Hover overlay zoom hint */}
                   <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-500">
-                    <div className="rounded-full border border-[#d4af37]/40 bg-[#050505]/60 backdrop-blur-sm px-4 py-2">
+                    <div className="flex items-center gap-2 rounded-full border border-[#d4af37]/40 bg-[#050505]/60 px-4 py-2 backdrop-blur-sm">
+                      <Camera className="size-3 text-[#d4af37]" />
                       <p className="font-[family-name:var(--font-accent)] text-[8px] tracking-[0.2em] text-[#d4af37] uppercase">View</p>
                     </div>
                   </div>
@@ -145,7 +147,7 @@ export function GalleryPageContent() {
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            className="fixed inset-0 z-[200] flex items-center justify-center bg-[#050505]/95 backdrop-blur-md p-5"
+            className="fixed inset-0 z-[200] flex items-center justify-center bg-[#050505]/95 p-4 backdrop-blur-md sm:p-5"
             onClick={() => setLightbox(null)}
           >
             <motion.div
@@ -153,7 +155,7 @@ export function GalleryPageContent() {
               animate={{ scale: 1, opacity: 1 }}
               exit={{ scale: 0.9, opacity: 0 }}
               transition={{ type: "spring", damping: 22, stiffness: 200 }}
-              className="relative max-h-[85vh] max-w-4xl w-full overflow-hidden rounded-2xl border border-[#d4af37]/20"
+              className="cinematic-frame relative max-h-[85vh] w-full max-w-5xl overflow-hidden rounded-2xl"
               onClick={(e) => e.stopPropagation()}
             >
               <div className="relative aspect-[4/3]">
@@ -161,7 +163,7 @@ export function GalleryPageContent() {
                   src={resolveImageUrl(lightbox.url)}
                   alt={lightbox.title}
                   fill
-                  className="object-cover"
+                  className="object-contain bg-[#050505]"
                   sizes="90vw"
                 />
               </div>
@@ -172,9 +174,10 @@ export function GalleryPageContent() {
               <button
                 type="button"
                 onClick={() => setLightbox(null)}
-                className="absolute top-4 right-4 rounded-full border border-white/20 bg-[#050505]/60 backdrop-blur-sm px-3 py-1 font-[family-name:var(--font-accent)] text-[9px] tracking-[0.15em] text-white/60 uppercase hover:text-white transition-colors"
+                aria-label="Close gallery image"
+                className="absolute top-4 right-4 flex size-10 items-center justify-center rounded-full border border-white/20 bg-[#050505]/70 text-white/60 backdrop-blur-sm transition-colors hover:border-[#d4af37]/40 hover:text-white"
               >
-                Close
+                <X className="size-4" />
               </button>
             </motion.div>
           </motion.div>

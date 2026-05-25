@@ -61,7 +61,7 @@ export function MenuItemCard({
       onMouseLeave={handleLeave}
       style={{ rotateX, rotateY, transformPerspective: 1200 }}
       className={cn(
-        "group relative flex flex-col overflow-hidden rounded-2xl border border-white/[0.06] bg-[#0c0c0e]/90 transition-[border-color,box-shadow] duration-500 hover:border-[#d4af37]/30 hover:shadow-[0_20px_60px_rgba(0,0,0,0.5),0_0_40px_rgba(212,175,55,0.08)]",
+        "cinematic-frame group relative flex flex-col overflow-hidden rounded-2xl bg-[#0c0c0e]/90 transition-[border-color,box-shadow] duration-500 hover:border-[#d4af37]/32 hover:shadow-[0_20px_60px_rgba(0,0,0,0.5),0_0_40px_rgba(212,175,55,0.08)]",
         isFeatured && "md:col-span-2"
       )}
     >
@@ -85,7 +85,7 @@ export function MenuItemCard({
         <div className="absolute inset-0 bg-gradient-to-t from-[#050505] via-[#050505]/25 to-[#050505]/10" />
         <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top,rgba(212,175,55,0.14),transparent_55%)] opacity-0 transition-opacity duration-700 group-hover:opacity-100" />
         <div className="absolute top-4 right-4">
-          <span className="inline-flex items-center rounded-full border border-[#d4af37]/40 bg-[#050505]/80 px-4 py-1.5 font-[family-name:var(--font-display)] text-lg text-[#d4af37] backdrop-blur-md md:text-xl">
+          <span className="inline-flex items-center rounded-full border border-[#d4af37]/40 bg-[#050505]/80 px-4 py-1.5 font-[family-name:var(--font-display)] text-lg text-[#d4af37] shadow-[0_0_20px_rgba(212,175,55,0.12)] backdrop-blur-md md:text-xl">
             ${item.price}
           </span>
         </div>
@@ -108,7 +108,7 @@ export function MenuItemCard({
         >
           {item.name}
         </h3>
-        <p className="mt-3 flex-1 font-[family-name:var(--font-body)] text-sm leading-relaxed text-white/55 md:text-[15px]">
+        <p className="mt-3 flex-1 font-[family-name:var(--font-body)] text-sm leading-relaxed text-white/58 md:text-[15px]">
           {item.description}
         </p>
         {item.tags && item.tags.length > 2 && (

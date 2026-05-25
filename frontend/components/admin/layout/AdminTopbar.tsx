@@ -26,11 +26,11 @@ export function AdminTopbar({
       .toUpperCase() || "SA";
 
   return (
-    <header className="sticky top-0 z-20 flex min-h-16 items-center justify-between gap-4 border-b border-[#d4af37]/10 bg-[#050505]/82 px-4 shadow-[0_12px_45px_rgba(0,0,0,0.28)] backdrop-blur-2xl md:px-6">
+    <header className="sticky top-0 z-20 flex min-h-16 items-center justify-between gap-4 border-b border-[#d4af37]/12 bg-[#050505]/84 px-4 shadow-[0_12px_45px_rgba(0,0,0,0.28)] backdrop-blur-2xl md:px-6">
       <div className="flex items-center gap-3">
         <button
           type="button"
-          className="rounded-xl border border-white/10 bg-white/[0.03] p-2 text-white/60 transition hover:border-[#d4af37]/30 hover:text-[#d4af37] lg:hidden"
+          className="rounded-xl border border-white/10 bg-white/[0.04] p-2 text-white/60 transition hover:border-[#d4af37]/30 hover:text-[#d4af37] lg:hidden"
           onClick={onMenuClick}
           aria-label="Open sidebar"
         >
@@ -38,7 +38,7 @@ export function AdminTopbar({
         </button>
         <button
           type="button"
-          className="hidden rounded-xl border border-white/10 bg-white/[0.03] p-2 text-white/60 transition hover:border-[#d4af37]/30 hover:text-[#d4af37] lg:inline-flex"
+          className="hidden rounded-xl border border-white/10 bg-white/[0.04] p-2 text-white/60 transition hover:border-[#d4af37]/30 hover:text-[#d4af37] lg:inline-flex"
           onClick={onToggleCollapse}
           aria-label="Toggle sidebar"
         >
@@ -60,7 +60,7 @@ export function AdminTopbar({
       <div className="flex min-w-0 items-center gap-2 sm:gap-3">
         <div className="relative hidden w-[min(28vw,320px)] lg:block">
           <Search className="pointer-events-none absolute top-1/2 left-3 size-4 -translate-y-1/2 text-white/25" />
-          <div className="h-10 rounded-2xl border border-white/[0.07] bg-white/[0.03] pl-10 pr-4 text-xs leading-10 text-white/28">
+          <div className="h-10 rounded-2xl border border-white/[0.07] bg-white/[0.04] pl-10 pr-4 text-xs leading-10 text-white/28">
             Search operations...
           </div>
         </div>

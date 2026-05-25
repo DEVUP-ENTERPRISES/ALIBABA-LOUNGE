@@ -11,9 +11,9 @@ const CUSTOMER_PROTECTED   = ["/account", "/reservations/my"];
 export function proxy(request: NextRequest) {
   const { pathname } = request.nextUrl;
 
-  /* ── Block direct /admin/* access — only the slug URL is public ── */
+  /* Block direct /admin/* access - only the slug URL is public */
   if (pathname === "/admin" || pathname.startsWith("/admin/")) {
-    // Someone typed /admin directly in the browser — send them home
+    // Someone typed /admin directly in the browser - send them home
     return NextResponse.redirect(new URL("/", request.url));
   }
 

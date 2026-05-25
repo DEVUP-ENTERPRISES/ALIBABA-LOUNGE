@@ -112,7 +112,7 @@ function LoginForm() {
         {/* Tagline */}
         <div className="relative z-10 p-12">
           <p className="font-[family-name:var(--font-accent)] text-[10px] tracking-[0.4em] text-[#d4af37] uppercase">
-            Dallas's Premier Lounge
+            Dallas&apos;s Premier Lounge
           </p>
           <h2 className="mt-3 font-[family-name:var(--font-display)] text-4xl leading-tight tracking-wide text-white uppercase">
             Where Every Night<br />Becomes Legend
@@ -150,12 +150,12 @@ function LoginForm() {
                   Reset Password
                 </h1>
                 <p className="mt-2 font-[family-name:var(--font-body)] text-sm text-white/50">
-                  Enter your email and we'll send a reset link.
+                  Enter your email and we&apos;ll send a reset link.
                 </p>
                 {resetSent ? (
                   <div className="mt-8 rounded-xl border border-[#d4af37]/30 bg-[#d4af37]/5 p-5 text-center">
                     <p className="font-[family-name:var(--font-body)] text-sm text-[#d4af37]">
-                      Reset link sent — check your inbox.
+                      Reset link sent - check your inbox.
                     </p>
                   </div>
                 ) : (

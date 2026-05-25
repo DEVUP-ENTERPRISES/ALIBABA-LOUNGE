@@ -153,7 +153,7 @@ function SignupForm() {
             Create Account
           </h1>
           <p className="mt-2 font-[family-name:var(--font-body)] text-sm text-white/50">
-            Join Dallas's most exclusive lounge experience.
+            Join Dallas&apos;s most exclusive lounge experience.
           </p>
 
           {/* Google */}

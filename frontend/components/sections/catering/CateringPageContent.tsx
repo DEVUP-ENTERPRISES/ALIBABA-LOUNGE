@@ -33,7 +33,7 @@ export function CateringPageContent() {
   };
 
   return (
-    <div className="relative min-h-screen pt-24 pb-20 pb-mobile-cta overflow-hidden">
+    <div className="cinematic-backdrop relative min-h-screen overflow-hidden pt-24 pb-20 pb-mobile-cta">
       <div className="absolute inset-0 bg-[radial-gradient(ellipse_70%_40%_at_50%_10%,rgba(212,175,55,0.06),transparent_65%)]" />
       <div className="film-grain absolute inset-0" />
       <div className="section-padding relative mx-auto grid max-w-7xl items-start gap-10 lg:grid-cols-2 lg:gap-16">
@@ -46,17 +46,17 @@ export function CateringPageContent() {
             align="left"
             eyebrow="Catering"
             title="Events Elevated"
-            subtitle="From intimate gatherings to grand celebrations — our culinary team and lounge specialists craft bespoke Sheesh experiences at your venue."
+            subtitle="From intimate gatherings to grand celebrations - our culinary team and lounge specialists craft bespoke Sheesh experiences at your venue."
           />
-          <div className="group relative mt-10 aspect-[4/3] overflow-hidden rounded-3xl border border-[#d4af37]/10 transition-all duration-700 hover:border-[#d4af37]/30 hover:shadow-[0_16px_50px_rgba(212,175,55,0.1)]">
+          <div className="cinematic-frame group relative mt-10 aspect-[4/3] overflow-hidden rounded-3xl transition-all duration-700 hover:border-[#d4af37]/30 hover:shadow-[0_16px_50px_rgba(212,175,55,0.1)]">
             <div className="absolute top-5 left-5 z-10 font-[family-name:var(--font-accent)] text-[8px] tracking-[0.25em] text-[#d4af37]/75 uppercase pointer-events-none">
-              CAM · 02 CATERING
+              CAM / 02 CATERING
             </div>
             <Image
               src={menuImages.catering}
               alt="Sheesh catering"
               fill
-              className="object-cover transition-transform duration-[2s] group-hover:scale-105"
+              className="object-cover image-cinematic transition-transform duration-[2s] group-hover:scale-105"
               sizes="50vw"
             />
             <div className="absolute inset-0 bg-gradient-to-t from-[#050505]/90 via-[#050505]/20 to-transparent" />
@@ -64,10 +64,10 @@ export function CateringPageContent() {
             <div className="absolute inset-4 z-10 border border-white/[0.04] rounded-2xl pointer-events-none group-hover:border-[#d4af37]/12 transition-colors duration-700" />
           </div>
           <ul className="mt-8 space-y-3 font-[family-name:var(--font-body)] text-sm text-white/55">
-            <li>— Full-service catering & premium hookah stations</li>
-            <li>— Custom menus & dietary accommodations</li>
-            <li>— On-site chefs and dedicated event hosts</li>
-            <li>— Corporate, wedding, and private celebrations</li>
+            <li>- Full-service catering & premium hookah stations</li>
+            <li>- Custom menus & dietary accommodations</li>
+            <li>- On-site chefs and dedicated event hosts</li>
+            <li>- Corporate, wedding, and private celebrations</li>
           </ul>
           <p className="mt-6 font-[family-name:var(--font-body)] text-sm text-white/40">
             Questions? Call <span className="text-[#d4af37]">(214) 407-7941</span>
@@ -78,7 +78,7 @@ export function CateringPageContent() {
           initial={{ opacity: 0, x: 40 }}
           animate={{ opacity: 1, x: 0 }}
           transition={{ duration: 1, delay: 0.2 }}
-          className="glass-luxury glow-gold luxury-shadow rounded-3xl p-8 md:p-10"
+          className="cinematic-frame glass-luxury glow-gold luxury-shadow rounded-3xl p-6 sm:p-8 md:p-10"
         >
           {!loading && !user ? (
             <div className="py-16 text-center">
@@ -112,6 +112,14 @@ export function CateringPageContent() {
             </div>
           ) : (
             <form onSubmit={handleSubmit} className="space-y-6">
+              <div className="border-b border-white/[0.06] pb-5">
+                <p className="font-[family-name:var(--font-accent)] text-[9px] tracking-[0.28em] text-[#d4af37]/80 uppercase">
+                  Private Event Concierge
+                </p>
+                <h2 className="mt-2 font-[family-name:var(--font-display)] text-2xl text-white">
+                  Plan a Bespoke Event
+                </h2>
+              </div>
               <div className="grid gap-6 sm:grid-cols-2">
                 <div className="space-y-2">
                   <Label htmlFor="name">Full Name</Label>

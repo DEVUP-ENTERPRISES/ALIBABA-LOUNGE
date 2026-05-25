@@ -106,7 +106,7 @@ export default function AdminEventsPage() {
                 {event.title}
               </h3>
               <p className="mt-1 text-sm text-white/45">
-                {event.date} · {event.time}
+                {event.date} / {event.time}
               </p>
               <p className="text-xs text-white/35">{event.location}</p>
               <div className="mt-4 flex gap-2">

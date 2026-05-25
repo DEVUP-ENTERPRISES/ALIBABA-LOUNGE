@@ -57,7 +57,7 @@ export function FinalCTASection() {
           transition={{ delay: 0.25, duration: 0.7 }}
           className="mx-auto mt-6 max-w-md font-[family-name:var(--font-body)] text-sm sm:text-base text-white/50 leading-relaxed"
         >
-          Dallas's premier hookah lounge & dining destination. Book online or call us directly — luxury awaits.
+          Dallas&apos;s premier hookah lounge & dining destination. Book online or call us directly - luxury awaits.
         </motion.p>
 
         {/* Phone number */}

@@ -7,7 +7,7 @@ interface FloatingParticlesProps {
   className?: string;
 }
 
-/* Pure CSS animations — zero JS per frame, GPU composited */
+/* Pure CSS animations - zero JS per frame, GPU composited */
 export function FloatingParticles({ count = 18, className = "" }: FloatingParticlesProps) {
   const particles = useMemo(() => {
     const seed = (n: number) => ((n * 9301 + 49297) % 233280) / 233280;

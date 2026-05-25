@@ -36,19 +36,19 @@ export function ReservationPageContent() {
   const { openModal } = useReservations();
 
   return (
-    <div className="relative min-h-screen overflow-hidden pt-24 pb-20 pb-mobile-cta">
+    <div className="cinematic-backdrop relative min-h-screen overflow-hidden pt-24 pb-20 pb-mobile-cta">
       <FloatingParticles count={10} />
       <div className="absolute inset-0 bg-[radial-gradient(ellipse_70%_50%_at_50%_20%,rgba(212,175,55,0.07),transparent_65%)]" />
       <div className="film-grain absolute inset-0" />
 
       {/* Hero image strip */}
       <div className="relative mx-auto mb-14 max-w-7xl px-5 sm:px-8">
-        <div className="relative aspect-[2/1] min-h-[160px] sm:min-h-[220px] overflow-hidden rounded-2xl sm:rounded-3xl border border-[#d4af37]/10">
+        <div className="cinematic-frame relative min-h-[330px] overflow-hidden rounded-2xl sm:min-h-[420px] sm:rounded-3xl">
           <Image
             src={menuImages.lounge}
             alt="Sheesh lounge"
             fill
-            className="object-cover"
+            className="object-cover image-cinematic"
             priority
             sizes="100vw"
           />
@@ -69,7 +69,7 @@ export function ReservationPageContent() {
           </div>
 
           <div className="absolute top-4 right-4 font-[family-name:var(--font-accent)] text-[8px] tracking-[0.25em] text-white/30 uppercase pointer-events-none">
-            CAM · 01 AMBIENT
+            CAM / 01 AMBIENT
           </div>
         </div>
       </div>
@@ -107,7 +107,7 @@ export function ReservationPageContent() {
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
           transition={{ delay: 0.3, duration: 0.9 }}
-          className="mx-auto mt-10 max-w-xl rounded-3xl border border-[#d4af37]/15 bg-[#0c0c0e]/80 backdrop-blur-sm p-8 sm:p-10 text-center shadow-[0_0_50px_rgba(212,175,55,0.08)]"
+          className="cinematic-frame mx-auto mt-10 max-w-xl rounded-3xl bg-[#0c0c0e]/80 p-8 text-center backdrop-blur-sm sm:p-10"
         >
           <div className="flex justify-center gap-0.5 mb-5">
             {Array.from({ length: 5 }).map((_, i) => (
@@ -118,7 +118,7 @@ export function ReservationPageContent() {
             Ready when you are.
           </p>
           <p className="mt-3 font-[family-name:var(--font-body)] text-sm leading-relaxed text-white/45">
-            Open the reservation form — your request goes directly to our team for fast confirmation.
+            Open the reservation form - your request goes directly to our team for fast confirmation.
           </p>
 
           <div className="mt-8 flex flex-col gap-3 sm:flex-row sm:justify-center">
@@ -157,7 +157,7 @@ export function ReservationPageContent() {
           transition={{ delay: 0.55, duration: 0.6 }}
           className="mt-6 text-center font-[family-name:var(--font-body)] text-sm text-white/30"
         >
-          Located in Dallas, TX · Sheesh Eatery & Lounge
+          Located in Dallas, TX / Sheesh Eatery & Lounge
         </motion.p>
       </div>
     </div>

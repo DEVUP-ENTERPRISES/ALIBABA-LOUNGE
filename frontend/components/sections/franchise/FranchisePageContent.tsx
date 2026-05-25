@@ -57,7 +57,7 @@ export function FranchisePageContent() {
   };
 
   return (
-    <div className="relative min-h-screen pt-24 pb-20 pb-mobile-cta overflow-hidden">
+    <div className="cinematic-backdrop relative min-h-screen overflow-hidden pt-24 pb-20 pb-mobile-cta">
       <div className="absolute inset-0 bg-[radial-gradient(ellipse_70%_40%_at_50%_0%,rgba(212,175,55,0.07),transparent_65%)]" />
       <div className="film-grain absolute inset-0" />
       <section className="section-padding relative">
@@ -83,7 +83,7 @@ export function FranchisePageContent() {
         </div>
       </section>
 
-      <section className="section-padding bg-[#0c0c0e]">
+      <section className="section-padding bg-[#0c0c0e]/85">
         <div className="mx-auto grid max-w-7xl gap-6 md:grid-cols-3">
           {pillars.map((p, i) => (
             <GlassCard key={p.title} delay={i * 0.1}>
@@ -104,7 +104,7 @@ export function FranchisePageContent() {
             initial={{ opacity: 0, y: 30 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
-            className="glass-luxury glow-gold rounded-3xl p-8 md:p-12"
+            className="cinematic-frame glass-luxury glow-gold rounded-3xl p-6 sm:p-8 md:p-12"
           >
             <h3 className="text-center font-[family-name:var(--font-display)] text-3xl text-white">
               Application
@@ -136,6 +136,11 @@ export function FranchisePageContent() {
               </p>
             ) : (
               <form onSubmit={handleSubmit} className="mt-10 space-y-6">
+                <div className="rounded-2xl border border-[#d4af37]/12 bg-[#d4af37]/[0.04] p-4">
+                  <p className="font-[family-name:var(--font-body)] text-sm leading-relaxed text-white/50">
+                    Applications are reviewed by the Sheesh leadership team for market fit, hospitality background, and capital readiness.
+                  </p>
+                </div>
                 <div className="grid gap-6 sm:grid-cols-2">
                   <div className="space-y-2">
                     <Label htmlFor="fname">First Name</Label>

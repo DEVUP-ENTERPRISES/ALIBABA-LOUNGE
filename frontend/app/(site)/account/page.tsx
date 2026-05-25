@@ -1,8 +1,8 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { motion } from "framer-motion";
-import { User, Mail, Phone, Calendar, Clock, Users, LogOut, Edit3, Check, X } from "lucide-react";
+import { User, Mail, Calendar, Clock, Users, LogOut, Edit3, Check, X, Crown, Sparkles } from "lucide-react";
 import { useRequireAuth } from "@/hooks/useRequireAuth";
 import { useAuth } from "@/contexts/AuthContext";
 import { useRouter } from "next/navigation";
@@ -34,14 +34,7 @@ export default function AccountPage() {
   const [nameVal, setNameVal] = useState("");
   const [saving, setSaving] = useState(false);
 
-  useEffect(() => {
-    if (!user) return;
-    setNameVal(user.displayName ?? "");
-    void fetchBookings();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [user]);
-
-  const fetchBookings = async () => {
+  const fetchBookings = useCallback(async () => {
     setBLoading(true);
     try {
       const token = await getIdToken();
@@ -57,7 +50,13 @@ export default function AccountPage() {
     } finally {
       setBLoading(false);
     }
-  };
+  }, [getIdToken]);
+
+  useEffect(() => {
+    if (!user) return;
+    queueMicrotask(() => setNameVal(user.displayName ?? ""));
+    queueMicrotask(() => void fetchBookings());
+  }, [fetchBookings, user]);
 
   const saveName = async () => {
     if (!nameVal.trim()) return;
@@ -89,21 +88,21 @@ export default function AccountPage() {
     .split(" ").map((w) => w[0]).slice(0, 2).join("").toUpperCase();
 
   return (
-    <div className="min-h-screen bg-[#050505] pt-28 pb-24">
-      <div className="mx-auto max-w-4xl px-6">
+    <div className="cinematic-backdrop min-h-screen pt-28 pb-24">
+      <div className="mx-auto max-w-6xl px-5 sm:px-6">
 
         {/* Header */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
-          className="mb-10 flex items-center justify-between"
+          className="mb-10 flex flex-col gap-5 sm:flex-row sm:items-center sm:justify-between"
         >
           <div>
             <p className="font-[family-name:var(--font-accent)] text-[10px] tracking-[0.35em] text-[#d4af37] uppercase">
               Member
             </p>
-            <h1 className="mt-1 font-[family-name:var(--font-display)] text-3xl tracking-wide text-white uppercase">
-              My Account
+            <h1 className="mt-1 font-[family-name:var(--font-display)] text-4xl tracking-normal text-white uppercase sm:text-5xl">
+              VIP Member Suite
             </h1>
           </div>
           <button
@@ -115,20 +114,42 @@ export default function AccountPage() {
           </button>
         </motion.div>
 
+        <div className="mb-6 grid gap-3 sm:grid-cols-3">
+          {[
+            { label: "Reservations", value: bookings.length, icon: Calendar },
+            { label: "Member Status", value: "VIP", icon: Crown },
+            { label: "Concierge", value: "Ready", icon: Sparkles },
+          ].map((item) => (
+            <div key={item.label} className="glass-luxury rounded-2xl p-4">
+              <div className="flex items-center justify-between gap-3">
+                <div>
+                  <p className="font-[family-name:var(--font-accent)] text-[8px] tracking-[0.22em] text-white/35 uppercase">
+                    {item.label}
+                  </p>
+                  <p className="mt-1 font-[family-name:var(--font-display)] text-2xl text-gold-gradient">
+                    {item.value}
+                  </p>
+                </div>
+                <item.icon className="size-5 text-[#d4af37]/60" />
+              </div>
+            </div>
+          ))}
+        </div>
+
         <div className="grid gap-6 lg:grid-cols-3">
           {/* Profile Card */}
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.1 }}
-            className="glass-luxury rounded-2xl p-6"
+            className="cinematic-frame glass-luxury rounded-2xl p-6"
           >
             {/* Avatar */}
             <div className="flex flex-col items-center text-center">
-              <div className="flex h-20 w-20 items-center justify-center rounded-full border-2 border-[#d4af37]/40 bg-[#d4af37]/10">
+              <div className="flex h-24 w-24 items-center justify-center rounded-full border-2 border-[#d4af37]/40 bg-[#d4af37]/10 shadow-[0_0_35px_rgba(212,175,55,0.16)]">
                 {user!.photoURL ? (
                   // eslint-disable-next-line @next/next/no-img-element
-                  <img src={user!.photoURL} alt="" className="h-20 w-20 rounded-full object-cover" />
+                  <img src={user!.photoURL} alt="" className="h-24 w-24 rounded-full object-cover" />
                 ) : (
                   <span className="font-[family-name:var(--font-display)] text-2xl text-[#d4af37]">
                     {initials}
@@ -189,10 +210,10 @@ export default function AccountPage() {
             transition={{ delay: 0.15 }}
             className="lg:col-span-2"
           >
-            <div className="glass-luxury rounded-2xl overflow-hidden">
+              <div className="cinematic-frame glass-luxury overflow-hidden rounded-2xl">
               <div className="flex items-center justify-between border-b border-white/[0.06] px-6 py-4">
-                <h2 className="font-[family-name:var(--font-display)] text-lg text-white">
-                  My Reservations
+                <h2 className="font-[family-name:var(--font-display)] text-xl text-white">
+                  Reservation History
                 </h2>
                 <span className="font-[family-name:var(--font-accent)] text-[9px] tracking-[0.2em] text-white/30 uppercase">
                   {bookings.length} total
@@ -219,7 +240,7 @@ export default function AccountPage() {
               ) : (
                 <div className="divide-y divide-white/[0.04]">
                   {bookings.map((b) => (
-                    <div key={b.id} className="flex flex-col gap-3 px-6 py-4 sm:flex-row sm:items-center sm:justify-between">
+                    <div key={b.id} className="flex flex-col gap-3 px-5 py-5 transition-colors hover:bg-white/[0.025] sm:flex-row sm:items-center sm:justify-between sm:px-6">
                       <div className="space-y-1">
                         <div className="flex flex-wrap items-center gap-3">
                           <div className="flex items-center gap-1.5 font-[family-name:var(--font-body)] text-sm text-white">
