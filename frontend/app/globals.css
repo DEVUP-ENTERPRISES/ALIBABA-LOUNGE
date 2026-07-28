@@ -92,7 +92,7 @@
     @apply border-border outline-ring/50;
   }
   html {
-    @apply scroll-smooth;
+    /* Removed scroll-smooth as it conflicts with Lenis smooth scrolling */
   }
   [id] {
     scroll-margin-top: 6rem;
