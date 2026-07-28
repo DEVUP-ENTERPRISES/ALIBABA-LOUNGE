@@ -1,24 +1,25 @@
 import type { Metadata } from "next";
-import { Cormorant_Garamond, Outfit, Cinzel } from "next/font/google";
+import { Playfair_Display, Manrope } from "next/font/google";
 import "./globals.css";
 import { cn } from "@/lib/utils";
 
-const display = Cormorant_Garamond({
+const display = Playfair_Display({
   subsets: ["latin"],
   variable: "--font-display",
+  weight: ["400", "500", "600", "700", "800"],
+});
+
+const body = Manrope({
+  subsets: ["latin"],
+  variable: "--font-body",
   weight: ["300", "400", "500", "600", "700"],
 });
 
-const body = Outfit({
-  subsets: ["latin"],
-  variable: "--font-body",
-  weight: ["300", "400", "500", "600"],
-});
-
-const accent = Cinzel({
+const accent = Playfair_Display({
   subsets: ["latin"],
   variable: "--font-accent",
-  weight: ["400", "500", "600", "700"],
+  weight: ["600", "700", "800"],
+  style: ["italic", "normal"],
 });
 
 export const metadata: Metadata = {
