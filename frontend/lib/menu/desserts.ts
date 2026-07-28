@@ -1,0 +1,25 @@
+import { dessertItem } from "./helpers";
+
+export const dessertsMenu = [
+  dessertItem("mango-milk-cake", "Mango Milk Cake", "Soaked milk cake with Alphonso mango and cardamom cream.", 12, { tags: ["New"], featured: true }),
+  dessertItem("walnut-date-cake", "Walnut & Date Cake", "Warm spice cake with caramelized dates and toasted walnuts.", 11),
+  dessertItem("raspberry-cheesecake", "Raspberry Cheesecake", "Silky cheesecake with tart raspberry coulis.", 12, { tags: ["Popular"] }),
+  dessertItem("peach-cobbler", "Peach Cobbler", "Buttery crumble, vanilla bean ice cream, bourbon caramel.", 11),
+  dessertItem("mango-lassi-cheesecake", "Mango Lassi Cheesecake", "Cream cheese meets mango lassi — fusion decadence.", 12, { tags: ["Staff Pick"] }),
+  dessertItem("ras-malai-cake", "Ras Malai Cake", "Sponge layered with ras malai cream and pistachio.", 13, { tags: ["Customer Fav"], featured: true }),
+  dessertItem("gulabi-tres-leches", "Gulabi Tres Leches Cake", "Rose-infused tres leches with pistachio dust.", 12, { tags: ["Popular"] }),
+  dessertItem("powdered-sugar-croissant", "Powdered Sugar Croissant", "Butter-laminated croissant, snow-dusted, warm served.", 8),
+  dessertItem("strawberry-croissant", "Strawberry Croissant", "Pastry cream, fresh strawberries, gold leaf.", 9, { tags: ["New"] }),
+  dessertItem("nutella-croissant", "Nutella Croissant", "Molten Nutella core, hazelnut crunch.", 9, { tags: ["Popular", "Customer Fav"] }),
+  dessertItem("special-shahi-falooda", "Special Shahi Falooda", "Royal falooda with vermicelli, basil seeds, and rose rabri.", 14, { tags: ["Staff Pick", "Popular"], featured: true }),
+  dessertItem("gulab-jamun-cheesecake", "Gulab Jamun Cheesecake", "Cheesecake crowned with warm gulab jamun.", 13, { tags: ["Popular"], featured: true }),
+  dessertItem("chocolate-mousse-cake", "Chocolate Mousse Cake", "Dark chocolate mousse on espresso sponge.", 11),
+  dessertItem("berrylicious-sundae", "Berrylicious Delight Sundae", "Mixed berries, gelato, and luxe toppings.", 10, { tags: ["Customer Fav"] }),
+  dessertItem("brownie-bliss-sundae", "Brownie Bliss Sundae", "Warm brownie, ice cream, hot fudge cascade.", 11, { tags: ["Popular"] }),
+  dessertItem("double-trouble-ice-cream", "Double Trouble Ice Cream", "Two scoops, two sauces, endless indulgence.", 9),
+  dessertItem("kulfi-plate", "Kulfi Plate", "Traditional malai kulfi with falooda threads.", 8, { tags: ["Customer Fav"] }),
+  dessertItem("matki-wali-kheer", "Matki Wali Kheer", "Slow-cooked rice kheer served in clay pot.", 9),
+  dessertItem("falooda-bowl", "Falooda Bowl", "Chilled falooda with rose syrup and nuts.", 10),
+  dessertItem("gulab-jamun-ice-cream", "Gulab Jamun with Vanilla Ice Cream", "Warm jamun meets cold vanilla — classic contrast.", 10, { tags: ["Popular"] }),
+  dessertItem("nutella-paratha", "Nutella Paratha", "Flaky paratha stuffed with Nutella — late-night legend.", 11, { tags: ["New", "Staff Pick"] }),
+];
