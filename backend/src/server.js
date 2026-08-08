@@ -13,7 +13,7 @@ async function startServer() {
     server = http.createServer(app);
     server.listen(env.port, () => {
       console.log(
-        `Sheesh backend running in ${env.nodeEnv} mode on port ${env.port}`
+        `Alibaba backend running in ${env.nodeEnv} mode on port ${env.port}`,
       );
     });
   } catch (error) {

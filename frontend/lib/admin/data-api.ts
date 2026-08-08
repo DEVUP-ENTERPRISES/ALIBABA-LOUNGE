@@ -4,6 +4,8 @@ import type {
   AdminFranchiseApp,
   AdminInquiry,
   AdminReservation,
+  AdminReview,
+  AdminSetting,
   GalleryImage,
 } from "@/lib/admin/types";
 import type { MenuItem } from "@/lib/menu/types";
@@ -222,5 +224,43 @@ export const dashboardApi = {
       recentReservations: AdminReservation[];
       activityFeed: { id: string; text: string; time: string; type: string }[];
     }>("/dashboard");
+  },
+};
+
+export const settingApi = {
+  async get() {
+    const data = await request<{ settings: AdminSetting }>("/settings");
+    return data.settings;
+  },
+  async update(payload: JsonRecord) {
+    const data = await request<{ settings: AdminSetting }>("/settings", {
+      method: "PUT",
+      body: JSON.stringify(payload),
+    });
+    return data.settings;
+  },
+};
+
+export const reviewApi = {
+  async list(params = "") {
+    const data = await request<{ reviews: AdminReview[] }>(`/reviews${params}`);
+    return data.reviews;
+  },
+  async create(payload: JsonRecord) {
+    const data = await request<{ review: AdminReview }>("/reviews", {
+      method: "POST",
+      body: JSON.stringify(payload),
+    });
+    return data.review;
+  },
+  async update(id: string, payload: JsonRecord) {
+    const data = await request<{ review: AdminReview }>(`/reviews/${id}`, {
+      method: "PUT",
+      body: JSON.stringify(payload),
+    });
+    return data.review;
+  },
+  async remove(id: string) {
+    await request(`/reviews/${id}`, { method: "DELETE" });
   },
 };

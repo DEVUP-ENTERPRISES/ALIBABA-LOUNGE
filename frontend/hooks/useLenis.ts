@@ -27,15 +27,15 @@ export function useLenis() {
 
     lenis.on("scroll", ScrollTrigger.update);
 
-    const tick = (time: number) => {
-      lenis.raf(time * 1000);
+    let rafId: number;
+    const raf = (time: number) => {
+      lenis.raf(time);
+      rafId = requestAnimationFrame(raf);
     };
-
-    gsap.ticker.add(tick);
-    gsap.ticker.lagSmoothing(0);
+    rafId = requestAnimationFrame(raf);
 
     return () => {
-      gsap.ticker.remove(tick);
+      cancelAnimationFrame(rafId);
       lenis.destroy();
       ScrollTrigger.getAll().forEach((t) => t.kill());
     };

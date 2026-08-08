@@ -1,9 +1,8 @@
 import type { MenuCategory } from "@/lib/menu/types";
 
 export const adminCategoryOptions: { value: MenuCategory; label: string }[] = [
-  { value: "food", label: "Food" },
-  { value: "drinks", label: "Drinks" },
   { value: "hookah", label: "Hookah" },
+  { value: "drinks", label: "Drinks" },
   { value: "desserts", label: "Desserts" },
 ];
 
@@ -11,13 +10,6 @@ export const adminSubcategoryOptions: Record<
   MenuCategory,
   { value: string; label: string }[]
 > = {
-  food: [
-    { value: "appetizers", label: "Appetizers" },
-    { value: "sandwiches", label: "Sandwiches & Rolls" },
-    { value: "bbq", label: "BBQ" },
-    { value: "desi", label: "Desi" },
-    { value: "chinese", label: "Chinese" },
-  ],
   drinks: [
     { value: "mocktails", label: "Mocktails" },
     { value: "milkshakes", label: "Milkshakes" },
@@ -26,6 +18,12 @@ export const adminSubcategoryOptions: Record<
     { value: "soda", label: "Soda & More" },
   ],
   hookah: [
+    { value: "starbuzz", label: "Starbuzz" },
+    { value: "fumari", label: "Fumari" },
+    { value: "afzal", label: "Afzal" },
+    { value: "mazaya", label: "Mazaya" },
+    { value: "adalya", label: "Adalya" },
+    { value: "al-fakher", label: "Al Fakher" },
     { value: "selection", label: "Hookah Selection" },
     { value: "house-mixes", label: "House Mixes" },
     { value: "regular", label: "Regular Flavors" },

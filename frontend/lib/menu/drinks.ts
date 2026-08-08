@@ -1,139 +1,74 @@
 import { drinkItem, slug } from "./helpers";
 
-const mocktails = [
-  "Lychee Mojito Mocktail",
-  "Strawberry Mojito Mocktail",
-  "Blueberry Mojito",
-  "Jamun Mojito",
-  "Mango Mojito",
-  "Pineapple Mojito",
-  "Passion Fruit Mojito",
-  "Ocean Blue Mojito",
-  "Mango Mule",
-  "OG Lemonade",
-  "Mint Lemonade",
-  "Berry Burlesque",
-  "Hayati",
-  "Pina Colada",
-  "Falsay Mojito",
-];
-
-const milkshakes = [
-  "Oreo Milkshake",
-  "Chocolate Milkshake",
-  "Pistachio Milkshake",
-  "Nutella Milkshake",
-  "Bombay Breeze Milkshake",
-  "Paan Rabri Milkshake",
-  "Strawberry Milkshake",
-  "Badam Milkshake",
-];
-
-const juices = [
-  "Fresh Watermelon Juice",
-  "Fresh Carrot Juice",
-  "Fresh Sugarcane Juice",
-  "Fresh Orange Juice",
-  "Fresh Apple Juice",
-  "Fresh Young Coconut",
-];
-
-const chaiCoffee = [
-  "Special Gurwali Chai",
-  "Special Dhaba Chai",
-  "Mint Tea",
-  "Mint Tea Pot",
-  "Doodh Pati",
-  "Americano",
-  "Espresso Shot",
-  "Latte & Cappuccino",
-  "Biscoff Latte",
-];
-
-const soda = [
-  "Coke",
-  "Diet Coke",
-  "Coke Zero",
-  "Sprite",
-  "Limca",
-  "Pakola",
-  "Vimto",
-  "Fiji Water",
-  "Sparkling Water",
-  "Dr Pepper",
-  "Bottled Water",
-  "Thumbs Up",
-];
-
-function mocktailDesc(name: string) {
-  return `${name} — handcrafted, ice-cold, garnished with fresh herbs and a cinematic pour.`;
-}
-
 export const drinksMenu = [
-  ...mocktails.map((name, i) =>
-    drinkItem(slug(name), name, mocktailDesc(name), 10 + (i % 3), "mocktails", {
-      tags:
-        name.includes("Ocean Blue") || name.includes("Hayati")
-          ? ["Popular", "Staff Pick"]
-          : name.includes("Lychee")
-            ? ["Customer Fav"]
-            : undefined,
-      featured: name === "Ocean Blue Mojito" || name === "Hayati",
-    })
-  ),
+  // --- MOCKTAILS (Poster & Notebook) ---
+  drinkItem("regular-mojito", "Regular Mojito", "Classic mint and lime refreshing mocktail.", 9.99, "mocktails", { tags: ["Popular"] }),
+  drinkItem("mango-mojito", "Mango Mojito", "Tropical mango blend with fresh mint, lime, and crushed ice.", 9.99, "mocktails", { tags: ["Customer Fav"] }),
+  drinkItem("strawberry-mojito", "Strawberry Mojito", "Sweet strawberry muddled with fresh mint, lime, and sparkling soda.", 9.99, "mocktails"),
+  drinkItem("watermelon-mojito", "Watermelon Mojito", "Fresh watermelon mocktail infused with lime and mint.", 9.99, "mocktails"),
+  drinkItem("classic-fresh-lemonade", "Classic Fresh Lemonade", "Freshly squeezed lemon juice with a touch of sweetness.", 7.99, "mocktails", { tags: ["Popular"] }),
+  drinkItem("pina-colada", "Pina Colada", "Creamy coconut and pineapple blended iced mocktail.", 9.99, "mocktails", { tags: ["Staff Pick"] }),
+  drinkItem("lychee-mojito-mocktail", "Lychee Mojito Mocktail", "Exotic lychee infused with fresh mint and crushed ice.", 9.99, "mocktails", { tags: ["Customer Fav"] }),
+  drinkItem("ocean-blue-mojito", "Ocean Blue Mojito", "Signature blue curaçao citrus mocktail with fresh mint and cinematic pour.", 11.99, "mocktails", { tags: ["Popular", "Staff Pick"], featured: true }),
+  drinkItem("hayati-mocktail", "Hayati Mocktail", "Lounge signature berry hibiscus elixier with gold flakes and smoke.", 11.99, "mocktails", { tags: ["Popular", "Staff Pick"], featured: true }),
+  drinkItem("blueberry-mojito", "Blueberry Mojito", "Fresh blueberries muddled with lime and mint.", 9.99, "mocktails"),
+  drinkItem("jamun-mojito", "Jamun Mojito", "Indian black plum nectar mixed with chatpata spices and soda.", 9.99, "mocktails"),
+  drinkItem("pineapple-mojito", "Pineapple Mojito", "Tropical pineapple twist with fresh spearmint.", 9.99, "mocktails"),
+  drinkItem("passion-fruit-mojito", "Passion Fruit Mojito", "Tangy passion fruit pulp with chilled sparkling soda.", 9.99, "mocktails"),
+  drinkItem("mango-mule", "Mango Mule", "Mango puree, fresh lime juice, and spicy ginger beer infusion.", 9.99, "mocktails"),
+  drinkItem("mint-lemonade", "Mint Lemonade", "Blend of fresh mint leaves, lemon juice, and crushed ice.", 7.99, "mocktails"),
+  drinkItem("berry-burlesque", "Berry Burlesque", "Rich mixed berry blend topped with ginger ale and fresh lime.", 9.99, "mocktails"),
+  drinkItem("falsay-mojito", "Falsay Mojito", "Traditional Grewia asiatica berry mocktail with black salt.", 9.99, "mocktails"),
+  drinkItem("lassi", "Lassi", "Traditional rich Indian yogurt drink. Choice of Sweet or Mango.", 9.99, "mocktails", { tags: ["Popular"] }),
 
-  ...milkshakes.map((name) =>
-    drinkItem(
-      slug(name),
-      name,
-      `${name} — thick, velvety, crowned with whipped cream and gold dust.`,
-      9,
-      "milkshakes",
-      {
-        tags:
-          name.includes("Oreo") || name.includes("Paan")
-            ? ["Popular"]
-            : undefined,
-        featured: name === "Paan Rabri Milkshake",
-      }
-    )
-  ),
+  // --- FRESH JUICES (Notebook & Poster) ---
+  drinkItem("fresh-orange-juice", "Fresh Orange Juice", "Pressed to order 100% pure orange juice. Small (10oz) $5.99 / Big (16oz) $9.99.", 5.99, "juices", { tags: ["Popular"] }),
+  drinkItem("fresh-pineapple-juice", "Fresh Pineapple Juice", "Cold-pressed fresh pineapple juice. Small (10oz) $5.99 / Big (16oz) $9.99.", 5.99, "juices"),
+  drinkItem("fresh-watermelon-juice", "Fresh Watermelon Juice", "Freshly extracted sweet watermelon juice. Small (10oz) $5.99 / Big (16oz) $9.99.", 5.99, "juices", { tags: ["Customer Fav"] }),
+  drinkItem("fresh-apple-juice", "Fresh Apple Juice", "Crisp cold-pressed red apple juice. Small (10oz) $5.99 / Big (16oz) $9.99.", 5.99, "juices"),
+  drinkItem("fresh-carrot-juice", "Fresh Carrot Juice", "Nutritious raw carrot juice pressed fresh.", 5.99, "juices"),
+  drinkItem("fresh-sugarcane-juice", "Fresh Sugarcane Juice", "Traditional sugarcane juice pressed with lime and ginger.", 6.99, "juices", { tags: ["Customer Fav"] }),
+  drinkItem("fresh-young-coconut", "Fresh Young Coconut Water", "Whole tender young coconut served chilled with straw.", 4.99, "juices"),
+  drinkItem("assorted-juice", "Assorted Juice", "Refreshing glass of juice. Choice of Mango, Watermelon, Fruit Punch, Orange, or Pineapple.", 4.99, "juices"),
 
-  ...juices.map((name) =>
-    drinkItem(
-      slug(name),
-      name,
-      `${name} — pressed to order, bright, refreshing, no compromise.`,
-      8,
-      "juices",
-      { tags: name.includes("Sugarcane") ? ["Customer Fav"] : undefined }
-    )
-  ),
+  // --- CHAI & COFFEE (Poster & Notebook) ---
+  drinkItem("iced-cold-coffee", "Iced Cold Coffee", "Chilled espresso blended with cold milk, ice, and dark chocolate drizzle.", 7.99, "chai-coffee", { tags: ["Popular"], featured: true }),
+  drinkItem("tea-selection", "Tea (Black / Mint / Green)", "Freshly brewed hot tea. Choice of Black, Mint, or Green.", 3.99, "chai-coffee"),
+  drinkItem("masala-tea", "Masala Tea", "Spiced traditional masala chai brewed with aromatic spices and milk.", 4.99, "chai-coffee", { tags: ["Staff Pick"] }),
+  drinkItem("tea-pot-small", "Tea Pot Small", "Small pot of freshly brewed tea served hot for sharing.", 9.99, "chai-coffee"),
+  drinkItem("tea-pot-big", "Tea Pot Big", "Large pot of freshly brewed tea served hot for the table.", 14.99, "chai-coffee"),
+  drinkItem("hot-lemon", "Hot Lemon", "Warming hot lemon tea infused with honey and fresh mint.", 5.99, "chai-coffee"),
+  drinkItem("black-coffee", "Black Coffee", "Rich and bold freshly brewed dark roast coffee.", 4.99, "chai-coffee"),
+  drinkItem("milk-coffee", "Milk Coffee", "Smooth coffee blended with warm steamed milk.", 1.99, "chai-coffee"),
+  drinkItem("special-gurwali-chai", "Special Gurwali Chai", "Traditional jaggery-infused slow-cooked chai.", 5.99, "chai-coffee"),
+  drinkItem("special-dhaba-chai", "Special Dhaba Chai", "Strong, cardamom-rich highway dhaba style chai.", 5.99, "chai-coffee", { tags: ["Popular", "Staff Pick"], featured: true }),
+  drinkItem("mint-tea-pot", "Mint Tea Pot", "Pot of fresh Moroccan mint tea leaves steeped in hot water.", 4.99, "chai-coffee"),
+  drinkItem("doodh-pati", "Doodh Pati", "Rich pakistani tea boiled purely in milk and green cardamom.", 4.99, "chai-coffee"),
+  drinkItem("americano", "Americano", "Double shot espresso diluted with hot water.", 4.99, "chai-coffee"),
+  drinkItem("espresso-shot", "Espresso Shot", "Intense concentrated single shot espresso.", 3.99, "chai-coffee"),
+  drinkItem("latte-cappuccino", "Latte & Cappuccino", "Espresso topped with silky steamed milk foam.", 5.99, "chai-coffee"),
+  drinkItem("biscoff-latte", "Biscoff Latte", "Espresso blended with Lotus Biscoff cookie spread.", 6.99, "chai-coffee", { tags: ["Staff Pick"] }),
 
-  ...chaiCoffee.map((name) =>
-    drinkItem(
-      slug(name),
-      name,
-      `${name} — brewed with intention, served at the perfect temperature.`,
-      name.includes("Espresso") ? 4 : name.includes("Latte") ? 6 : 5,
-      "chai-coffee",
-      {
-        tags:
-          name.includes("Dhaba") || name.includes("Biscoff")
-            ? ["Staff Pick"]
-            : undefined,
-        featured: name === "Special Dhaba Chai",
-      }
-    )
-  ),
+  // --- SODA & COLD BEVERAGES (Poster) ---
+  drinkItem("soda-selection", "Soda", "Selection of Coke, Diet Coke, Coke Zero, Fanta, Sprite, Mountain Dew, Pepsi, or Ginger Ale.", 2.99, "soda"),
+  drinkItem("bottle-water", "Bottle Water", "Chilled premium bottled spring water.", 1.99, "soda"),
+  drinkItem("sparkling-water", "Sparkling Water", "Crisp, chilled sparkling mineral water.", 4.99, "soda"),
+  drinkItem("topo-chico", "Topo Chico (Lime / Regular)", "Imported Mexican sparkling mineral water available in Lime or Regular flavor.", 4.99, "soda"),
+  drinkItem("coconut-water", "Coconut Water", "100% pure hydrating coconut water.", 4.99, "soda"),
+  drinkItem("red-bull", "Red Bull", "Chilled original energy drink.", 5.99, "soda"),
+  drinkItem("limca", "Limca", "Fizzy lemon-lime soda.", 3.49, "soda"),
+  drinkItem("pakola", "Pakola", "Classic Pakistani ice-cream soda.", 3.49, "soda"),
+  drinkItem("vimto", "Vimto", "Fizzy berry fruit drink.", 3.49, "soda"),
+  drinkItem("dr-pepper", "Dr Pepper", "23-flavor blend classic soda.", 2.99, "soda"),
+  drinkItem("thumbs-up", "Thumbs Up", "Strong fizzy cola.", 3.49, "soda"),
 
-  ...soda.map((name) =>
-    drinkItem(
-      slug(name),
-      name,
-      `${name} — chilled and served with premium glassware.`,
-      name.includes("Water") ? 4 : 3,
-      "soda"
-    )
-  ),
+  // --- MILKSHAKES ---
+  drinkItem("oreo-milkshake", "Oreo Milkshake", "Creamy vanilla milkshake blended with crunchy Oreo cookies.", 8.99, "milkshakes", { tags: ["Popular"] }),
+  drinkItem("chocolate-milkshake", "Chocolate Milkshake", "Rich Belgian chocolate milkshake topped with whipped cream.", 8.99, "milkshakes"),
+  drinkItem("pistachio-milkshake", "Pistachio Milkshake", "Gourmet roasted pistachio blend with saffron cream.", 9.99, "milkshakes"),
+  drinkItem("nutella-milkshake", "Nutella Milkshake", "Decadent hazelnut chocolate Nutella milkshake.", 9.99, "milkshakes"),
+  drinkItem("bombay-breeze-milkshake", "Bombay Breeze Milkshake", "Spiced rose and cardamom specialty milkshake.", 8.99, "milkshakes"),
+  drinkItem("paan-rabri-milkshake", "Paan Rabri Milkshake", "Signature betel leaf and rabri sweet cream milkshake.", 9.99, "milkshakes", { tags: ["Popular", "Staff Pick"], featured: true }),
+  drinkItem("strawberry-milkshake", "Strawberry Milkshake", "Real strawberry puree blended with vanilla ice cream.", 8.99, "milkshakes"),
+  drinkItem("badam-milkshake", "Badam Milkshake", "Traditional rich almond milk shake infused with cardamom.", 8.99, "milkshakes"),
 ];

@@ -8,6 +8,8 @@ const galleryRoutes = require("./galleryRoutes");
 const inquiryRoutes = require("./inquiryRoutes");
 const menuRoutes = require("./menuRoutes");
 const reservationRoutes = require("./reservationRoutes");
+const settingRoutes = require("./settingRoutes");
+const reviewRoutes = require("./reviewRoutes");
 const userRoutes = require("./userRoutes");
 
 const router = express.Router();
@@ -15,7 +17,7 @@ const router = express.Router();
 router.get("/", (_req, res) => {
   res.status(200).json({
     success: true,
-    message: "Sheesh API foundation is ready.",
+    message: "Alibaba API foundation is ready.",
   });
 });
 
@@ -28,5 +30,7 @@ router.use("/inquiries", inquiryRoutes);
 router.use("/dashboard", dashboardRoutes);
 router.use("/admins", adminRoutes);
 router.use("/users", userRoutes);
+router.use("/settings", settingRoutes);
+router.use("/reviews", reviewRoutes);
 
 module.exports = router;

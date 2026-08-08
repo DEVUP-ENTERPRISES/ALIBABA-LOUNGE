@@ -46,7 +46,7 @@ export function ReservationPageContent() {
         <div className="cinematic-frame relative min-h-[330px] overflow-hidden rounded-2xl sm:min-h-[420px] sm:rounded-3xl">
           <Image
             src={menuImages.lounge}
-            alt="Sheesh lounge"
+            alt="Alibaba lounge"
             fill
             className="object-cover image-cinematic"
             priority
@@ -157,7 +157,7 @@ export function ReservationPageContent() {
           transition={{ delay: 0.55, duration: 0.6 }}
           className="mt-6 text-center font-[family-name:var(--font-body)] text-sm text-white/30"
         >
-          Located in Dallas, TX / Sheesh Eatery & Lounge
+          Located in Dallas, TX / Alibaba Hookah Lounge
         </motion.p>
       </div>
     </div>

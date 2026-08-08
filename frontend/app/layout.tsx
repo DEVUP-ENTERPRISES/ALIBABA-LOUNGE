@@ -23,11 +23,11 @@ const accent = Playfair_Display({
 });
 
 export const metadata: Metadata = {
-  title: "Sheesh Eatery & Lounge | Dallas's Premier Lounge",
+  title: "Alibaba Hookah Lounge | Dallas's Premier Lounge",
   description:
     "Dallas's premier hookah lounge & dining destination. Where luxury meets flavor.",
   keywords: [
-    "Sheesh",
+    "Alibaba Hookah Lounge",
     "hookah lounge",
     "Dallas restaurant",
     "luxury dining",
@@ -44,7 +44,7 @@ export default function RootLayout({
     <html
       lang="en"
       className={cn(
-        "dark h-full",
+        "dark min-h-screen",
         display.variable,
         body.variable,
         accent.variable
@@ -52,7 +52,7 @@ export default function RootLayout({
     >
       <body
         className={cn(
-          "relative min-h-full overflow-x-hidden bg-[#050505] font-[family-name:var(--font-body)] antialiased",
+          "relative min-h-screen overflow-x-hidden bg-[#050505] font-[family-name:var(--font-body)] antialiased",
           body.className
         )}
       >

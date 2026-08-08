@@ -21,7 +21,7 @@ interface MenuItemFormProps {
 }
 
 export function MenuItemForm({ item, onCancel, onSave }: MenuItemFormProps) {
-  const [category, setCategory] = useState<MenuCategory>(item?.category ?? "food");
+  const [category, setCategory] = useState<MenuCategory>(item?.category ?? "hookah");
   const [subcategory, setSubcategory] = useState(item?.subcategory ?? "");
   const [selectedTags, setSelectedTags] = useState<MenuTag[]>(item?.tags ?? []);
   const [imageFile, setImageFile] = useState<File | null>(null);
@@ -35,7 +35,7 @@ export function MenuItemForm({ item, onCancel, onSave }: MenuItemFormProps) {
       setSelectedTags(item.tags ?? []);
       return;
     }
-    setCategory("food");
+    setCategory("hookah");
     setSubcategory("");
     setSelectedTags([]);
   }, [item]);

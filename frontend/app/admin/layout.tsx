@@ -1,7 +1,7 @@
 import { AdminLayoutClient } from "@/components/admin/layout/AdminLayoutClient";
 
 export const metadata = {
-  title: "Admin | Sheesh Eatery & Lounge",
+  title: "Admin | Alibaba Hookah Lounge",
   robots: { index: false, follow: false },
 };
 

@@ -1,7 +1,6 @@
 export type {
   MenuCategory,
   MenuTag,
-  FoodSubcategory,
   HookahSubcategory,
   DrinksSubcategory,
   MenuItem,
@@ -9,7 +8,6 @@ export type {
 
 export {
   menuCategories,
-  foodSubcategories,
   hookahSubcategories,
   drinksSubcategories,
   menuItems,

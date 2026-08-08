@@ -43,7 +43,7 @@ export function WelcomeToast() {
                   </div>
                   <div>
                     <p className="font-[family-name:var(--font-display)] text-sm text-white">
-                      Welcome to Sheesh Dallas
+                      Welcome to Alibaba Dallas
                     </p>
                     <p className="mt-0.5 font-[family-name:var(--font-body)] text-xs text-white/45 leading-snug">
                       Luxury dining · Hookah · Private events

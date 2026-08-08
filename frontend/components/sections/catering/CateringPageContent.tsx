@@ -46,7 +46,7 @@ export function CateringPageContent() {
             align="left"
             eyebrow="Catering"
             title="Events Elevated"
-            subtitle="From intimate gatherings to grand celebrations - our culinary team and lounge specialists craft bespoke Sheesh experiences at your venue."
+            subtitle="From intimate gatherings to grand celebrations - our culinary team and lounge specialists craft bespoke Alibaba experiences at your venue."
           />
           <div className="cinematic-frame group relative mt-10 aspect-[4/3] overflow-hidden rounded-3xl transition-all duration-700 hover:border-[#d4af37]/30 hover:shadow-[0_16px_50px_rgba(212,175,55,0.1)]">
             <div className="absolute top-5 left-5 z-10 font-[family-name:var(--font-accent)] text-[8px] tracking-[0.25em] text-[#d4af37]/75 uppercase pointer-events-none">
@@ -54,7 +54,7 @@ export function CateringPageContent() {
             </div>
             <Image
               src={menuImages.catering}
-              alt="Sheesh catering"
+              alt="Alibaba catering"
               fill
               className="object-cover image-cinematic transition-transform duration-[2s] group-hover:scale-105"
               sizes="50vw"

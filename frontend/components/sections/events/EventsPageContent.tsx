@@ -34,7 +34,7 @@ export function EventsPageContent() {
         <div className="absolute inset-0">
           <Image
             src={menuImages.events}
-            alt="Voice of Sheesh"
+            alt="Voice of Alibaba"
             fill
             className="object-cover image-cinematic"
             priority
@@ -72,7 +72,7 @@ export function EventsPageContent() {
             transition={{ delay: 0.1 }}
             className="font-[family-name:var(--font-display)] text-4xl sm:text-6xl lg:text-7xl leading-tight tracking-wide text-white uppercase"
           >
-            Voice of Sheesh
+            Voice of Alibaba
             <span className="mt-2 block text-gold-gradient">Season 1 / Coming Soon</span>
           </motion.h1>
 
@@ -135,7 +135,7 @@ export function EventsPageContent() {
           <SectionHeading
             eyebrow="Calendar"
             title="Recurring Experiences"
-            subtitle="Beyond the main stage — discover the rhythm of Sheesh throughout the week."
+            subtitle="Beyond the main stage — discover the rhythm of Alibaba throughout the week."
           />
 
           {loading && (

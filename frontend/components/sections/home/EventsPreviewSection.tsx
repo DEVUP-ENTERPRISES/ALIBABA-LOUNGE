@@ -33,7 +33,7 @@ export function EventsPreviewSection() {
 
             <Image
               src={menuImages.events}
-              alt="Voice of Sheesh"
+              alt="Voice of Alibaba"
               fill
               className="object-cover transition-transform duration-[2s] ease-out group-hover:scale-105"
               sizes="100vw"
@@ -55,7 +55,7 @@ export function EventsPreviewSection() {
               </div>
 
               <h3 className="font-[family-name:var(--font-display)] text-2xl sm:text-4xl md:text-5xl leading-tight tracking-wide text-white uppercase">
-                Voice of Sheesh<br />
+                Voice of Alibaba<br />
                 <span className="text-gold-gradient">Season 1</span>
               </h3>
 
@@ -67,7 +67,7 @@ export function EventsPreviewSection() {
               </div>
 
               <p className="hidden sm:block font-[family-name:var(--font-body)] text-sm leading-relaxed text-white/55 max-w-md">
-                A cinematic showcase of Dallas talent. Live vocals, luxury production, and the signature Sheesh atmosphere.
+                A cinematic showcase of Dallas talent. Live vocals, luxury production, and the signature Alibaba atmosphere.
               </p>
 
               <MagneticButton href="/events" variant="gold" className="mt-6 sm:mt-8">

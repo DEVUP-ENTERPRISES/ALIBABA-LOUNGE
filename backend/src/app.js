@@ -51,7 +51,7 @@ if (env.isDevelopment) {
 app.get("/health", (_req, res) => {
   res.status(200).json({
     success: true,
-    message: "Sheesh backend is healthy.",
+    message: "Alibaba backend is healthy.",
     environment: env.nodeEnv,
   });
 });

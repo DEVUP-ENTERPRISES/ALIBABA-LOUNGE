@@ -10,7 +10,7 @@ const plates = [
   { src: menuImages.desi, alt: "Desi cuisine", span: "col-span-2 row-span-2", minH: "min-h-[220px] sm:min-h-[300px]" },
   { src: menuImages.bbq, alt: "BBQ platter" },
   { src: menuImages.biryani, alt: "Biryani" },
-  { src: menuImages.burger, alt: "Sheesh burger" },
+  { src: menuImages.burger, alt: "Alibaba burger" },
   { src: menuImages.karahi, alt: "Chicken karahi" },
 ];
 

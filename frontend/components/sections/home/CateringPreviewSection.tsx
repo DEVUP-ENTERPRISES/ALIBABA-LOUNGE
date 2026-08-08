@@ -39,7 +39,7 @@ export function CateringPreviewSection() {
 
             <Image
               src={menuImages.catering}
-              alt="Sheesh catering"
+              alt="Alibaba catering"
               fill
               className="object-cover transition-transform duration-[2s] ease-out group-hover:scale-105"
               sizes="(max-width: 1024px) 100vw, 50vw"
@@ -67,7 +67,7 @@ export function CateringPreviewSection() {
               align="left"
               eyebrow="Catering"
               title="Luxury Beyond Our Doors"
-              subtitle="Private events, corporate galas, and celebrations — we bring the full Sheesh experience to your venue with on-site chefs and hookah stations."
+              subtitle="Private events, corporate galas, and celebrations — we bring the full Alibaba experience to your venue with on-site chefs and hookah stations."
             />
 
             <div className="mt-8 grid grid-cols-1 gap-3 sm:grid-cols-2">

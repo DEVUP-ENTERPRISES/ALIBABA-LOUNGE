@@ -1,49 +1,81 @@
 "use client";
 
+import { useEffect, useState } from "react";
 import { motion } from "framer-motion";
 import { SectionHeading } from "@/components/ui/SectionHeading";
 import { Star, Quote } from "lucide-react";
+import { reviewApi } from "@/lib/admin/data-api";
+import type { AdminReview } from "@/lib/admin/types";
 
-const REVIEWS = [
+const DEFAULT_REVIEWS: AdminReview[] = [
   {
-    quote: "Sheesh is Dallas's premier hookah lounge — the food, the clouds, the vibe. Nothing else comes close.",
-    author: "Amir K.", role: "Regular Guest", stars: 5,
+    id: "r1",
+    quote: "Alibaba is Dallas's premier hookah lounge — the food, the clouds, the vibe. Nothing else comes close.",
+    author: "Amir K.",
+    role: "Regular Guest",
+    stars: 5,
     initial: "AK",
+    isFeatured: true,
+    isApproved: true,
   },
   {
-    quote: "Voice of Sheesh had production quality you'd expect at a major venue. Season 1 can't come soon enough.",
-    author: "Sarah M.", role: "Event Attendee", stars: 5,
+    id: "r2",
+    quote: "Voice of Alibaba had production quality you'd expect at a major venue. Season 1 can't come soon enough.",
+    author: "Sarah M.",
+    role: "Event Attendee",
+    stars: 5,
     initial: "SM",
+    isFeatured: true,
+    isApproved: true,
   },
   {
-    quote: "The BBQ platter and Sheesh Mix are why we keep coming back. True luxury hospitality in Dallas.",
-    author: "James T.", role: "Dallas Foodie", stars: 5,
+    id: "r3",
+    quote: "The BBQ platter and Alibaba Mix are why we keep coming back. True luxury hospitality in Dallas.",
+    author: "James T.",
+    role: "Dallas Foodie",
+    stars: 5,
     initial: "JT",
+    isFeatured: true,
+    isApproved: true,
   },
   {
+    id: "r4",
     quote: "Brought my whole crew for a birthday — flawless service, fire hookah, and the vibes were immaculate.",
-    author: "Layla R.", role: "Private Event Host", stars: 5,
+    author: "Layla R.",
+    role: "Private Event Host",
+    stars: 5,
     initial: "LR",
+    isFeatured: true,
+    isApproved: true,
   },
   {
+    id: "r5",
     quote: "The Mediterranean spread is unlike anything else in the city. Feels like you're dining in another world.",
-    author: "Marcus D.", role: "Food Critic", stars: 5,
+    author: "Marcus D.",
+    role: "Food Critic",
+    stars: 5,
     initial: "MD",
+    isFeatured: true,
+    isApproved: true,
   },
   {
+    id: "r6",
     quote: "Premium shisha experience — smooth clouds, exotic flavors, beautiful space. A must-visit in Dallas.",
-    author: "Priya N.", role: "Hookah Enthusiast", stars: 5,
+    author: "Priya N.",
+    role: "Hookah Enthusiast",
+    stars: 5,
     initial: "PN",
+    isFeatured: true,
+    isApproved: true,
   },
 ];
 
-const doubled = [...REVIEWS, ...REVIEWS];
-
-function ReviewCard({ review }: { review: typeof REVIEWS[0] }) {
+function ReviewCard({ review }: { review: AdminReview }) {
   return (
     <div className="relative w-[300px] sm:w-[340px] shrink-0 rounded-2xl border border-white/[0.07] bg-[#0c0c0e]/70 backdrop-blur-md p-6 mx-3 card-lift group overflow-hidden">
       {/* Gold corner accent */}
-      <div className="absolute top-0 left-0 h-12 w-12 opacity-40"
+      <div
+        className="absolute top-0 left-0 h-12 w-12 opacity-40"
         style={{ background: "linear-gradient(135deg, rgba(212,175,55,0.3), transparent 60%)" }}
       />
 
@@ -67,7 +99,7 @@ function ReviewCard({ review }: { review: typeof REVIEWS[0] }) {
       {/* Author */}
       <div className="flex items-center gap-3 border-t border-white/[0.06] pt-4">
         <div className="flex size-9 shrink-0 items-center justify-center rounded-full bg-gradient-to-br from-[#8b6914] to-[#d4af37] text-[#050505] font-[family-name:var(--font-display)] text-xs font-medium">
-          {review.initial}
+          {review.initial || review.author.slice(0, 2).toUpperCase()}
         </div>
         <div>
           <p className="font-[family-name:var(--font-display)] text-sm text-[#d4af37]">{review.author}</p>
@@ -76,7 +108,8 @@ function ReviewCard({ review }: { review: typeof REVIEWS[0] }) {
       </div>
 
       {/* Hover glow */}
-      <div className="absolute inset-0 rounded-2xl opacity-0 group-hover:opacity-100 transition-opacity duration-700 pointer-events-none"
+      <div
+        className="absolute inset-0 rounded-2xl opacity-0 group-hover:opacity-100 transition-opacity duration-700 pointer-events-none"
         style={{ boxShadow: "inset 0 0 0 1px rgba(212,175,55,0.15)" }}
       />
     </div>
@@ -84,6 +117,23 @@ function ReviewCard({ review }: { review: typeof REVIEWS[0] }) {
 }
 
 export function ReviewsSection() {
+  const [reviews, setReviews] = useState<AdminReview[]>(DEFAULT_REVIEWS);
+
+  useEffect(() => {
+    let mounted = true;
+    reviewApi
+      .list("?featured=true&approved=true")
+      .then((items) => {
+        if (mounted && items && items.length > 0) setReviews(items);
+      })
+      .catch(() => {});
+    return () => {
+      mounted = false;
+    };
+  }, []);
+
+  const doubled = [...reviews, ...reviews];
+
   return (
     <section id="reviews" className="relative overflow-hidden bg-[#080808] py-20 sm:py-28">
       {/* Background */}
@@ -93,21 +143,25 @@ export function ReviewsSection() {
         <SectionHeading
           eyebrow="Guest Reviews"
           title="Whispers of Excellence"
-          subtitle="Thousands of guests, one shared sentiment — Sheesh is unlike anything else."
+          subtitle="Thousands of guests, one shared sentiment — Alibaba is unlike anything else."
         />
       </div>
 
       {/* Marquee row 1 */}
       <div className="relative overflow-hidden mask-fade-sides pause-on-hover mb-5">
         <div className="flex animate-marquee w-max">
-          {doubled.map((r, i) => <ReviewCard key={i} review={r} />)}
+          {doubled.map((r, i) => (
+            <ReviewCard key={`${r.id}-${i}`} review={r} />
+          ))}
         </div>
       </div>
 
       {/* Marquee row 2 — reverse */}
       <div className="relative overflow-hidden mask-fade-sides pause-on-hover">
         <div className="flex animate-marquee-fast w-max" style={{ animationDirection: "reverse" }}>
-          {doubled.map((r, i) => <ReviewCard key={i} review={r} />)}
+          {doubled.map((r, i) => (
+            <ReviewCard key={`rev-${r.id}-${i}`} review={r} />
+          ))}
         </div>
       </div>
 

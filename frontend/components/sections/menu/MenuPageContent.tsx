@@ -9,9 +9,9 @@ import { MenuItemCard } from "@/components/ui/MenuItemCard";
 import { Input } from "@/components/ui/input";
 import {
   menuCategories,
-  foodSubcategories,
   hookahSubcategories,
   drinksSubcategories,
+  menuItems as fallbackMenuItems,
 } from "@/lib/menu-data";
 import type { MenuCategory } from "@/lib/menu/types";
 import type { MenuItem } from "@/lib/menu/types";
@@ -22,7 +22,6 @@ import { SmokeOverlay } from "@/components/effects/SmokeOverlay";
 import { FloatingParticles } from "@/components/effects/FloatingParticles";
 
 const categoryHero: Record<MenuCategory, string> = {
-  food: menuImages.cuisine,
   hookah: menuImages.hookahLounge,
   drinks: menuImages.mocktails,
   desserts: menuImages.desserts,
@@ -31,7 +30,7 @@ const categoryHero: Record<MenuCategory, string> = {
 function matchesSubcategory(
   itemSub: string | undefined,
   filter: string,
-  category: MenuCategory
+  category: MenuCategory,
 ) {
   if (filter === "all") return true;
   if (itemSub === filter) return true;
@@ -42,11 +41,26 @@ function matchesSubcategory(
   ) {
     return true;
   }
+  if (
+    category === "hookah" &&
+    filter === "regular" &&
+    [
+      "starbuzz",
+      "fumari",
+      "afzal",
+      "mazaya",
+      "adalya",
+      "al-fakher",
+      "regular",
+    ].includes(itemSub || "")
+  ) {
+    return true;
+  }
   return false;
 }
 
 export function MenuPageContent() {
-  const [category, setCategory] = useState<MenuCategory>("food");
+  const [category, setCategory] = useState<MenuCategory>("hookah");
   const [subFilter, setSubFilter] = useState("all");
   const [search, setSearch] = useState("");
   const [menuItems, setMenuItems] = useState<MenuItem[]>([]);
@@ -54,15 +68,16 @@ export function MenuPageContent() {
 
   useEffect(() => {
     let mounted = true;
-    // eslint-disable-next-line react-hooks/set-state-in-effect -- fetches menu data from the backend on mount.
     setLoading(true);
     menuApi
-      .list("?limit=100&isAvailable=true")
+      .list("?limit=500&isAvailable=true")
       .then((items) => {
-        if (mounted) setMenuItems(items);
+        if (mounted) {
+          setMenuItems(items.length > 0 ? items : fallbackMenuItems);
+        }
       })
       .catch(() => {
-        if (mounted) setMenuItems([]);
+        if (mounted) setMenuItems(fallbackMenuItems);
       })
       .finally(() => {
         if (mounted) setLoading(false);
@@ -73,18 +88,20 @@ export function MenuPageContent() {
   }, []);
 
   const subcategories =
-    category === "food"
-      ? foodSubcategories
-      : category === "hookah"
-        ? hookahSubcategories
-        : category === "drinks"
-          ? drinksSubcategories
-          : null;
+    category === "hookah"
+      ? hookahSubcategories
+      : category === "drinks"
+        ? drinksSubcategories
+        : null;
 
   const filtered = useMemo(() => {
     return menuItems.filter((item) => {
       const matchCategory = item.category === category;
-      const matchSub = matchesSubcategory(item.subcategory, subFilter, category);
+      const matchSub = matchesSubcategory(
+        item.subcategory,
+        subFilter,
+        category,
+      );
       const matchSearch =
         search.trim() === "" ||
         item.name.toLowerCase().includes(search.toLowerCase()) ||
@@ -99,7 +116,7 @@ export function MenuPageContent() {
       <SmokeOverlay className="opacity-40" />
 
       <div className="relative mx-auto mb-10 max-w-7xl px-4 sm:px-6 md:mb-14 md:px-12 lg:px-20">
-        <div className="cinematic-frame relative min-h-[360px] overflow-hidden rounded-2xl md:min-h-[430px] md:rounded-3xl">
+        <div className="cinematic-frame relative min-h-[280px] sm:min-h-[360px] overflow-hidden rounded-2xl md:min-h-[430px] md:rounded-3xl">
           <Image
             src={categoryHero[category]}
             alt=""
@@ -125,12 +142,14 @@ export function MenuPageContent() {
                   Curated Discovery
                 </span>
               </div>
-              <h1 className="font-[family-name:var(--font-display)] text-4xl leading-none text-white sm:text-6xl md:text-7xl">
+              <h1 className="font-[family-name:var(--font-display)] text-4xl leading-tight text-white sm:text-5xl md:text-6xl lg:text-7xl">
                 Menu as an
                 <span className="block text-gold-gradient">Evening Ritual</span>
               </h1>
-              <p className="mt-5 max-w-xl font-[family-name:var(--font-body)] text-sm leading-relaxed text-white/62 sm:text-base">
-                Explore signature plates, private shisha blends, craft drinks, and late-night desserts through a cinematic menu built for discovery.
+              <p className="mt-5 max-w-xl font-[family-name:var(--font-body)] text-sm leading-relaxed text-white/62 sm:text-base md:text-lg">
+                Explore signature plates, private shisha blends, craft drinks,
+                and late-night desserts through a cinematic menu built for
+                discovery.
               </p>
             </motion.div>
           </div>
@@ -144,7 +163,12 @@ export function MenuPageContent() {
           subtitle="Elevated plates, signature hookah blends, craft drinks, and decadent desserts - every item presented with cinematic luxury."
         />
 
-        <div className="relative mx-auto mt-10 max-w-2xl">
+        <div className="mx-auto mt-8 max-w-3xl rounded-3xl border border-white/10 bg-[#050505]/90 px-5 py-5 text-center text-sm text-white/70 shadow-[0_20px_60px_rgba(0,0,0,0.28)] sm:px-6 sm:text-base">
+          Discover the latest seasonal offerings, premium blends, and festive
+          plates curated for every size screen and every late-night craving.
+        </div>
+
+        <div className="relative mx-auto mt-8 max-w-2xl">
           <Search className="absolute top-1/2 left-4 size-4 -translate-y-1/2 text-[#d4af37]/50" />
           <Input
             placeholder="Search menu..."
@@ -167,7 +191,7 @@ export function MenuPageContent() {
                 "shrink-0 rounded-full border px-4 py-2 font-[family-name:var(--font-accent)] text-[9px] tracking-[0.18em] uppercase transition-all duration-300 sm:px-6 sm:py-2.5 sm:text-[10px]",
                 category === cat.id
                   ? "border-[#d4af37] bg-[#d4af37]/15 text-[#d4af37] glow-gold"
-                  : "border-white/10 text-white/50 hover:border-[#d4af37]/40 hover:text-white"
+                  : "border-white/10 text-white/50 hover:border-[#d4af37]/40 hover:text-white",
               )}
             >
               {cat.label}
@@ -191,7 +215,7 @@ export function MenuPageContent() {
                   "rounded-full border px-3 py-1.5 font-[family-name:var(--font-body)] text-xs transition-all duration-300",
                   subFilter === sub.id
                     ? "border-[#d4af37]/40 bg-[#d4af37]/10 text-[#d4af37]"
-                    : "border-transparent text-white/40 hover:text-white/70"
+                    : "border-transparent text-white/40 hover:text-white/70",
                 )}
               >
                 {sub.label}
@@ -207,13 +231,21 @@ export function MenuPageContent() {
         )}
 
         <div className="mx-auto mt-6 flex w-fit items-center gap-2 rounded-full border border-white/[0.08] bg-white/[0.03] px-4 py-2 font-[family-name:var(--font-body)] text-sm text-white/42">
-          {loading ? <Flame className="size-3.5 animate-pulse text-[#d4af37]" /> : <ChefHat className="size-3.5 text-[#d4af37]/70" />}
-          <span>{loading ? "Preparing the menu..." : `${filtered.length} ${filtered.length === 1 ? "item" : "items"}`}</span>
+          {loading ? (
+            <Flame className="size-3.5 animate-pulse text-[#d4af37]" />
+          ) : (
+            <ChefHat className="size-3.5 text-[#d4af37]/70" />
+          )}
+          <span>
+            {loading
+              ? "Preparing the menu..."
+              : `${filtered.length} ${filtered.length === 1 ? "item" : "items"}`}
+          </span>
         </div>
 
         <motion.div
           layout
-          className="mt-10 grid grid-cols-1 gap-5 sm:grid-cols-2 sm:gap-6 lg:grid-cols-3"
+          className="mt-10 grid grid-cols-1 gap-5 sm:grid-cols-2 sm:gap-6 lg:grid-cols-3 xl:grid-cols-4 xl:gap-8"
         >
           <AnimatePresence mode="popLayout">
             {filtered.map((item, i) => (
@@ -234,7 +266,9 @@ export function MenuPageContent() {
         {!loading && filtered.length === 0 && (
           <div className="mx-auto mt-16 max-w-md rounded-2xl border border-[#d4af37]/12 bg-white/[0.03] p-8 text-center">
             <ChefHat className="mx-auto size-8 text-[#d4af37]/45" />
-            <p className="mt-4 font-[family-name:var(--font-display)] text-2xl text-white">No match found</p>
+            <p className="mt-4 font-[family-name:var(--font-display)] text-2xl text-white">
+              No match found
+            </p>
             <p className="mt-2 font-[family-name:var(--font-body)] text-sm text-white/42">
               Try another category or search for a signature dish.
             </p>

@@ -54,3 +54,30 @@ export interface GalleryImage {
   title: string;
   category: string;
 }
+
+export interface AdminSetting {
+  brandName: string;
+  tagline: string;
+  description: string;
+  phone: string;
+  location: string;
+  email: string;
+  instagram: string;
+  instagramUrl: string;
+  hoursSunThu: string;
+  hoursFriSat: string;
+  eventsBanner?: string;
+  cateringBanner?: string;
+}
+
+export interface AdminReview {
+  id: string;
+  author: string;
+  role: string;
+  quote: string;
+  stars: number;
+  initial: string;
+  isFeatured: boolean;
+  isApproved: boolean;
+  createdAt?: string;
+}

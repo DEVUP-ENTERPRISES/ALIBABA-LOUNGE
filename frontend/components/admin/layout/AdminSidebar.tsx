@@ -14,6 +14,7 @@ import {
   LogOut,
   X,
   Users,
+  Star,
 } from "lucide-react";
 import { adminNavItems, ADMIN_BASE } from "@/lib/admin/navigation";
 import { cn } from "@/lib/utils";
@@ -27,6 +28,7 @@ const icons: Record<string, React.ComponentType<{ className?: string }>> = {
   "concierge-bell": ClipboardList,
   building: Building2,
   image: ImageIcon,
+  star: Star,
   users: Users,
   settings: Settings,
 };
@@ -53,26 +55,25 @@ export function AdminSidebar({ open, onClose, collapsed }: AdminSidebarProps) {
       )}
       <aside
         className={cn(
-          "fixed top-0 left-0 z-50 flex h-full flex-col border-r border-[#d4af37]/12 bg-[#050505]/92 shadow-[18px_0_60px_rgba(0,0,0,0.32)] backdrop-blur-2xl transition-all duration-300 lg:z-30",
+          "fixed top-0 left-0 z-50 flex h-full flex-col border-r border-zinc-800 bg-zinc-950 transition-all duration-300 lg:z-30",
           collapsed ? "w-[72px]" : "w-64",
           open ? "translate-x-0" : "-translate-x-full lg:translate-x-0"
         )}
       >
-        <div className="relative flex h-16 items-center justify-between border-b border-white/[0.06] px-4">
-          <div className="absolute inset-x-0 bottom-0 h-px bg-gradient-to-r from-transparent via-[#d4af37]/45 to-transparent" />
+        <div className="relative flex h-16 items-center justify-between border-b border-zinc-800 px-4">
           {!collapsed && (
             <Link href={`${ADMIN_BASE}/dashboard`} className="block">
-              <span className="font-[family-name:var(--font-display)] text-lg tracking-[0.12em] text-white uppercase">
-                Sheesh
+              <span className="text-lg font-bold tracking-tight text-zinc-100">
+                Alibaba
               </span>
-              <span className="block font-[family-name:var(--font-accent)] text-[8px] tracking-[0.3em] text-[#d4af37]/70 uppercase">
+              <span className="block text-[10px] font-medium tracking-wider text-zinc-400 uppercase">
                 Admin
               </span>
             </Link>
           )}
           <button
             type="button"
-            className="rounded-lg p-1 text-white/50 lg:hidden"
+            className="rounded-md p-1 text-zinc-400 hover:text-zinc-100 lg:hidden"
             onClick={onClose}
           >
             <X className="size-5" />
@@ -90,15 +91,15 @@ export function AdminSidebar({ open, onClose, collapsed }: AdminSidebarProps) {
                 onClick={onClose}
                 title={collapsed ? item.label : undefined}
                 className={cn(
-                  "group flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm transition-all duration-300",
+                  "group flex items-center gap-3 rounded-lg px-3 py-2 text-sm font-medium transition-colors",
                   active
-                    ? "bg-[#d4af37]/15 text-[#d4af37] shadow-[inset_0_1px_0_rgba(212,175,55,0.12),0_10px_28px_rgba(212,175,55,0.06)]"
-                    : "text-white/50 hover:bg-white/[0.045] hover:text-white"
+                    ? "bg-zinc-800 text-zinc-50"
+                    : "text-zinc-400 hover:bg-zinc-800/50 hover:text-zinc-50"
                 )}
               >
-                {Icon && <Icon className="size-4 shrink-0 transition-transform duration-300 group-hover:scale-105" />}
+                {Icon && <Icon className="size-4 shrink-0" />}
                 {!collapsed && (
-                  <span className="font-[family-name:var(--font-body)] text-xs tracking-wide">
+                  <span>
                     {item.label}
                   </span>
                 )}
@@ -107,17 +108,17 @@ export function AdminSidebar({ open, onClose, collapsed }: AdminSidebarProps) {
           })}
         </nav>
 
-        <div className="border-t border-white/[0.06] p-3">
+        <div className="border-t border-zinc-800 p-3">
           <button
             type="button"
             onClick={() => void logout()}
             className={cn(
-              "flex w-full items-center gap-3 rounded-xl px-3 py-2.5 text-sm text-white/40 transition-colors hover:bg-white/[0.04] hover:text-rose-200"
+              "flex w-full items-center gap-3 rounded-lg px-3 py-2 text-sm font-medium text-zinc-400 transition-colors hover:bg-zinc-800/50 hover:text-rose-400"
             )}
           >
             <LogOut className="size-4 shrink-0" />
             {!collapsed && (
-              <span className="font-[family-name:var(--font-body)] text-xs">
+              <span>
                 Logout
               </span>
             )}

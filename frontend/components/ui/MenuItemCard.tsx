@@ -61,14 +61,14 @@ export function MenuItemCard({
       onMouseLeave={handleLeave}
       style={{ rotateX, rotateY, transformPerspective: 1200 }}
       className={cn(
-        "cinematic-frame group relative flex flex-col overflow-hidden rounded-2xl bg-[#0c0c0e]/90 transition-[border-color,box-shadow] duration-500 hover:border-[#d4af37]/32 hover:shadow-[0_20px_60px_rgba(0,0,0,0.5),0_0_40px_rgba(212,175,55,0.08)]",
-        isFeatured && "md:col-span-2"
+        "cinematic-frame group relative flex flex-col overflow-hidden rounded-2xl bg-[#0c0c0e]/90 transition-[border-color,box-shadow] duration-500 hover:border-[#d4af37]/32 hover:shadow-[0_20px_60px_rgba(0,0,0,0.5),0_0_40px_rgba(212,175,55,0.08)] w-full",
+        isFeatured && "lg:col-span-2",
       )}
     >
       <div
         className={cn(
           "relative w-full overflow-hidden",
-          isFeatured ? "aspect-[16/10] md:aspect-[21/9]" : "aspect-[5/4]"
+          isFeatured ? "aspect-[16/10] md:aspect-[21/9]" : "aspect-[5/4]",
         )}
       >
         <Image
@@ -103,7 +103,7 @@ export function MenuItemCard({
         <h3
           className={cn(
             "font-[family-name:var(--font-display)] leading-tight tracking-wide text-white",
-            isFeatured ? "text-2xl md:text-3xl" : "text-xl md:text-2xl"
+            isFeatured ? "text-2xl md:text-3xl" : "text-xl md:text-2xl",
           )}
         >
           {item.name}

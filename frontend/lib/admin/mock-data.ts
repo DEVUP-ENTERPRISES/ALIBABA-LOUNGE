@@ -68,10 +68,10 @@ export const mockReservations: AdminReservation[] = [
 export const mockEvents: AdminEvent[] = [
   {
     id: "evt-001",
-    title: "Voice of Sheesh Season 1",
+    title: "Voice of Alibaba Season 1",
     date: "2026-09-01",
     time: "8:00 PM",
-    location: "Sheesh Main Lounge",
+    location: "Alibaba Main Lounge",
     featured: true,
     status: "Published",
     image: menuImages.events,
@@ -81,7 +81,7 @@ export const mockEvents: AdminEvent[] = [
     title: "Live DJ Fridays",
     date: "2026-05-23",
     time: "10:00 PM",
-    location: "Sheesh Main Lounge",
+    location: "Alibaba Main Lounge",
     featured: false,
     status: "Published",
     image: menuImages.lounge,
@@ -91,7 +91,7 @@ export const mockEvents: AdminEvent[] = [
     title: "Desi Night",
     date: "2026-06-07",
     time: "9:00 PM",
-    location: "Sheesh Main Lounge",
+    location: "Alibaba Main Lounge",
     featured: false,
     status: "Draft",
     image: menuImages.desi,
@@ -157,6 +157,6 @@ export const activityFeed = [
   { id: "a1", text: "New reservation from Fatima Ali", time: "12m ago", type: "reservation" },
   { id: "a2", text: "Catering inquiry — Corporate Gala", time: "1h ago", type: "catering" },
   { id: "a3", text: "Franchise application — Houston", time: "3h ago", type: "franchise" },
-  { id: "a4", text: "Menu item updated — Sheesh Mix", time: "5h ago", type: "menu" },
+  { id: "a4", text: "Menu item updated — Alibaba Mix", time: "5h ago", type: "menu" },
   { id: "a5", text: "Event published — Live DJ Fridays", time: "1d ago", type: "event" },
 ];

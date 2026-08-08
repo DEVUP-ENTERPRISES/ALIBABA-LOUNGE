@@ -5,9 +5,9 @@ const ADMIN_SLUG = process.env.NEXT_PUBLIC_ADMIN_SLUG || "admin";
 const nextConfig: NextConfig = {
   async rewrites() {
     return [
-      // Map /<slug>/admin and /<slug>/admin/* → /admin and /admin/*
-      { source: `/${ADMIN_SLUG}/admin`, destination: "/admin" },
-      { source: `/${ADMIN_SLUG}/admin/:path*`, destination: "/admin/:path*" },
+      // Map /<slug> and /<slug>/* → /admin and /admin/*
+      { source: `/${ADMIN_SLUG}`, destination: "/admin" },
+      { source: `/${ADMIN_SLUG}/:path*`, destination: "/admin/:path*" },
     ];
   },
 

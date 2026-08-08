@@ -3,7 +3,7 @@ import { ADMIN_TOKEN_COOKIE } from "@/lib/admin/api";
 
 // Secret slug that maps to the admin panel (set in .env.local)
 const ADMIN_SLUG = process.env.NEXT_PUBLIC_ADMIN_SLUG || "admin";
-const ADMIN_BASE = `/${ADMIN_SLUG}/admin`;
+const ADMIN_BASE = `/${ADMIN_SLUG}`;
 
 const CUSTOMER_AUTH_ROUTES = ["/login", "/signup"];
 const CUSTOMER_PROTECTED   = ["/account", "/reservations/my"];

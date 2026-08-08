@@ -52,12 +52,12 @@ export function ExperienceSection() {
               CAM · 01 AMBIENT
             </div>
             <div className="absolute bottom-5 right-5 z-10 font-[family-name:var(--font-accent)] text-[8px] tracking-[0.2em] text-white/30 uppercase pointer-events-none">
-              SHEESH ARCHIVES
+              ALIBABA ARCHIVES
             </div>
 
             <Image
               src={menuImages.lounge}
-              alt="Sheesh lounge interior"
+              alt="Alibaba lounge interior"
               fill
               priority
               className="object-cover transition-transform duration-[2s] ease-out group-hover:scale-[1.07]"

@@ -191,7 +191,7 @@ function LoginForm() {
                   Welcome Back
                 </h1>
                 <p className="mt-2 font-[family-name:var(--font-body)] text-sm text-white/50">
-                  Sign in to your Sheesh account.
+                  Sign in to your Alibaba Hookah Lounge account.
                 </p>
 
                 {/* Google */}

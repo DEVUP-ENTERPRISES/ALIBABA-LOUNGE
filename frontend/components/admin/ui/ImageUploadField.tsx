@@ -10,9 +10,11 @@ interface ImageUploadFieldProps {
   label?: string;
   hint?: string;
   initialPreview?: string | null;
+  value?: string | null;
   aspect?: "video" | "square" | "wide";
   onFileChange?: (file: File | null) => void;
   onPreviewChange?: (previewUrl: string | null) => void;
+  onChange?: (url: string) => void;
   className?: string;
 }
 
@@ -26,12 +28,15 @@ export function ImageUploadField({
   label = "Upload Image",
   hint = "Drag & drop or click to browse · JPG, PNG, WebP",
   initialPreview,
+  value,
   aspect = "video",
   onFileChange,
   onPreviewChange,
+  onChange,
   className,
 }: ImageUploadFieldProps) {
-  const resolvedInitialPreview = resolveImageUrl(initialPreview);
+  const effectiveInitial = value ?? initialPreview;
+  const resolvedInitialPreview = resolveImageUrl(effectiveInitial);
   const upload = useImageUpload(resolvedInitialPreview);
 
   const onInputChange = (files: FileList | null) => {
@@ -40,10 +45,12 @@ export function ImageUploadField({
     onFileChange?.(f);
     if (!f) {
       onPreviewChange?.(resolvedInitialPreview || null);
+      onChange?.(resolvedInitialPreview || "");
       return;
     }
     const url = URL.createObjectURL(f);
     onPreviewChange?.(url);
+    onChange?.(url);
   };
 
   const handleDrop = (e: React.DragEvent) => {
@@ -56,6 +63,7 @@ export function ImageUploadField({
     upload.clear();
     onFileChange?.(null);
     onPreviewChange?.(null);
+    onChange?.("");
   };
 
   return (
@@ -78,7 +86,7 @@ export function ImageUploadField({
         <div
           className={cn(
             "group relative overflow-hidden rounded-2xl border border-[#d4af37]/20 bg-[#050505] premium-glow-ring",
-            aspectClass[aspect]
+            aspectClass[aspect],
           )}
         >
           {resolveImageUrl(upload.preview).startsWith("blob:") ? (
@@ -138,7 +146,7 @@ export function ImageUploadField({
             aspectClass[aspect],
             upload.dragOver
               ? "border-[#d4af37] bg-[#d4af37]/8 shadow-[0_0_40px_rgba(212,175,55,0.12)]"
-              : "border-white/10 bg-white/[0.02] hover:border-[#d4af37]/35 hover:bg-[#d4af37]/5"
+              : "border-white/10 bg-white/[0.02] hover:border-[#d4af37]/35 hover:bg-[#d4af37]/5",
           )}
         >
           <div className="flex size-14 items-center justify-center rounded-full border border-[#d4af37]/25 bg-[#d4af37]/10">

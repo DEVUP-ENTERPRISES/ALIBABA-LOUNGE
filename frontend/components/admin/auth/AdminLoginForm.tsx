@@ -87,10 +87,8 @@ export function AdminLoginForm() {
   };
 
   return (
-    <div className="relative min-h-screen overflow-hidden bg-[#050505] px-4 py-6 text-white sm:px-6 lg:px-8">
-      <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top_left,rgba(212,175,55,0.12),transparent_32%),radial-gradient(ellipse_at_bottom_right,rgba(245,230,200,0.06),transparent_34%)]" />
-      <div className="absolute inset-0 bg-[linear-gradient(135deg,rgba(255,255,255,0.035)_0_1px,transparent_1px_72px)] opacity-25" />
-      <div className="film-grain pointer-events-none absolute inset-0 opacity-55" />
+    <div className="relative min-h-screen overflow-hidden bg-zinc-950 px-4 py-6 text-zinc-50 sm:px-6 lg:px-8">
+      <div className="absolute inset-0 bg-[linear-gradient(135deg,rgba(255,255,255,0.02)_0_1px,transparent_1px_72px)] opacity-25" />
 
       <AnimatePresence>
         {toast && (
@@ -123,13 +121,13 @@ export function AdminLoginForm() {
           className="hidden lg:block"
         >
           <div className="max-w-xl">
-            <p className="font-[family-name:var(--font-accent)] text-[11px] tracking-[0.42em] text-[#d4af37] uppercase">
-              Sheesh Admin
+            <p className="text-[11px] font-semibold tracking-wider text-zinc-500 uppercase">
+              Alibaba Admin
             </p>
-            <h1 className="mt-6 font-[family-name:var(--font-display)] text-6xl leading-[0.95] tracking-wide text-white xl:text-7xl">
+            <h1 className="mt-6 text-5xl font-bold tracking-tight text-zinc-100 xl:text-6xl">
               Hospitality control, refined.
             </h1>
-            <p className="mt-6 max-w-lg text-base leading-8 text-white/55">
+            <p className="mt-6 max-w-lg text-base leading-8 text-zinc-400">
               A secure command center for reservations, guest flow, events,
               catering, and franchise operations.
             </p>
@@ -143,12 +141,12 @@ export function AdminLoginForm() {
             ].map(([value, label]) => (
               <div
                 key={label}
-                className="rounded-2xl border border-white/[0.07] bg-white/[0.035] p-4 shadow-[inset_0_1px_0_rgba(255,255,255,0.06)] backdrop-blur-md"
+                className="rounded-xl border border-zinc-800 bg-zinc-900/50 p-4 shadow-sm"
               >
-                <p className="font-[family-name:var(--font-display)] text-2xl text-[#d4af37]">
+                <p className="text-2xl font-bold text-zinc-100">
                   {value}
                 </p>
-                <p className="mt-1 text-[10px] tracking-[0.2em] text-white/35 uppercase">
+                <p className="mt-1 text-[10px] font-medium tracking-wider text-zinc-500 uppercase">
                   {label}
                 </p>
               </div>
@@ -162,61 +160,58 @@ export function AdminLoginForm() {
           transition={{ duration: 0.65, ease: "easeOut" }}
           className="mx-auto w-full max-w-[480px] lg:mr-0"
         >
-          <div className="relative overflow-hidden rounded-[1.75rem] border border-[#d4af37]/15 bg-[#0b0b0d]/78 p-5 shadow-[0_24px_90px_rgba(0,0,0,0.62)] backdrop-blur-2xl sm:p-7">
-            <div className="absolute inset-x-8 top-0 h-px bg-gradient-to-r from-transparent via-[#d4af37]/70 to-transparent" />
-            <div className="absolute -top-32 right-8 h-56 w-56 rounded-full bg-[#d4af37]/10 blur-3xl" />
-
+          <div className="relative overflow-hidden rounded-2xl border border-zinc-800 bg-zinc-900/80 p-6 shadow-xl backdrop-blur-xl sm:p-8">
             <div className="relative">
               <div className="flex items-center justify-between gap-4">
                 <div>
-                  <p className="font-[family-name:var(--font-accent)] text-[10px] tracking-[0.34em] text-[#d4af37] uppercase">
+                  <p className="text-[10px] font-semibold tracking-wider text-zinc-500 uppercase">
                     Secure Login
                   </p>
-                  <h2 className="mt-3 font-[family-name:var(--font-display)] text-3xl text-white sm:text-4xl">
+                  <h2 className="mt-2 text-2xl font-bold text-zinc-100 sm:text-3xl">
                     Admin Portal
                   </h2>
                 </div>
-                <div className="flex size-12 items-center justify-center rounded-2xl border border-[#d4af37]/20 bg-[#d4af37]/10 text-[#d4af37] shadow-[0_0_32px_rgba(212,175,55,0.08)]">
+                <div className="flex size-12 items-center justify-center rounded-xl bg-blue-500/10 text-blue-500">
                   <ShieldCheck className="size-5" />
                 </div>
               </div>
 
               <form noValidate onSubmit={handleSubmit} className="mt-8 space-y-5">
                 <label className="block space-y-2">
-                  <span className="text-xs tracking-[0.18em] text-white/45 uppercase">
-                    Email
+                  <span className="text-xs font-medium text-zinc-400">
+                    Email address
                   </span>
                   <div className="relative">
-                    <Mail className="pointer-events-none absolute top-1/2 left-4 size-4 -translate-y-1/2 text-[#d4af37]/55" />
+                    <Mail className="pointer-events-none absolute top-1/2 left-3.5 size-4 -translate-y-1/2 text-zinc-500" />
                     <Input
                       type="email"
                       autoComplete="email"
                       value={email}
                       onChange={(event) => setEmail(event.target.value)}
                       placeholder="admin@sheesh.com"
-                      className="h-[52px] rounded-2xl bg-[#111114]/85 pl-11"
+                      className="h-12 rounded-lg bg-zinc-950 pl-10 border-zinc-800 text-zinc-100 placeholder:text-zinc-600 focus:border-blue-500 focus:ring-1 focus:ring-blue-500"
                     />
                   </div>
                 </label>
 
                 <label className="block space-y-2">
-                  <span className="text-xs tracking-[0.18em] text-white/45 uppercase">
+                  <span className="text-xs font-medium text-zinc-400">
                     Password
                   </span>
                   <div className="relative">
-                    <LockKeyhole className="pointer-events-none absolute top-1/2 left-4 size-4 -translate-y-1/2 text-[#d4af37]/55" />
+                    <LockKeyhole className="pointer-events-none absolute top-1/2 left-3.5 size-4 -translate-y-1/2 text-zinc-500" />
                     <Input
                       type={showPassword ? "text" : "password"}
                       autoComplete="current-password"
                       value={password}
                       onChange={(event) => setPassword(event.target.value)}
                       placeholder="Enter secure password"
-                      className="h-[52px] rounded-2xl bg-[#111114]/85 pr-12 pl-11"
+                      className="h-12 rounded-lg bg-zinc-950 px-10 border-zinc-800 text-zinc-100 placeholder:text-zinc-600 focus:border-blue-500 focus:ring-1 focus:ring-blue-500"
                     />
                     <button
                       type="button"
                       onClick={() => setShowPassword((value) => !value)}
-                      className="absolute top-1/2 right-3 inline-flex size-9 -translate-y-1/2 items-center justify-center rounded-xl text-white/45 transition hover:bg-white/[0.05] hover:text-[#d4af37]"
+                      className="absolute top-1/2 right-3 inline-flex size-8 -translate-y-1/2 items-center justify-center rounded-md text-zinc-500 transition hover:bg-zinc-800 hover:text-zinc-300"
                       aria-label={showPassword ? "Hide password" : "Show password"}
                     >
                       {showPassword ? <EyeOff className="size-4" /> : <Eye className="size-4" />}
@@ -224,24 +219,24 @@ export function AdminLoginForm() {
                   </div>
                 </label>
 
-                <div className="flex flex-col gap-3 text-sm text-white/50 sm:flex-row sm:items-center sm:justify-between">
-                  <label className="inline-flex cursor-pointer items-center gap-3">
+                <div className="flex flex-col gap-3 text-sm text-zinc-400 sm:flex-row sm:items-center sm:justify-between">
+                  <label className="inline-flex cursor-pointer items-center gap-2.5">
                     <input
                       type="checkbox"
                       checked={rememberMe}
                       onChange={(event) => setRememberMe(event.target.checked)}
-                      className="size-4 rounded border border-[#d4af37]/30 bg-[#111114] accent-[#d4af37]"
+                      className="size-4 rounded border-zinc-700 bg-zinc-950 text-blue-600 focus:ring-blue-500 focus:ring-offset-zinc-900"
                     />
                     <span>Remember this console</span>
                   </label>
-                  <span className="text-xs text-white/30">JWT secured session</span>
+                  <span className="text-xs text-zinc-600">JWT secured session</span>
                 </div>
 
                 {fieldError && (
                   <motion.p
                     initial={{ opacity: 0, y: -4 }}
                     animate={{ opacity: 1, y: 0 }}
-                    className="rounded-2xl border border-rose-400/20 bg-rose-500/10 px-4 py-3 text-sm text-rose-100"
+                    className="rounded-lg border border-rose-900/50 bg-rose-500/10 px-4 py-3 text-sm text-rose-200"
                   >
                     {fieldError}
                   </motion.p>
@@ -250,11 +245,10 @@ export function AdminLoginForm() {
                 <button
                   type="submit"
                   disabled={submitting}
-                  className="group relative flex h-[52px] w-full items-center justify-center overflow-hidden rounded-2xl bg-gradient-to-r from-[#8b6914] via-[#d4af37] to-[#f0d77a] px-5 font-[family-name:var(--font-accent)] text-xs font-semibold tracking-[0.24em] text-[#050505] uppercase shadow-[0_18px_48px_rgba(212,175,55,0.16)] transition duration-300 hover:brightness-105 disabled:cursor-not-allowed disabled:opacity-60"
+                  className="flex h-12 w-full items-center justify-center rounded-lg bg-blue-600 px-5 text-sm font-medium text-white transition-colors hover:bg-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 focus:ring-offset-zinc-900 disabled:pointer-events-none disabled:opacity-50"
                 >
-                  <span className="absolute inset-0 translate-x-[-120%] bg-gradient-to-r from-transparent via-white/35 to-transparent transition-transform duration-700 group-hover:translate-x-[120%]" />
                   <span className="relative">
-                    {submitting ? "Authenticating..." : "Enter Control Center"}
+                    {submitting ? "Authenticating..." : "Sign in to Dashboard"}
                   </span>
                 </button>
               </form>

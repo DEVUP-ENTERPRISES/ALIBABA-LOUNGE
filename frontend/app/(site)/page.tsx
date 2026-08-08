@@ -1,6 +1,5 @@
 import { HeroSection } from "@/components/sections/hero/HeroSection";
 import { ExperienceSection } from "@/components/sections/home/ExperienceSection";
-import { CuisineSection } from "@/components/sections/home/CuisineSection";
 import { HookahSection } from "@/components/sections/home/HookahSection";
 import { FeaturedMenuSection } from "@/components/sections/home/FeaturedMenuSection";
 import { EventsPreviewSection } from "@/components/sections/home/EventsPreviewSection";
@@ -14,8 +13,6 @@ export default function HomePage() {
     <>
       <HeroSection />
       <ExperienceSection />
-      <div className="line-gold opacity-[0.08]" />
-      <CuisineSection />
       <div className="line-gold opacity-[0.08]" />
       <HookahSection />
       <div className="line-gold opacity-[0.08]" />

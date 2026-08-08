@@ -2,7 +2,7 @@ import { PublicPageShell } from "@/components/layout/PublicPageShell";
 import { MenuPageContent } from "@/components/sections/menu/MenuPageContent";
 
 export const metadata = {
-  title: "Menu | Sheesh Eatery & Lounge",
+  title: "Menu | Alibaba Hookah Lounge",
   description: "Explore our premium food, hookah, drinks, and desserts menu.",
 };
 

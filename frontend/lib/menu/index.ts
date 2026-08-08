@@ -1,33 +1,27 @@
-import { foodMenu } from "./food";
 import { hookahMenu } from "./hookah";
 import { drinksMenu } from "./drinks";
 import { dessertsMenu } from "./desserts";
 import type {
   MenuCategory,
-  FoodSubcategory,
   HookahSubcategory,
   DrinksSubcategory,
   MenuItem,
 } from "./types";
 
 export const menuCategories: { id: MenuCategory; label: string }[] = [
-  { id: "food", label: "Food" },
   { id: "hookah", label: "Hookah" },
   { id: "drinks", label: "Drinks" },
   { id: "desserts", label: "Desserts" },
 ];
 
-export const foodSubcategories: { id: FoodSubcategory; label: string }[] = [
-  { id: "all", label: "All" },
-  { id: "appetizers", label: "Appetizers" },
-  { id: "sandwiches", label: "Sandwiches & Rolls" },
-  { id: "bbq", label: "BBQ" },
-  { id: "desi", label: "Desi" },
-  { id: "chinese", label: "Chinese" },
-];
-
 export const hookahSubcategories: { id: HookahSubcategory; label: string }[] = [
   { id: "all", label: "All" },
+  { id: "starbuzz", label: "Starbuzz" },
+  { id: "fumari", label: "Fumari" },
+  { id: "afzal", label: "Afzal" },
+  { id: "mazaya", label: "Mazaya" },
+  { id: "adalya", label: "Adalya" },
+  { id: "al-fakher", label: "Al Fakher" },
   { id: "selection", label: "Hookah Selection" },
   { id: "house-mixes", label: "House Mixes" },
   { id: "regular", label: "Regular Flavors" },
@@ -43,7 +37,6 @@ export const drinksSubcategories: { id: DrinksSubcategory; label: string }[] = [
 ];
 
 export const menuItems: MenuItem[] = [
-  ...foodMenu,
   ...hookahMenu,
   ...drinksMenu,
   ...dessertsMenu,

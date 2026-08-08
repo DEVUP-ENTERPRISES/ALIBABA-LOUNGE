@@ -39,7 +39,7 @@ export function FranchisePreviewSection() {
               align="left"
               eyebrow="Franchise"
               title="Own the Night"
-              subtitle="Partner with Dallas's premier hookah lounge & dining brand. Scale the Sheesh experience across markets with full support."
+              subtitle="Partner with Dallas's premier hookah lounge & dining brand. Scale the Alibaba experience across markets with full support."
             />
 
             {/* Stats */}
@@ -102,7 +102,7 @@ export function FranchisePreviewSection() {
 
             <Image
               src={menuImages.lounge}
-              alt="Sheesh franchise"
+              alt="Alibaba franchise"
               fill
               className="object-cover transition-transform duration-[2s] ease-out group-hover:scale-105"
               sizes="50vw"

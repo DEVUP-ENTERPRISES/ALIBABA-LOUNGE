@@ -1,16 +1,14 @@
-export type MenuCategory = "food" | "hookah" | "drinks" | "desserts";
+export type MenuCategory = "hookah" | "drinks" | "desserts";
 
 export type MenuTag = "Popular" | "Staff Pick" | "Customer Fav" | "New";
 
-export type FoodSubcategory =
-  | "appetizers"
-  | "sandwiches"
-  | "bbq"
-  | "desi"
-  | "chinese"
-  | "all";
-
 export type HookahSubcategory =
+  | "starbuzz"
+  | "fumari"
+  | "afzal"
+  | "mazaya"
+  | "adalya"
+  | "al-fakher"
   | "selection"
   | "house-mixes"
   | "regular"

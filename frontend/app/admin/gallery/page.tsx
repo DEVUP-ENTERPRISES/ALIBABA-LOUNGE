@@ -72,50 +72,57 @@ export default function AdminGalleryPage() {
 
   return (
     <div className="space-y-8">
-      <section className="glass-luxury rounded-2xl p-6 md:p-8">
-        <h2 className="font-[family-name:var(--font-display)] text-xl text-white">
+      <section className="rounded-xl border border-zinc-800 bg-zinc-900/50 p-6 md:p-8 shadow-sm">
+        <h2 className="text-xl font-semibold text-zinc-100">
           Upload to Gallery
         </h2>
-        <p className="mt-1 text-sm text-white/40">
+        <p className="mt-1 text-sm text-zinc-400">
           Drag & drop with live preview before adding to the grid
         </p>
 
-        <div className="mt-6 space-y-5">
-          <ImageUploadField
-            key={uploadKey}
-            label="Gallery Image"
-            hint="Luxury lounge, food, or event photography"
-            aspect="square"
-            onFileChange={setPendingFile}
-            onPreviewChange={setPendingPreview}
-          />
-
-          <div className="grid gap-4 sm:grid-cols-2">
-            <div className="space-y-2">
-              <Label htmlFor="gal-title">Title</Label>
-              <Input
-                id="gal-title"
-                value={title}
-                onChange={(e) => setTitle(e.target.value)}
-                placeholder="Image title"
-              />
-            </div>
-            <AdminSelect
-              label="Category"
-              value={category}
-              onChange={setCategory}
-              options={galleryCategoryOptions}
+        <div className="mt-8 grid gap-8 lg:grid-cols-[320px_1fr] xl:grid-cols-[360px_1fr]">
+          <div className="mx-auto w-full max-w-sm lg:mx-0 lg:max-w-none">
+            <ImageUploadField
+              key={uploadKey}
+              label="Gallery Image"
+              hint="Luxury lounge, food, or event photography"
+              aspect="square"
+              onFileChange={setPendingFile}
+              onPreviewChange={setPendingPreview}
             />
           </div>
 
-          <button
-            type="button"
-            disabled={!pendingPreview}
-            onClick={() => void addImage()}
-            className="rounded-full bg-[#d4af37] px-6 py-2.5 text-sm font-medium text-[#050505] disabled:cursor-not-allowed disabled:opacity-40"
-          >
-            Add to Gallery
-          </button>
+          <div className="flex flex-col justify-center space-y-6">
+            <div className="grid gap-5 sm:grid-cols-2">
+              <div className="space-y-2">
+                <Label htmlFor="gal-title">Title</Label>
+                <Input
+                  id="gal-title"
+                  value={title}
+                  onChange={(e) => setTitle(e.target.value)}
+                  placeholder="Image title"
+                  className="h-[52px]"
+                />
+              </div>
+              <AdminSelect
+                label="Category"
+                value={category}
+                onChange={setCategory}
+                options={galleryCategoryOptions}
+              />
+            </div>
+
+            <div>
+              <button
+                type="button"
+                disabled={!pendingPreview}
+                onClick={() => void addImage()}
+                className="rounded-lg bg-blue-600 px-8 py-2.5 text-sm font-medium text-white shadow-sm transition-all hover:bg-blue-500 disabled:pointer-events-none disabled:opacity-50"
+              >
+                Add to Gallery
+              </button>
+            </div>
+          </div>
         </div>
       </section>
 
@@ -123,7 +130,7 @@ export default function AdminGalleryPage() {
         {images.map((img) => (
           <div
             key={img.id}
-            className="group glass-luxury overflow-hidden rounded-2xl"
+            className="group overflow-hidden rounded-xl border border-zinc-800 bg-zinc-900/50"
           >
             <div className="relative aspect-square">
               {resolveImageUrl(img.url).startsWith("blob:") ? (
@@ -142,12 +149,12 @@ export default function AdminGalleryPage() {
                   sizes="300px"
                 />
               )}
-              <div className="absolute inset-0 bg-gradient-to-t from-[#050505] to-transparent opacity-60" />
+              <div className="absolute inset-0 bg-gradient-to-t from-zinc-950 to-transparent opacity-60" />
               <div className="absolute top-3 right-3 flex gap-2 opacity-0 transition-opacity group-hover:opacity-100">
                 <button
                   type="button"
                   onClick={() => openEdit(img)}
-                  className="rounded-lg border border-white/10 bg-[#050505]/80 p-2 text-white/50 hover:text-[#d4af37]"
+                  className="rounded-lg border border-zinc-700 bg-zinc-900/80 p-2 text-zinc-400 hover:text-blue-400"
                   aria-label="Edit"
                 >
                   <Pencil className="size-4" />
@@ -155,18 +162,18 @@ export default function AdminGalleryPage() {
                 <button
                   type="button"
                   onClick={() => void remove(img.id)}
-                  className="rounded-lg border border-white/10 bg-[#050505]/80 p-2 text-white/50 hover:text-rose-400"
+                  className="rounded-lg border border-zinc-700 bg-zinc-900/80 p-2 text-zinc-400 hover:text-rose-400"
                   aria-label="Delete"
                 >
                   <Trash2 className="size-4" />
                 </button>
               </div>
             </div>
-            <div className="p-4">
-              <p className="font-[family-name:var(--font-body)] text-sm text-white">
+            <div className="p-4 border-t border-zinc-800/50">
+              <p className="text-sm font-medium text-zinc-100 truncate">
                 {img.title}
               </p>
-              <p className="text-xs text-white/40">{img.category}</p>
+              <p className="text-xs text-zinc-500 mt-0.5">{img.category}</p>
             </div>
           </div>
         ))}
@@ -199,18 +206,18 @@ export default function AdminGalleryPage() {
               onChange={setEditCategory}
               options={galleryCategoryOptions}
             />
-            <div className="flex gap-3 border-t border-white/[0.06] pt-4">
+            <div className="flex gap-3 border-t border-zinc-800 pt-4">
               <button
                 type="button"
                 onClick={() => void updateImage()}
-                className="rounded-full bg-[#d4af37] px-5 py-2 text-sm text-[#050505]"
+                className="rounded-lg bg-blue-600 px-5 py-2 text-sm font-medium text-white hover:bg-blue-500"
               >
                 Save Changes
               </button>
               <button
                 type="button"
                 onClick={() => setEditing(null)}
-                className="rounded-full border border-white/15 px-5 py-2 text-sm text-white/60"
+                className="rounded-lg border border-zinc-700 bg-transparent px-5 py-2 text-sm font-medium text-zinc-300 hover:bg-zinc-800"
               >
                 Cancel
               </button>

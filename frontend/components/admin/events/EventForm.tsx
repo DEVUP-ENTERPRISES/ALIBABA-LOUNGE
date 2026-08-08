@@ -97,7 +97,7 @@ export function EventForm({ event, onCancel, onSave }: EventFormProps) {
           id="event-location"
           name="location"
           defaultValue={event?.location}
-          placeholder="Sheesh Main Lounge"
+          placeholder="Alibaba Main Lounge"
           required
         />
       </div>

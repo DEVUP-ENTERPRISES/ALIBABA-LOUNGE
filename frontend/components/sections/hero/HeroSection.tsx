@@ -14,7 +14,7 @@ const HERO_PLAYLIST = [
   "/videos/pizza.mp4",
 ] as const;
 
-const LETTERS = "SHEESH".split("");
+const LETTERS = "ALIBABA".split("");
 
 const HeroBackgroundVideo = memo(function HeroBackgroundVideo() {
   const timerRef = useRef<number | null>(null);
@@ -102,7 +102,7 @@ export function HeroSection() {
           animate="show"
           className="flex"
           style={{ perspective: "800px" }}
-          aria-label="SHEESH"
+          aria-label="ALIBABA"
         >
           {LETTERS.map((l, i) => (
             <motion.span

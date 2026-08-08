@@ -66,7 +66,7 @@ export function FranchisePageContent() {
           <SectionHeading
             eyebrow="Franchise"
             title="Build the Empire"
-            subtitle="Partner with Sheesh and bring Dallas's most coveted lounge experience to new cities."
+            subtitle="Partner with Alibaba and bring Dallas's most coveted lounge experience to new cities."
           />
           <div className="mt-16 grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
             {stats.map((stat, i) => (
@@ -138,7 +138,7 @@ export function FranchisePageContent() {
               <form onSubmit={handleSubmit} className="mt-10 space-y-6">
                 <div className="rounded-2xl border border-[#d4af37]/12 bg-[#d4af37]/[0.04] p-4">
                   <p className="font-[family-name:var(--font-body)] text-sm leading-relaxed text-white/50">
-                    Applications are reviewed by the Sheesh leadership team for market fit, hospitality background, and capital readiness.
+                    Applications are reviewed by the Alibaba leadership team for market fit, hospitality background, and capital readiness.
                   </p>
                 </div>
                 <div className="grid gap-6 sm:grid-cols-2">

@@ -2,7 +2,7 @@ import { Suspense } from "react";
 import { AdminLoginForm } from "@/components/admin/auth/AdminLoginForm";
 
 export const metadata = {
-  title: "Admin Login | Sheesh Eatery & Lounge",
+  title: "Admin Login | Alibaba Hookah Lounge",
   robots: { index: false, follow: false },
 };
 

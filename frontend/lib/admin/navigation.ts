@@ -1,4 +1,5 @@
-const BASE = `/admin`;
+const ADMIN_SLUG = process.env.NEXT_PUBLIC_ADMIN_SLUG || "admin";
+const BASE = `/${ADMIN_SLUG}`;
 
 export const adminNavItems = [
   { href: `${BASE}/dashboard`,    label: "Dashboard",              icon: "layout-dashboard" },
@@ -8,6 +9,7 @@ export const adminNavItems = [
   { href: `${BASE}/catering`,     label: "Catering Inquiries",     icon: "concierge-bell" },
   { href: `${BASE}/franchise`,    label: "Franchise Applications", icon: "building" },
   { href: `${BASE}/gallery`,      label: "Gallery",                icon: "image" },
+  { href: `${BASE}/reviews`,      label: "Guest Reviews",          icon: "star" },
   { href: `${BASE}/users`,        label: "Users",                  icon: "users" },
   { href: `${BASE}/settings`,     label: "Settings",               icon: "settings" },
 ] as const;
@@ -15,3 +17,4 @@ export const adminNavItems = [
 export type AdminNavIcon = (typeof adminNavItems)[number]["icon"];
 
 export const ADMIN_BASE = BASE;
+

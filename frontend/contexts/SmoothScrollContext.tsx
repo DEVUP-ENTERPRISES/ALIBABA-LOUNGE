@@ -78,12 +78,12 @@ export function SmoothScrollProvider({
     lenisRef.current = lenis;
     lenis.on("scroll", ScrollTrigger.update);
 
-    const tick = (time: number) => {
-      lenis.raf(time * 1000);
+    let rafId: number;
+    const raf = (time: number) => {
+      lenis.raf(time);
+      rafId = requestAnimationFrame(raf);
     };
-
-    gsap.ticker.add(tick);
-    gsap.ticker.lagSmoothing(0);
+    rafId = requestAnimationFrame(raf);
 
     // Refresh after fonts/images settle so ScrollTrigger positions are accurate
     const r1 = window.setTimeout(() => ScrollTrigger.refresh(), 400);
@@ -92,7 +92,7 @@ export function SmoothScrollProvider({
     return () => {
       window.clearTimeout(r1);
       window.clearTimeout(r2);
-      gsap.ticker.remove(tick);
+      cancelAnimationFrame(rafId);
       lenis.destroy();
       lenisRef.current = null;
       ScrollTrigger.getAll().forEach((t) => t.kill());

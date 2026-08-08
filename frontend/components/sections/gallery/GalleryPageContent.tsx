@@ -11,7 +11,7 @@ import { cn } from "@/lib/utils";
 import { resolveImageUrl } from "@/lib/image-url";
 import { FloatingParticles } from "@/components/effects/FloatingParticles";
 
-const categories = ["All", "Food", "Drinks", "Hookah", "Ambiance", "Events", "Desserts"];
+const categories = ["All", "Hookah", "Drinks", "Ambiance", "Events", "Desserts"];
 
 export function GalleryPageContent() {
   const [images, setImages] = useState<GalleryImage[]>([]);
@@ -49,7 +49,7 @@ export function GalleryPageContent() {
       <section className="relative mx-auto max-w-7xl px-5 sm:px-8 md:px-12">
         <SectionHeading
           eyebrow="Gallery"
-          title="Inside Sheesh"
+          title="Inside Alibaba"
           subtitle="A living archive of the room, the plates, the smoke, and the nights that make the lounge glow."
         />
 

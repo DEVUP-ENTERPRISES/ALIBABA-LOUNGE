@@ -9,7 +9,7 @@ import { MagneticButton } from "@/components/ui/MagneticButton";
 import { SmokeOverlay } from "@/components/effects/SmokeOverlay";
 
 const blends = [
-  { name: "Sheesh Mix", note: "House Signature · Floral · Citrus", image: menuImages.hookahLounge, tag: "Staff Pick" as const },
+  { name: "Alibaba Mix", note: "House Signature · Floral · Citrus", image: menuImages.hookahLounge, tag: "Staff Pick" as const },
   { name: "Desert Mirage", note: "Oud · Amber · Saffron", image: menuImages.hookahPremium, tag: "Popular" as const },
   { name: "Gully Boy", note: "Bold · Spiced · Smooth Finish", image: menuImages.hookah, tag: "Customer Fav" as const },
 ];
