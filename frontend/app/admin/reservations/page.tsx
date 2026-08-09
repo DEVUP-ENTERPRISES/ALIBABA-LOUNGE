@@ -6,6 +6,7 @@ import { StatusChip } from "@/components/admin/ui/StatusChip";
 import { AdminModal } from "@/components/admin/ui/AdminModal";
 import { useReservations } from "@/components/providers/ReservationProvider";
 import { cn } from "@/lib/utils";
+import { formatUsDate, formatUsDateTime, formatUsTime } from "@/lib/format";
 
 export default function AdminReservationsPage() {
   const { reservations, updateReservationStatus } = useReservations();
@@ -50,7 +51,7 @@ export default function AdminReservationsPage() {
                   <p className="text-xs">{r.phone}</p>
                 </td>
                 <td className="px-4 py-3 text-white/60">
-                  {r.date} · {r.time}
+                  {formatUsDate(r.date)} · {formatUsTime(r.time)}
                 </td>
                 <td className="px-4 py-3 text-white/60">{r.partySize}</td>
                 <td className="px-4 py-3">
@@ -100,7 +101,7 @@ export default function AdminReservationsPage() {
             <p className="text-white/50">{detail.email} · {detail.phone}</p>
             <p>
               <span className="text-white/40">When: </span>
-              {detail.date} at {detail.time}
+              {formatUsDateTime(detail.date, detail.time)}
             </p>
             <p>
               <span className="text-white/40">Party: </span>

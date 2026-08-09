@@ -86,7 +86,7 @@ function SignupForm() {
       <div className="relative hidden w-[52%] flex-col justify-between overflow-hidden lg:flex">
         <Image
           src={menuImages.experience}
-          alt="Sheesh experience"
+          alt="Alibaba experience"
           fill
           className="object-cover"
           priority
@@ -99,7 +99,7 @@ function SignupForm() {
           <Link href="/" className="flex items-center gap-3">
             <div className="h-8 w-8 rounded-full border border-[#d4af37]/60 bg-[#d4af37]/10" />
             <span className="font-[family-name:var(--font-display)] text-lg tracking-[0.15em] text-white uppercase">
-              Sheesh
+              Alibaba
             </span>
           </Link>
         </div>
@@ -145,7 +145,7 @@ function SignupForm() {
           <div className="mb-8 flex items-center gap-3 lg:hidden">
             <div className="h-6 w-6 rounded-full border border-[#d4af37]/60 bg-[#d4af37]/10" />
             <span className="font-[family-name:var(--font-display)] text-base tracking-[0.12em] text-white uppercase">
-              Sheesh
+              Alibaba
             </span>
           </div>
 

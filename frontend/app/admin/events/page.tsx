@@ -10,6 +10,7 @@ import { ImageUploadField } from "@/components/admin/ui/ImageUploadField";
 import { menuImages } from "@/lib/menu-images";
 import type { AdminEvent } from "@/lib/admin/types";
 import { eventApi } from "@/lib/admin/data-api";
+import { formatUsDate, formatUsTime } from "@/lib/format";
 
 export default function AdminEventsPage() {
   const [modalOpen, setModalOpen] = useState(false);
@@ -106,7 +107,7 @@ export default function AdminEventsPage() {
                 {event.title}
               </h3>
               <p className="mt-1 text-sm text-white/45">
-                {event.date} / {event.time}
+                {formatUsDate(event.date)} / {formatUsTime(event.time)}
               </p>
               <p className="text-xs text-white/35">{event.location}</p>
               <div className="mt-4 flex gap-2">
@@ -144,7 +145,7 @@ export default function AdminEventsPage() {
             {events.map((e) => (
               <tr key={e.id} className="border-b border-white/[0.04]">
                 <td className="px-4 py-3 text-white">{e.title}</td>
-                <td className="px-4 py-3 text-white/50">{e.date}</td>
+                <td className="px-4 py-3 text-white/50">{formatUsDate(e.date)}</td>
                 <td className="px-4 py-3">
                   <StatusChip status={e.status} />
                 </td>

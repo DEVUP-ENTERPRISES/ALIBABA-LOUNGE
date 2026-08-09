@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 
 const LOADER_SEEN_KEY = "sheesh-loader-seen";
-const letters = ["S", "H", "E", "E", "S", "H"];
+const letters = ["A", "L", "I", "B", "A", "B", "A"];
 
 export function LoadingScreen() {
   const [loading, setLoading] = useState(true);

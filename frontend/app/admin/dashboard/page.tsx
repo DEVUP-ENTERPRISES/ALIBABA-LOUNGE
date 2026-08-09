@@ -7,6 +7,7 @@ import { StatusChip } from "@/components/admin/ui/StatusChip";
 import { dashboardApi } from "@/lib/admin/data-api";
 import { ADMIN_BASE } from "@/lib/admin/navigation";
 import type { AdminReservation } from "@/lib/admin/types";
+import { formatUsDate, formatUsTime } from "@/lib/format";
 
 export default function AdminDashboardPage() {
   const [data, setData] = useState<Awaited<ReturnType<typeof dashboardApi.get>> | null>(null);
@@ -137,7 +138,7 @@ export default function AdminDashboardPage() {
                     {r.guestName}
                   </p>
                   <p className="mt-0.5 text-xs text-zinc-400">
-                    {r.date} / {r.time} / {r.partySize} guests
+                    {formatUsDate(r.date)} / {formatUsTime(r.time)} / {r.partySize} guests
                   </p>
                 </div>
                 <StatusChip status={r.status} />

@@ -90,7 +90,7 @@ function LoginForm() {
       <div className="relative hidden w-[52%] flex-col justify-between overflow-hidden lg:flex">
         <Image
           src={menuImages.lounge}
-          alt="Sheesh lounge"
+          alt="Alibaba lounge"
           fill
           className="object-cover"
           priority
@@ -104,7 +104,7 @@ function LoginForm() {
           <Link href="/" className="flex items-center gap-3">
             <div className="h-8 w-8 rounded-full border border-[#d4af37]/60 bg-[#d4af37]/10" />
             <span className="font-[family-name:var(--font-display)] text-lg tracking-[0.15em] text-white uppercase">
-              Sheesh
+              Alibaba
             </span>
           </Link>
         </div>
@@ -133,7 +133,7 @@ function LoginForm() {
           <div className="mb-8 flex items-center gap-3 lg:hidden">
             <div className="h-6 w-6 rounded-full border border-[#d4af37]/60 bg-[#d4af37]/10" />
             <span className="font-[family-name:var(--font-display)] text-base tracking-[0.12em] text-white uppercase">
-              Sheesh
+              Alibaba
             </span>
           </div>
 

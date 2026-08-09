@@ -5,6 +5,7 @@ import { motion } from "framer-motion";
 import { useEffect, useState } from "react";
 import { SectionHeading } from "@/components/ui/SectionHeading";
 import { CountdownTimer } from "@/components/sections/events/CountdownTimer";
+import { formatUsDate, formatUsTime } from "@/lib/format";
 import { MagneticButton } from "@/components/ui/MagneticButton";
 import { menuImages } from "@/lib/menu-images";
 import { SmokeOverlay } from "@/components/effects/SmokeOverlay";
@@ -188,7 +189,7 @@ export function EventsPageContent() {
                         <div className="flex items-center gap-1.5">
                           <Calendar className="size-3 text-[#d4af37]/60" />
                           <span className="font-[family-name:var(--font-accent)] text-[8px] tracking-[0.2em] text-[#d4af37]/70 uppercase">
-                            {event.date}
+                            {formatUsDate(event.date)}
                           </span>
                         </div>
                       )}
@@ -196,7 +197,7 @@ export function EventsPageContent() {
                         <div className="flex items-center gap-1.5">
                           <Clock className="size-3 text-white/30" />
                           <span className="font-[family-name:var(--font-accent)] text-[8px] tracking-[0.2em] text-white/40 uppercase">
-                            {event.time}
+                            {formatUsTime(event.time)}
                           </span>
                         </div>
                       )}
