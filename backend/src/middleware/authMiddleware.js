@@ -31,6 +31,29 @@ const protect = asyncHandler(async (req, _res, next) => {
   next();
 });
 
+// Attaches req.admin when a valid token is present, but never rejects.
+// Use on public routes that reveal extra data to signed-in admins.
+const attachAdmin = asyncHandler(async (req, _res, next) => {
+  const token = getBearerToken(req);
+
+  if (!token) {
+    return next();
+  }
+
+  try {
+    const payload = verifyToken(token);
+    const admin = await Admin.findById(payload.sub);
+
+    if (admin && admin.isActive) {
+      req.admin = admin;
+    }
+  } catch {
+    // Invalid or expired token on a public route — treat as anonymous.
+  }
+
+  return next();
+});
+
 function requireRole(...roles) {
   return (req, _res, next) => {
     if (!req.admin || !roles.includes(req.admin.role)) {
@@ -42,6 +65,7 @@ function requireRole(...roles) {
 }
 
 module.exports = {
+  attachAdmin,
   protect,
   requireRole,
 };

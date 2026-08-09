@@ -22,10 +22,22 @@ const accent = Playfair_Display({
   style: ["italic", "normal"],
 });
 
+const SITE_URL =
+  process.env.NEXT_PUBLIC_SITE_URL?.replace(/\/$/, "") ||
+  "https://alibaba-lounge.vercel.app";
+
+const SITE_NAME = "Alibaba Hookah Lounge";
+const SITE_DESCRIPTION =
+  "Dallas's premier hookah lounge & dining destination. Where luxury meets flavor.";
+
 export const metadata: Metadata = {
-  title: "Alibaba Hookah Lounge | Dallas's Premier Lounge",
-  description:
-    "Dallas's premier hookah lounge & dining destination. Where luxury meets flavor.",
+  metadataBase: new URL(SITE_URL),
+  title: {
+    default: `${SITE_NAME} | Dallas's Premier Lounge`,
+    template: `%s | ${SITE_NAME}`,
+  },
+  description: SITE_DESCRIPTION,
+  applicationName: SITE_NAME,
   keywords: [
     "Alibaba Hookah Lounge",
     "hookah lounge",
@@ -33,6 +45,26 @@ export const metadata: Metadata = {
     "luxury dining",
     "catering",
   ],
+  alternates: {
+    canonical: "/",
+  },
+  openGraph: {
+    type: "website",
+    siteName: SITE_NAME,
+    title: `${SITE_NAME} | Dallas's Premier Lounge`,
+    description: SITE_DESCRIPTION,
+    url: SITE_URL,
+    locale: "en_US",
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: `${SITE_NAME} | Dallas's Premier Lounge`,
+    description: SITE_DESCRIPTION,
+  },
+  robots: {
+    index: true,
+    follow: true,
+  },
 };
 
 export default function RootLayout({

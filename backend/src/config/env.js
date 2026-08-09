@@ -20,6 +20,19 @@ const env = {
   mongoServerSelectionTimeoutMs:
     Number(process.env.MONGO_SERVER_SELECTION_TIMEOUT_MS) || 10000,
   clientUrl: process.env.CLIENT_URL || "http://localhost:3000",
+  // Comma-separated list of every browser origin allowed to call the API.
+  // CLIENT_URL is always included; CLIENT_URLS adds apex/www/preview domains.
+  clientUrls: Array.from(
+    new Set(
+      `${process.env.CLIENT_URL || "http://localhost:3000"},${
+        process.env.CLIENT_URLS || ""
+      }`
+        .split(",")
+        .map((value) => value.trim().replace(/\/$/, ""))
+        .filter(Boolean)
+    )
+  ),
+  allowVercelPreviews: process.env.ALLOW_VERCEL_PREVIEWS === "true",
   jwt: {
     secret: jwtSecret,
     expiresIn: process.env.JWT_EXPIRES_IN || "7d",

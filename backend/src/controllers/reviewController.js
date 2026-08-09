@@ -18,8 +18,15 @@ function formatReview(doc) {
 
 const getReviews = asyncHandler(async (req, res) => {
   const filter = {};
+
   if (req.query.featured === "true") filter.isFeatured = true;
-  if (req.query.approved === "true") filter.isApproved = true;
+
+  // Public callers only ever see approved reviews. An authenticated admin can
+  // pass ?all=true to include pending ones for moderation.
+  const includeUnapproved = req.admin && req.query.all === "true";
+  if (!includeUnapproved) {
+    filter.isApproved = true;
+  }
 
   const reviews = await Review.find(filter).sort({ createdAt: -1 });
   res.json({ success: true, reviews: reviews.map(formatReview) });
@@ -39,8 +46,23 @@ const createReview = asyncHandler(async (req, res) => {
   res.status(201).json({ success: true, review: formatReview(review) });
 });
 
+const REVIEW_FIELDS = [
+  "author",
+  "role",
+  "quote",
+  "stars",
+  "initial",
+  "isFeatured",
+  "isApproved",
+];
+
 const updateReview = asyncHandler(async (req, res) => {
-  const review = await Review.findByIdAndUpdate(req.params.id, req.body, {
+  const updates = {};
+  for (const field of REVIEW_FIELDS) {
+    if (req.body[field] !== undefined) updates[field] = req.body[field];
+  }
+
+  const review = await Review.findByIdAndUpdate(req.params.id, updates, {
     new: true,
     runValidators: true,
   });

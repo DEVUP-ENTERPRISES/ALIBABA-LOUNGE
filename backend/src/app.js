@@ -22,7 +22,22 @@ app.use(
 
 app.use(
   cors({
-    origin: env.clientUrl,
+    origin(origin, callback) {
+      // Same-origin/server-to-server requests send no Origin header.
+      if (!origin) return callback(null, true);
+
+      const normalized = origin.replace(/\/$/, "");
+      if (env.clientUrls.includes(normalized)) return callback(null, true);
+
+      // Vercel preview deployments for this project.
+      if (env.allowVercelPreviews && /^https:\/\/[a-z0-9-]+\.vercel\.app$/i.test(normalized)) {
+        return callback(null, true);
+      }
+
+      // Reject by withholding the CORS headers rather than throwing — the
+      // browser blocks the response, and we avoid a 500 + stack trace per hit.
+      return callback(null, false);
+    },
     credentials: true,
   })
 );
@@ -33,6 +48,8 @@ app.use(
     max: env.rateLimit.max,
     standardHeaders: true,
     legacyHeaders: false,
+    // Render's uptime probe must never be throttled.
+    skip: (req) => req.path === "/health",
     message: {
       success: false,
       message: "Too many requests. Please try again later.",
