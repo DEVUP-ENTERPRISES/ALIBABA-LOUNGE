@@ -50,3 +50,7 @@ public/uploads/
 # logs
 logs/
 *.log
+
+# raw AI-generated menu art (working set, ~725 KB/img)
+# optimized WebP in frontend/public/images/menu IS committed
+frontend/public/images/menu-raw/
