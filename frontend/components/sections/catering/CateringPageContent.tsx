@@ -16,20 +16,35 @@ import { useAuth } from "@/contexts/AuthContext";
 
 export function CateringPageContent() {
   const [submitted, setSubmitted] = useState(false);
+  const [submitting, setSubmitting] = useState(false);
+  const [error, setError] = useState<string | null>(null);
   const { user, loading } = useAuth();
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     const form = new FormData(e.currentTarget);
-    await inquiryApi.createCatering({
-      name: form.get("name"),
-      email: form.get("email"),
-      phone: form.get("phone"),
-      guests: Number(form.get("guests") || 0) || undefined,
-      eventDate: form.get("date"),
-      details: form.get("details"),
-    });
-    setSubmitted(true);
+
+    setSubmitting(true);
+    setError(null);
+    try {
+      await inquiryApi.createCatering({
+        name: form.get("name"),
+        email: form.get("email"),
+        phone: form.get("phone"),
+        guests: Number(form.get("guests") || 0) || undefined,
+        eventDate: form.get("date"),
+        details: form.get("details"),
+      });
+      setSubmitted(true);
+    } catch (err) {
+      setError(
+        err instanceof Error
+          ? err.message
+          : "We couldn't submit your inquiry. Please try again."
+      );
+    } finally {
+      setSubmitting(false);
+    }
   };
 
   return (
@@ -165,8 +180,22 @@ export function CateringPageContent() {
                   rows={5}
                 />
               </div>
-              <MagneticButton type="submit" variant="gold" className="w-full sm:w-auto">
-                Submit Inquiry
+              {error && (
+                <p
+                  role="alert"
+                  className="font-[family-name:var(--font-body)] text-sm text-red-400"
+                >
+                  {error}
+                </p>
+              )}
+
+              <MagneticButton
+                type="submit"
+                variant="gold"
+                disabled={submitting}
+                className="w-full sm:w-auto"
+              >
+                {submitting ? "Submitting…" : "Submit Inquiry"}
               </MagneticButton>
             </form>
           ) }

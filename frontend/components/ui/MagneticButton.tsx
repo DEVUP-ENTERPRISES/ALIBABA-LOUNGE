@@ -15,6 +15,7 @@ interface MagneticButtonProps {
   className?: string;
   type?: "button" | "submit";
   scroll?: boolean;
+  disabled?: boolean;
 }
 
 const variants = {
@@ -41,6 +42,7 @@ export function MagneticButton({
   className,
   type = "button",
   scroll = true,
+  disabled = false,
 }: MagneticButtonProps) {
   const pathname = usePathname();
   const { scrollTo } = useSmoothScroll();
@@ -48,6 +50,7 @@ export function MagneticButton({
   const baseClass = cn(
     "luxury-focus-ring relative inline-flex min-h-12 cursor-pointer items-center justify-center gap-2 overflow-hidden rounded-full px-7 py-3 text-xs font-medium tracking-[0.14em] uppercase transition-all duration-500 sm:px-8 sm:py-3.5 sm:text-sm",
     variants[variant],
+    disabled && "pointer-events-none opacity-50",
     className
   );
 
@@ -109,6 +112,7 @@ export function MagneticButton({
       ref={ref as React.RefObject<HTMLButtonElement>}
       type={type}
       onClick={onClick}
+      disabled={disabled}
       data-magnetic
       className={cn(baseClass, "group")}
     >

@@ -37,23 +37,41 @@ const pillars = [
 
 export function FranchisePageContent() {
   const [submitted, setSubmitted] = useState(false);
+  const [submitting, setSubmitting] = useState(false);
+  const [error, setError] = useState<string | null>(null);
   const { user, loading } = useAuth();
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    const form = new FormData(e.currentTarget);
-    await inquiryApi.createFranchise({
+    const formEl = e.currentTarget;
+    const form = new FormData(formEl);
+
+    const payload = {
       name: `${form.get("firstName")} ${form.get("lastName")}`.trim(),
       email: form.get("email"),
       market: form.get("market"),
       investment:
         form.get("investment") ||
-        e.currentTarget.querySelector<HTMLInputElement>("#capital")?.value,
+        formEl.querySelector<HTMLInputElement>("#capital")?.value,
       background:
         form.get("background") ||
-        e.currentTarget.querySelector<HTMLTextAreaElement>("#experience")?.value,
-    });
-    setSubmitted(true);
+        formEl.querySelector<HTMLTextAreaElement>("#experience")?.value,
+    };
+
+    setSubmitting(true);
+    setError(null);
+    try {
+      await inquiryApi.createFranchise(payload);
+      setSubmitted(true);
+    } catch (err) {
+      setError(
+        err instanceof Error
+          ? err.message
+          : "We couldn't submit your application. Please try again."
+      );
+    } finally {
+      setSubmitting(false);
+    }
   };
 
   return (
@@ -173,8 +191,16 @@ export function FranchisePageContent() {
                   />
                 </div>
                 <div className="text-center">
-                  <MagneticButton type="submit" variant="gold">
-                    Submit Application
+                  {error && (
+                    <p
+                      role="alert"
+                      className="mb-4 font-[family-name:var(--font-body)] text-sm text-red-400"
+                    >
+                      {error}
+                    </p>
+                  )}
+                  <MagneticButton type="submit" variant="gold" disabled={submitting}>
+                    {submitting ? "Submitting…" : "Submit Application"}
                   </MagneticButton>
                 </div>
               </form>

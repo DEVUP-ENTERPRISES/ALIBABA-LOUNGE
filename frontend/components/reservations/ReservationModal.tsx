@@ -2,7 +2,7 @@
 
 import { AnimatePresence, motion } from "framer-motion";
 import { Check, X } from "lucide-react";
-import { useMemo, useState } from "react";
+import { useEffect, useState } from "react";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 
@@ -37,12 +37,28 @@ export function ReservationModal({ open, onClose, onConfirm }: ReservationModalP
   const [submitting, setSubmitting] = useState(false);
 
 
-  const minDate = useMemo(() => {
-    const today = new Date();
-    return today.toISOString().split("T")[0];
-  }, []);
+  // Reset whenever the modal is reopened — otherwise the success screen from a
+  // previous booking sticks around and the guest can never book a second time.
+  useEffect(() => {
+    if (open) {
+      // eslint-disable-next-line react-hooks/set-state-in-effect
+      setForm(defaultFormState);
+      setSubmitted(false);
+      setError(null);
+    }
+  }, [open]);
+
+  // Local calendar date, not UTC. toISOString() would roll over to tomorrow
+  // during the evening in US timezones — exactly when guests book a table.
+  // Computed every render so it stays correct across a midnight rollover.
+  const now = new Date();
+  const minDate = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(
+    2,
+    "0"
+  )}-${String(now.getDate()).padStart(2, "0")}`;
 
   const handleChange = (field: keyof typeof form, value: string) => {
+    setError(null);
     setForm((state) => ({
       ...state,
       [field]: field === "partySize" ? Number(value) : value,
