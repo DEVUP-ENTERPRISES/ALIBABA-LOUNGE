@@ -3,7 +3,6 @@ import type { MenuCategory } from "@/lib/menu/types";
 export const adminCategoryOptions: { value: MenuCategory; label: string }[] = [
   { value: "hookah", label: "Hookah" },
   { value: "drinks", label: "Drinks" },
-  { value: "desserts", label: "Desserts" },
 ];
 
 export const adminSubcategoryOptions: Record<
@@ -12,24 +11,22 @@ export const adminSubcategoryOptions: Record<
 > = {
   drinks: [
     { value: "mocktails", label: "Mocktails" },
-    { value: "milkshakes", label: "Milkshakes" },
     { value: "juices", label: "Juices" },
     { value: "chai-coffee", label: "Chai & Coffee" },
     { value: "soda", label: "Soda & More" },
   ],
   hookah: [
+    { value: "hookah-types", label: "Hookah Types" },
+    { value: "fresh-fruit", label: "Fresh Fruit" },
+    { value: "special-mixes", label: "Special Mixes" },
     { value: "starbuzz", label: "Starbuzz" },
     { value: "fumari", label: "Fumari" },
     { value: "afzal", label: "Afzal" },
     { value: "mazaya", label: "Mazaya" },
     { value: "adalya", label: "Adalya" },
     { value: "al-fakher", label: "Al Fakher" },
-    { value: "selection", label: "Hookah Selection" },
-    { value: "house-mixes", label: "House Mixes" },
-    { value: "regular", label: "Regular Flavors" },
-    { value: "premium", label: "Premium Hookahs" },
+    { value: "add-ons", label: "Add-Ons" },
   ],
-  desserts: [{ value: "desserts", label: "Desserts" }],
 };
 
 export const adminTagOptions = [

@@ -1,5 +1,5 @@
 import { resolveMenuImage } from "@/lib/menu-images";
-import type { MenuItem, MenuTag, MenuCategory } from "./types";
+import type { MenuItem, MenuTag } from "./types";
 
 type FoodSub =
   | "appetizers"
@@ -72,26 +72,6 @@ export function drinkItem(
     category: "drinks",
     subcategory,
     image: resolveMenuImage("drinks", subcategory, id),
-    tags: opts?.tags,
-    featured: opts?.featured,
-  };
-}
-
-export function dessertItem(
-  id: string,
-  name: string,
-  description: string,
-  price: number,
-  opts?: { tags?: MenuTag[]; featured?: boolean; image?: string }
-): MenuItem {
-  return {
-    id,
-    name,
-    description,
-    price,
-    category: "desserts",
-    subcategory: "desserts",
-    image: opts?.image ?? resolveMenuImage("desserts", "desserts", id),
     tags: opts?.tags,
     featured: opts?.featured,
   };

@@ -12,7 +12,9 @@
     "menu:generate": "node src/scripts/generateMenuImages.js",
     "menu:optimize": "node src/scripts/optimizeMenuImages.js",
     "menu:link": "node src/scripts/updateSeedImages.js",
-    "seed:drinks": "node src/scripts/seedDrinks.js"
+    "seed:drinks": "node src/scripts/seedDrinks.js",
+    "seed:hookah": "node src/scripts/seedHookah.js",
+    "menu:prune": "node src/scripts/pruneMenu.js"
   },
   "keywords": [
     "express",

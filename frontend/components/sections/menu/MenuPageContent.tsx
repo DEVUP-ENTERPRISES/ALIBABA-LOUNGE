@@ -24,7 +24,6 @@ import { FloatingParticles } from "@/components/effects/FloatingParticles";
 const categoryHero: Record<MenuCategory, string> = {
   hookah: menuImages.hookahLounge,
   drinks: menuImages.mocktails,
-  desserts: menuImages.desserts,
 };
 
 function matchesSubcategory(
@@ -148,7 +147,7 @@ export function MenuPageContent() {
               </h1>
               <p className="mt-5 max-w-xl font-[family-name:var(--font-body)] text-sm leading-relaxed text-white/62 sm:text-base md:text-lg">
                 Explore signature plates, private shisha blends, craft drinks,
-                and late-night desserts through a cinematic menu built for
+                and signature blends through a cinematic menu built for
                 discovery.
               </p>
             </motion.div>
@@ -160,7 +159,7 @@ export function MenuPageContent() {
         <SectionHeading
           eyebrow="Our Menu"
           title="Curated Indulgence"
-          subtitle="Elevated plates, signature hookah blends, craft drinks, and decadent desserts - every item presented with cinematic luxury."
+          subtitle="Signature hookah blends, special mixes, and craft drinks - every item presented with cinematic luxury."
         />
 
         <div className="mx-auto mt-8 max-w-3xl rounded-3xl border border-white/10 bg-[#050505]/90 px-5 py-5 text-center text-sm text-white/70 shadow-[0_20px_60px_rgba(0,0,0,0.28)] sm:px-6 sm:text-base">
@@ -222,12 +221,6 @@ export function MenuPageContent() {
               </button>
             ))}
           </motion.div>
-        )}
-
-        {category === "desserts" && subFilter === "all" && (
-          <p className="mt-4 text-center font-[family-name:var(--font-accent)] text-[10px] tracking-[0.25em] text-[#d4af37]/60 uppercase">
-            Decadent Desserts
-          </p>
         )}
 
         <div className="mx-auto mt-6 flex w-fit items-center gap-2 rounded-full border border-white/[0.08] bg-white/[0.03] px-4 py-2 font-[family-name:var(--font-body)] text-sm text-white/42">
