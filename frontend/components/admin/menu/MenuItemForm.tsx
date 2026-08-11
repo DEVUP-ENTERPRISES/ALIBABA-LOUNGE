@@ -93,7 +93,7 @@ export function MenuItemForm({ item, onCancel, onSave }: MenuItemFormProps) {
     >
       <ImageUploadField
         label="Item Image"
-        hint="Hookah, drinks, or the lounge. Shown at 4:3 and cropped to fill — upload 4:3 (e.g. 1200×900) so nothing important is lost."
+        hint="Portrait works best — shown at 3:4 and cropped to fill. Upload 3:4 (e.g. 900×1200) and keep the subject centred."
         initialPreview={item?.image ?? null}
         aspect="card"
         onFileChange={setImageFile}

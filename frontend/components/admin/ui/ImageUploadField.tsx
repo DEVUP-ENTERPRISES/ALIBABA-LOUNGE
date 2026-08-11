@@ -11,7 +11,7 @@ interface ImageUploadFieldProps {
   hint?: string;
   initialPreview?: string | null;
   value?: string | null;
-  aspect?: "video" | "square" | "wide" | "card" | "event";
+  aspect?: "video" | "square" | "wide" | "card" | "gallery" | "event";
   onFileChange?: (file: File | null) => void;
   onPreviewChange?: (previewUrl: string | null) => void;
   onChange?: (url: string) => void;
@@ -25,7 +25,9 @@ const aspectClass = {
   // Matches MenuItemCard's image window, so the preview crops exactly the
   // way the public card will. Anything else and you approve one framing
   // and ship another.
-  card: "aspect-[4/3]",
+  card: "aspect-[3/4]",
+  // Gallery grid and the Instagram strip are landscape.
+  gallery: "aspect-[4/3]",
   // Matches the public event card.
   event: "aspect-[16/10]",
 };

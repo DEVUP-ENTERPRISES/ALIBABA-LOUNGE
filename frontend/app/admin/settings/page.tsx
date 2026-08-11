@@ -11,8 +11,8 @@ import { Check, Loader2 } from "lucide-react";
 
 const defaultSettings: AdminSetting = {
   brandName: "Alibaba Hookah Lounge",
-  tagline: "Where luxury meets flavor.",
-  description: "Dallas's premier hookah lounge & dining destination.",
+  tagline: "Premium shisha, done properly.",
+  description: "Dallas's premier hookah lounge. Open late, every night.",
   phone: "+1 (469) 586-5437",
   location: "Dallas, TX",
   email: "alibabahookah2238@gmail.com",
@@ -131,7 +131,7 @@ export default function AdminSettingsPage() {
             <Input
               value={form.tagline}
               onChange={(e) => handleChange("tagline", e.target.value)}
-              placeholder="Where luxury meets flavor."
+              placeholder="Premium shisha, done properly."
             />
           </div>
           <div className="space-y-2">
@@ -140,7 +140,7 @@ export default function AdminSettingsPage() {
               rows={3}
               value={form.description}
               onChange={(e) => handleChange("description", e.target.value)}
-              placeholder="Dallas's premier hookah lounge & dining destination."
+              placeholder="Dallas's premier hookah lounge. Open late, every night."
             />
           </div>
         </div>

@@ -27,6 +27,8 @@ const CONTACT = {
   phone: "+1 (469) 586-5437",
   hoursSunThu: "1 PM – 2 AM",
   hoursFriSat: "1 PM – 4 AM",
+  tagline: "Premium shisha, done properly.",
+  description: "Dallas's premier hookah lounge. Open late, every night.",
   instagram: "@alibabalounge01",
   instagramUrl: "https://instagram.com/alibabalounge01",
 };

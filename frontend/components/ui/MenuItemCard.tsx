@@ -55,8 +55,10 @@ export function MenuItemCard({ item, index = 0 }: MenuItemCardProps) {
       style={{ rotateX, rotateY, transformPerspective: 1200 }}
       className="cinematic-frame group relative flex h-full w-full flex-col overflow-hidden rounded-2xl bg-[#0c0c0e]/90 transition-[border-color,box-shadow] duration-500 hover:border-[#d4af37]/32 hover:shadow-[0_20px_60px_rgba(0,0,0,0.5),0_0_40px_rgba(212,175,55,0.08)]"
     >
-      {/* Every card keeps the same 4:3 image window so the grid stays even. */}
-      <div className="relative w-full shrink-0 overflow-hidden aspect-[4/3]">
+      {/* Portrait window, matching the product photography actually being
+          uploaded (2:3 and 5:6). A landscape frame cropped the top and bottom
+          off every hookah. Uniform across cards so the grid stays even. */}
+      <div className="relative w-full shrink-0 overflow-hidden aspect-[3/4]">
         <Image
           src={imageSrc}
           alt={item.name}

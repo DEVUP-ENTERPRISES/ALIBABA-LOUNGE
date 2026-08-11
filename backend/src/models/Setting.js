@@ -3,10 +3,10 @@ const mongoose = require("mongoose");
 const settingSchema = new mongoose.Schema(
   {
     brandName: { type: String, default: "Alibaba Hookah Lounge", trim: true },
-    tagline: { type: String, default: "Where luxury meets flavor.", trim: true },
+    tagline: { type: String, default: "Premium shisha, done properly.", trim: true },
     description: {
       type: String,
-      default: "Dallas's premier hookah lounge & dining destination.",
+      default: "Dallas's premier hookah lounge. Open late, every night.",
       trim: true,
     },
     phone: { type: String, default: "+1 (469) 586-5437", trim: true },
