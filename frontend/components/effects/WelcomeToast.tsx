@@ -29,7 +29,7 @@ export function WelcomeToast() {
           animate={{ y: 0, opacity: 1, scale: 1 }}
           exit={{ y: 80, opacity: 0, scale: 0.95 }}
           transition={{ type: "spring", stiffness: 280, damping: 28 }}
-          className="fixed bottom-28 right-4 z-[9000] max-w-[calc(100vw-2rem)] w-[340px] lg:bottom-8 lg:right-8"
+          className="fixed bottom-28 right-4 z-[9000] hidden w-[340px] max-w-[calc(100vw-2rem)] lg:bottom-8 lg:right-8 lg:block"
         >
           <div className="glass-ultra rounded-2xl overflow-hidden border-gold-gradient">
             {/* Gold top strip */}
@@ -46,7 +46,7 @@ export function WelcomeToast() {
                       Welcome to Alibaba Dallas
                     </p>
                     <p className="mt-0.5 font-[family-name:var(--font-body)] text-xs text-white/45 leading-snug">
-                      Luxury dining · Hookah · Private events
+                      Hookah · Drinks · Private events
                     </p>
                   </div>
                 </div>

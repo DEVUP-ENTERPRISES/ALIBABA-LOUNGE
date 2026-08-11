@@ -83,13 +83,12 @@ export function LoadingScreen() {
                   className="h-auto w-full"
                 />
 
-                {/* Shine travelling through the letterforms themselves */}
-                <motion.div
+                {/* Shine through the letterforms. The mask must sit on a
+                    STATIONARY wrapper — on the moving element it travels with
+                    it and paints a second, ghost logo sliding across screen. */}
+                <div
                   aria-hidden
-                  initial={{ x: "-120%" }}
-                  animate={{ x: "120%" }}
-                  transition={{ delay: 0.55, duration: 1.0, ease: [0.4, 0, 0.2, 1] }}
-                  className="pointer-events-none absolute inset-0 bg-gradient-to-r from-transparent via-white/70 to-transparent"
+                  className="pointer-events-none absolute inset-0 overflow-hidden"
                   style={{
                     WebkitMaskImage: "url(/alibaba-logo.png)",
                     maskImage: "url(/alibaba-logo.png)",
@@ -100,7 +99,14 @@ export function LoadingScreen() {
                     WebkitMaskPosition: "center",
                     maskPosition: "center",
                   }}
-                />
+                >
+                  <motion.div
+                    initial={{ x: "-110%" }}
+                    animate={{ x: "110%" }}
+                    transition={{ delay: 0.55, duration: 1.0, ease: [0.4, 0, 0.2, 1] }}
+                    className="h-full w-full bg-gradient-to-r from-transparent via-white/70 to-transparent"
+                  />
+                </div>
               </motion.div>
 
               {/* Hairline drawing outward beneath the mark */}

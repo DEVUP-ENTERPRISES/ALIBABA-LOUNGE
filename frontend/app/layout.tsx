@@ -15,11 +15,14 @@ const body = Manrope({
   weight: ["300", "400", "500", "600", "700"],
 });
 
-const accent = Playfair_Display({
+// Micro-labels (eyebrows, stat captions, button text) render at 8-10px
+// uppercase with wide tracking. Playfair is a high-contrast display serif —
+// its hairlines break up at that size, especially light-on-dark. Manrope
+// holds its weight down there, so accent is a sans and display stays serif.
+const accent = Manrope({
   subsets: ["latin"],
   variable: "--font-accent",
-  weight: ["600", "700", "800"],
-  style: ["italic", "normal"],
+  weight: ["500", "600", "700"],
 });
 
 const SITE_URL =

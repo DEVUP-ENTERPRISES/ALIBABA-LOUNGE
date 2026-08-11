@@ -101,7 +101,19 @@ export function SmoothScrollProvider({
 
   useEffect(() => {
     const hash = window.location.hash;
-    if (!hash) return;
+
+    // No hash means a plain page change. Lenis keeps its own scroll offset
+    // across route changes, so without this you land on the new page at
+    // whatever position you left the previous one at.
+    if (!hash) {
+      const lenis = lenisRef.current;
+      if (lenis) {
+        lenis.scrollTo(0, { immediate: true });
+      } else {
+        window.scrollTo(0, 0);
+      }
+      return;
+    }
 
     const timer = window.setTimeout(() => {
       scrollTo(hash, { offset: NAVBAR_OFFSET });

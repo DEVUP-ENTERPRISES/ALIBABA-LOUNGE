@@ -103,13 +103,12 @@ export function HeroSection() {
             className="relative h-auto w-full drop-shadow-[0_18px_60px_rgba(0,0,0,0.65)]"
           />
 
-          {/* Light sweep across the mark */}
-          <motion.div
+          {/* Light sweep across the mark. The mask belongs on this static
+              wrapper; on the moving child it drags along and renders a
+              ghost copy of the logo sliding across the hero. */}
+          <div
             aria-hidden
-            initial={{ x: "-130%" }}
-            animate={{ x: "130%" }}
-            transition={{ delay: 1.15, duration: 1.9, ease: [0.22, 1, 0.36, 1] }}
-            className="pointer-events-none absolute inset-0 -z-0 bg-gradient-to-r from-transparent via-white/22 to-transparent"
+            className="pointer-events-none absolute inset-0 overflow-hidden"
             style={{
               WebkitMaskImage: "url(/alibaba-logo.png)",
               maskImage: "url(/alibaba-logo.png)",
@@ -120,7 +119,14 @@ export function HeroSection() {
               WebkitMaskPosition: "center",
               maskPosition: "center",
             }}
-          />
+          >
+            <motion.div
+              initial={{ x: "-110%" }}
+              animate={{ x: "110%" }}
+              transition={{ delay: 1.15, duration: 1.6, ease: [0.22, 1, 0.36, 1] }}
+              className="h-full w-full bg-gradient-to-r from-transparent via-white/25 to-transparent"
+            />
+          </div>
         </motion.div>
 
         {/* Desc + CTAs */}
