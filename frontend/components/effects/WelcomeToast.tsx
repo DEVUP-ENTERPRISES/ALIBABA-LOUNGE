@@ -68,7 +68,7 @@ export function WelcomeToast() {
                   Reserve Table
                 </Link>
                 <a
-                  href="tel:+12144077941"
+                  href="tel:+14695865437"
                   onClick={dismiss}
                   className="flex items-center gap-1.5 rounded-xl border border-white/10 px-4 py-2.5 font-[family-name:var(--font-body)] text-xs text-white/60 hover:text-white hover:border-white/25 transition-colors"
                 >

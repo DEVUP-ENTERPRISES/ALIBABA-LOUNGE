@@ -21,13 +21,13 @@ const defaultSettings: AdminSetting = {
   brandName: "Alibaba Hookah Lounge",
   tagline: "Where luxury meets flavor.",
   description: "Dallas's premier hookah lounge & dining destination. Where luxury meets flavor.",
-  phone: "+1 (214) 407-7941",
+  phone: "+1 (469) 586-5437",
   location: "Dallas, TX",
-  email: "info@alibabahookahlounge.com",
+  email: "alibabahookah2238@gmail.com",
   instagram: "@alibabahookahlounge",
   instagramUrl: "https://instagram.com/alibabahookahlounge",
-  hoursSunThu: "11 AM – 2 AM",
-  hoursFriSat: "11 AM – 3 AM",
+  hoursSunThu: "1 PM – 2 AM",
+  hoursFriSat: "1 PM – 4 AM",
 };
 
 export function Footer() {

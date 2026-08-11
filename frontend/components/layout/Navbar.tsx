@@ -528,10 +528,10 @@ export function Navbar() {
 
                 {/* Phone shortcut */}
                 <a
-                  href="tel:+12144077941"
+                  href="tel:+14695865437"
                   className="flex items-center justify-center gap-2 pt-1 font-[family-name:var(--font-accent)] text-[9px] tracking-[0.2em] text-white/25 uppercase hover:text-[#d4af37]/60 transition-colors"
                 >
-                  <Phone size={10} /> (214) 407-7941
+                  <Phone size={10} /> (469) 586-5437
                 </a>
               </motion.div>
             </motion.nav>

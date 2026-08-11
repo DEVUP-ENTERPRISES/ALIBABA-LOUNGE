@@ -62,7 +62,7 @@ export function FinalCTASection() {
 
         {/* Phone number */}
         <motion.a
-          href="tel:+12144077941"
+          href="tel:+14695865437"
           initial={{ opacity: 0 }}
           whileInView={{ opacity: 1 }}
           viewport={{ once: true }}
@@ -70,7 +70,7 @@ export function FinalCTASection() {
           className="inline-flex items-center gap-2 mt-5 font-[family-name:var(--font-display)] text-[#d4af37] hover:text-[#f5e6c8] transition-colors text-lg sm:text-xl"
         >
           <Phone className="size-4" />
-          (214) 407-7941
+          (469) 586-5437
         </motion.a>
 
         {/* CTAs */}

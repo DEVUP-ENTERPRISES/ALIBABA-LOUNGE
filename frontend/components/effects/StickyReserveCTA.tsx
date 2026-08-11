@@ -36,7 +36,7 @@ export function StickyReserveCTA() {
               Reserve a Table
             </Link>
             <a
-              href="tel:+12144077941"
+              href="tel:+14695865437"
               className="flex size-[50px] shrink-0 items-center justify-center rounded-xl border border-white/10 text-white/60 active:scale-95 transition-transform"
               aria-label="Call us"
             >

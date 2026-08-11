@@ -1,5 +1,5 @@
 /** Public site navigation constants */
-export const RESERVE_PHONE = "+12144077941";
+export const RESERVE_PHONE = "+14695865437";
 
 export const routes = {
   home: "/",

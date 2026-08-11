@@ -28,8 +28,8 @@ const highlights = [
 ];
 
 const hours = [
-  { days: "Sun – Thu", time: "11 AM – 2 AM" },
-  { days: "Fri – Sat", time: "11 AM – 3 AM" },
+  { days: "Sun – Thu", time: "1 PM – 2 AM" },
+  { days: "Fri – Sat", time: "1 PM – 4 AM" },
 ];
 
 export function ReservationPageContent() {
@@ -125,9 +125,9 @@ export function ReservationPageContent() {
             <MagneticButton onClick={openModal} variant="gold" className="w-full sm:w-auto">
               Request Reservation
             </MagneticButton>
-            <MagneticButton href="tel:+12144077941" variant="outline" className="w-full sm:w-auto">
+            <MagneticButton href="tel:+14695865437" variant="outline" className="w-full sm:w-auto">
               <Phone className="size-3.5 mr-1.5" />
-              (214) 407-7941
+              (469) 586-5437
             </MagneticButton>
           </div>
         </motion.div>

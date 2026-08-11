@@ -85,7 +85,7 @@ export function CateringPageContent() {
             <li>- Corporate, wedding, and private celebrations</li>
           </ul>
           <p className="mt-6 font-[family-name:var(--font-body)] text-sm text-white/40">
-            Questions? Call <span className="text-[#d4af37]">(214) 407-7941</span>
+            Questions? Call <span className="text-[#d4af37]">(469) 586-5437</span>
           </p>
         </motion.div>
 
@@ -158,7 +158,7 @@ export function CateringPageContent() {
                     id="phone"
                     name="phone"
                     type="tel"
-                    placeholder="(214) 407-7941"
+                    placeholder="(469) 586-5437"
                   />
                 </div>
                 <div className="space-y-2">

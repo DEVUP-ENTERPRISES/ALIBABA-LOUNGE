@@ -117,7 +117,7 @@ export function EventsPageContent() {
             transition={{ delay: 0.55 }}
             className="mt-10 flex flex-col sm:flex-row items-center justify-center gap-3"
           >
-            <MagneticButton href="tel:+12144077941" variant="gold">
+            <MagneticButton href="tel:+14695865437" variant="gold">
               Call to Register
             </MagneticButton>
             <MagneticButton href="#events-calendar" variant="outline">
