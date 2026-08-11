@@ -112,3 +112,45 @@ body.custom-cursor-active,
 body.custom-cursor-active * {
   cursor: none !important;
 }
+
+/* ──────────────────────────────────────────────────────────────
+   Mobile / iOS safe areas
+
+   StickyReserveCTA is fixed to the bottom on screens below lg.
+   Pages that render behind it need clearance, or their last section
+   sits underneath the bar. `pb-mobile-cta` was referenced by several
+   pages but never defined, so that clearance was silently absent.
+
+   env(safe-area-inset-*) covers the iPhone home indicator and the
+   notch. It resolves to 0 everywhere it does not apply, so this is
+   safe on Android and desktop too. Requires viewport-fit=cover,
+   set via the viewport export in app/layout.tsx.
+   ────────────────────────────────────────────────────────────── */
+.pb-mobile-cta {
+  padding-bottom: calc(6.5rem + env(safe-area-inset-bottom, 0px));
+}
+
+@media (min-width: 1024px) {
+  .pb-mobile-cta {
+    padding-bottom: 6rem;
+  }
+}
+
+/* The bar itself must clear the home indicator. */
+.safe-bottom {
+  padding-bottom: env(safe-area-inset-bottom, 0px);
+}
+
+/* Never let a stray wide child scroll the whole page sideways. */
+html {
+  overflow-x: hidden;
+}
+
+/* iOS zooms the page when a font smaller than 16px receives focus. */
+@media (max-width: 767px) {
+  input,
+  select,
+  textarea {
+    font-size: 16px;
+  }
+}

@@ -29,7 +29,7 @@ export function EventsPageContent() {
   }, []);
 
   return (
-    <div className="cinematic-backdrop relative min-h-screen">
+    <div className="cinematic-backdrop relative min-h-screen pb-mobile-cta">
       {/* Hero */}
       <section className="relative flex min-h-[88dvh] items-center overflow-hidden pt-24 sm:min-h-[94vh]">
         <div className="absolute inset-0">
@@ -83,7 +83,7 @@ export function EventsPageContent() {
             transition={{ delay: 0.25 }}
             className="mx-auto mt-6 max-w-2xl font-[family-name:var(--font-body)] text-sm sm:text-base text-white/55 leading-relaxed"
           >
-            A groundbreaking vocal competition set in our cinematic lounge. Dallas talent. Luxury production. Unforgettable nights.
+            A live vocal competition hosted at the lounge. Dallas talent, real stage production, every season.
           </motion.p>
 
           <motion.div

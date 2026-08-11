@@ -23,7 +23,7 @@ const stats = [
 const pillars = [
   {
     title: "Proven Concept",
-    desc: "A dual-revenue model combining elevated dining and premium hookah lounge culture.",
+    desc: "Hookah and bar revenue in one venue, with a model that is already working in Dallas.",
   },
   {
     title: "Operational Playbook",

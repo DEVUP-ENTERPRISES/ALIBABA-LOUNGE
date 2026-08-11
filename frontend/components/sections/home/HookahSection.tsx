@@ -25,7 +25,7 @@ export function HookahSection() {
         <SectionHeading
           eyebrow="Premium Hookah"
           title="Clouds of Opulence"
-          subtitle="House mixes, premium hookahs, expert heat management — hookah elevated to an art form."
+          subtitle="House mixes, premium bowls, and proper heat management on every session."
         />
 
         <div className="mt-10 sm:mt-12 grid gap-5 sm:gap-6 md:grid-cols-3">

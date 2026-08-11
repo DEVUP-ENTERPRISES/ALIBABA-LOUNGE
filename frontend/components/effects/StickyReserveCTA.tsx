@@ -27,7 +27,7 @@ export function StickyReserveCTA() {
           {/* Top gold line */}
           <div className="h-px bg-gradient-to-r from-transparent via-[#d4af37]/40 to-transparent" />
 
-          <div className="glass-ultra flex items-center gap-3 px-4 py-3">
+          <div className="glass-ultra safe-bottom flex items-center gap-3 px-4 py-3">
             <Link
               href="/reservation"
               className="flex flex-1 items-center justify-center gap-2 rounded-xl bg-gradient-to-r from-[#8b6914] via-[#d4af37] to-[#8b6914] py-3.5 font-[family-name:var(--font-accent)] text-[11px] font-medium tracking-[0.15em] text-[#050505] uppercase shadow-[0_0_20px_rgba(212,175,55,0.3)] active:scale-[0.97] transition-transform"

@@ -14,7 +14,7 @@ const highlights = [
   },
   {
     title: "Nightlife Energy",
-    desc: "Live performances, curated playlists, and VIP corners for unforgettable Dallas evenings.",
+    desc: "Live performances, resident DJs, and VIP corners open late every night.",
     image: menuImages.events,
     icon: "o",
   },
@@ -35,7 +35,7 @@ export function ExperienceSection() {
       <div className="relative mx-auto max-w-7xl">
         <SectionHeading
           eyebrow="The Experience"
-          title="A World Beyond Dining"
+          title="More Than A Lounge"
           subtitle="Step into a cinematic realm where every detail - from the first bite to the last cloud - is orchestrated for luxury."
         />
 

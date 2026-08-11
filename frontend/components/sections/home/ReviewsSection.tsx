@@ -10,7 +10,7 @@ import type { AdminReview } from "@/lib/admin/types";
 const DEFAULT_REVIEWS: AdminReview[] = [
   {
     id: "r1",
-    quote: "Alibaba is Dallas's premier hookah lounge — the food, the clouds, the vibe. Nothing else comes close.",
+    quote: "Best hookah in Dallas, hands down. The clouds, the setup, the vibe — nothing else comes close.",
     author: "Amir K.",
     role: "Regular Guest",
     stars: 5,
@@ -30,9 +30,9 @@ const DEFAULT_REVIEWS: AdminReview[] = [
   },
   {
     id: "r3",
-    quote: "The BBQ platter and Alibaba Mix are why we keep coming back. True luxury hospitality in Dallas.",
+    quote: "The house mixes are why we keep coming back. Staff actually know their tobacco.",
     author: "James T.",
-    role: "Dallas Foodie",
+    role: "Weekly Regular",
     stars: 5,
     initial: "JT",
     isFeatured: true,
@@ -50,9 +50,9 @@ const DEFAULT_REVIEWS: AdminReview[] = [
   },
   {
     id: "r5",
-    quote: "The Mediterranean spread is unlike anything else in the city. Feels like you're dining in another world.",
+    quote: "Fresh fruit heads are unreal. Ordered the watermelon and it lasted the whole night.",
     author: "Marcus D.",
-    role: "Food Critic",
+    role: "Hookah Lover",
     stars: 5,
     initial: "MD",
     isFeatured: true,
@@ -142,8 +142,8 @@ export function ReviewsSection() {
       <div className="mx-auto max-w-7xl px-5 sm:px-8 mb-12 sm:mb-16">
         <SectionHeading
           eyebrow="Guest Reviews"
-          title="Whispers of Excellence"
-          subtitle="Thousands of guests, one shared sentiment — Alibaba is unlike anything else."
+          title="What Our Guests Say"
+          subtitle="Reviews from people who spend their nights here."
         />
       </div>
 

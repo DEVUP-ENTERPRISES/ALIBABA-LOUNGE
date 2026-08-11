@@ -60,8 +60,8 @@ export function CateringPageContent() {
           <SectionHeading
             align="left"
             eyebrow="Catering"
-            title="Events Elevated"
-            subtitle="From intimate gatherings to grand celebrations - our culinary team and lounge specialists craft bespoke Alibaba experiences at your venue."
+            title="Catering & Events"
+            subtitle="Hookah stations and full lounge setup at your venue - birthdays, corporate events, weddings."
           />
           <div className="cinematic-frame group relative mt-10 aspect-[4/3] overflow-hidden rounded-3xl transition-all duration-700 hover:border-[#d4af37]/30 hover:shadow-[0_16px_50px_rgba(212,175,55,0.1)]">
             <div className="absolute top-5 left-5 z-10 font-[family-name:var(--font-accent)] text-[8px] tracking-[0.25em] text-[#d4af37]/75 uppercase pointer-events-none">
@@ -132,7 +132,7 @@ export function CateringPageContent() {
                   Private Event Concierge
                 </p>
                 <h2 className="mt-2 font-[family-name:var(--font-display)] text-2xl text-white">
-                  Plan a Bespoke Event
+                  Plan Your Event
                 </h2>
               </div>
               <div className="grid gap-6 sm:grid-cols-2">

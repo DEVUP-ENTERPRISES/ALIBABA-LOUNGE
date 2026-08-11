@@ -1,12 +1,9 @@
 "use client";
 
 import { memo, useCallback, useEffect, useRef, useState } from "react";
-import Link from "next/link";
 import Image from "next/image";
 import { motion } from "framer-motion";
-import { homeHash } from "@/lib/navigation";
 import { MagneticButton } from "@/components/ui/MagneticButton";
-import { ChevronDown } from "lucide-react";
 
 const HERO_PLAYLIST = [
   "/videos/hero.mp4",
@@ -134,7 +131,7 @@ export function HeroSection() {
           className="mt-8 flex max-w-lg flex-col items-center gap-6 text-center sm:mt-12 sm:gap-8"
         >
           <p className="font-[family-name:var(--font-body)] text-sm sm:text-[15px] text-white/70 leading-relaxed tracking-wide px-2">
-            Dallas&apos;s premier hookah lounge - signature private shisha blends, fresh fruit heads, craft drinks, and absolute sensory luxury.
+            Six tobacco brands, our own house mixes, fresh fruit heads, and a full drinks list. Open late, every night.
           </p>
 
           <div className="flex flex-col sm:flex-row items-center gap-3 w-full sm:w-auto">
@@ -149,22 +146,6 @@ export function HeroSection() {
         </motion.div>
       </div>
 
-      {/* Scroll indicator */}
-      <motion.div
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        transition={{ delay: 1.9, duration: 0.8 }}
-        className="absolute bottom-6 sm:bottom-10 left-1/2 z-30 -translate-x-1/2"
-      >
-        <Link href={homeHash("experience")} scroll={false} className="flex flex-col items-center gap-1.5 group">
-          <span className="font-[family-name:var(--font-accent)] text-[8px] tracking-[0.4em] text-[#d4af37]/45 uppercase group-hover:text-[#d4af37]/75 transition-colors">
-            Scroll
-          </span>
-          <motion.div animate={{ y: [0, 5, 0] }} transition={{ duration: 2, repeat: Infinity, ease: "easeInOut" }}>
-            <ChevronDown className="size-4 text-[#d4af37]/45 group-hover:text-[#d4af37]/80 transition-colors" />
-          </motion.div>
-        </Link>
-      </motion.div>
     </section>
   );
 }

@@ -117,10 +117,10 @@ export function ReservationModal({ open, onClose, onConfirm }: ReservationModalP
                   Table Booking
                 </p>
                 <h2 className="font-[family-name:var(--font-display)] text-3xl tracking-[0.05em] text-white sm:text-4xl">
-                  Luxury reservation experience
+                  Book a table
                 </h2>
                 <p className="font-[family-name:var(--font-body)] text-sm leading-7 text-white/60">
-                  Reserve your evening with a cinematic luxury booking flow. We will hold your preferred table and confirm the experience instantly.
+                  Tell us when you are coming and how many. We will hold your table and confirm by phone.
                 </p>
                 <div className="space-y-3 rounded-3xl border border-white/10 bg-white/5 p-5 text-sm text-white/70">
                   <p className="font-semibold text-white">What to expect</p>

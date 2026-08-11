@@ -42,7 +42,7 @@ export function FeaturedMenuSection() {
         <SectionHeading
           eyebrow="Featured Menu"
           title="Signature Selections"
-          subtitle="Handpicked from our kitchen and lounge — each plate and blend crafted for unforgettable Dallas nights."
+          subtitle="A few of the blends and drinks our regulars keep coming back for."
         />
 
         <div className="mt-10 md:mt-12 grid gap-6 lg:grid-cols-12 lg:items-stretch">

@@ -20,7 +20,7 @@ const footerNav = [
 const defaultSettings: AdminSetting = {
   brandName: "Alibaba Hookah Lounge",
   tagline: "Where luxury meets flavor.",
-  description: "Dallas's premier hookah lounge & dining destination. Where luxury meets flavor.",
+  description: "Dallas's premier hookah lounge. Open late, every night.",
   phone: "+1 (469) 586-5437",
   location: "Dallas, TX",
   email: "alibabahookah2238@gmail.com",

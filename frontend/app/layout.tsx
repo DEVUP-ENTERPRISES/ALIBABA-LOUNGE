@@ -1,4 +1,4 @@
-import type { Metadata } from "next";
+import type { Metadata, Viewport } from "next";
 import { Playfair_Display, Manrope } from "next/font/google";
 import "./globals.css";
 import { cn } from "@/lib/utils";
@@ -65,6 +65,15 @@ export const metadata: Metadata = {
     index: true,
     follow: true,
   },
+};
+
+// viewport-fit=cover is what makes env(safe-area-inset-*) resolve to real
+// values on notched iPhones; without it they are always 0.
+export const viewport: Viewport = {
+  width: "device-width",
+  initialScale: 1,
+  viewportFit: "cover",
+  themeColor: "#050505",
 };
 
 export default function RootLayout({

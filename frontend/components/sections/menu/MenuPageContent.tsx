@@ -106,17 +106,16 @@ export function MenuPageContent() {
               <div className="mb-4 inline-flex items-center gap-2 rounded-full border border-[#d4af37]/30 bg-[#050505]/55 px-4 py-1.5 backdrop-blur-md">
                 <Sparkles className="size-3 text-[#d4af37]" />
                 <span className="font-[family-name:var(--font-accent)] text-[8px] tracking-[0.26em] text-[#d4af37] uppercase">
-                  Curated Discovery
+                  The Menu
                 </span>
               </div>
               <h1 className="font-[family-name:var(--font-display)] text-4xl leading-tight text-white sm:text-5xl md:text-6xl lg:text-7xl">
-                Menu as an
-                <span className="block text-gold-gradient">Evening Ritual</span>
+                Hookah &amp; Drinks
+                <span className="block text-gold-gradient">Menu</span>
               </h1>
               <p className="mt-5 max-w-xl font-[family-name:var(--font-body)] text-sm leading-relaxed text-white/62 sm:text-base md:text-lg">
-                Explore signature plates, private shisha blends, craft drinks,
-                and signature blends through a cinematic menu built for
-                discovery.
+                Six tobacco brands, our own house mixes, fresh fruit heads, and
+                everything behind the bar.
               </p>
             </motion.div>
           </div>
@@ -125,14 +124,14 @@ export function MenuPageContent() {
 
       <div className="relative mx-auto max-w-7xl px-4 sm:px-6 md:px-12 lg:px-20">
         <SectionHeading
-          eyebrow="Our Menu"
-          title="Curated Indulgence"
-          subtitle="Signature hookah blends, special mixes, and craft drinks - every item presented with cinematic luxury."
+          eyebrow="What We Serve"
+          title="Everything On The Menu"
+          subtitle="49 flavors across six brands, 13 house special mixes, fresh fruit heads, and a full drinks list."
         />
 
         <div className="mx-auto mt-8 max-w-3xl rounded-3xl border border-white/10 bg-[#050505]/90 px-5 py-5 text-center text-sm text-white/70 shadow-[0_20px_60px_rgba(0,0,0,0.28)] sm:px-6 sm:text-base">
-          Discover the latest seasonal offerings, premium blends, and festive
-          plates curated for every size screen and every late-night craving.
+          Prices shown are per hookah. Ask your server about add-ons - ice base,
+          fruit heads, and refills are all on the menu.
         </div>
 
         <div className="relative mx-auto mt-8 max-w-2xl">

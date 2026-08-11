@@ -39,7 +39,7 @@ export function FranchisePreviewSection() {
               align="left"
               eyebrow="Franchise"
               title="Own the Night"
-              subtitle="Partner with Dallas's premier hookah lounge & dining brand. Scale the Alibaba experience across markets with full support."
+              subtitle="Partner with Dallas's premier hookah lounge. Full support opening your own Alibaba."
             />
 
             {/* Stats */}

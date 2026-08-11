@@ -11,7 +11,7 @@ const initialReviews = [
     author: "Amir K.",
     role: "Regular Guest",
     quote:
-      "Alibaba is Dallas's premier hookah lounge — the food, the clouds, the vibe. Nothing else comes close.",
+      "Best hookah in Dallas, hands down. The clouds, the setup, the vibe — nothing else comes close.",
     stars: 5,
     initial: "AK",
     isFeatured: true,
@@ -29,9 +29,9 @@ const initialReviews = [
   },
   {
     author: "James T.",
-    role: "Dallas Foodie",
+    role: "Weekly Regular",
     quote:
-      "The BBQ platter and Alibaba Mix are why we keep coming back. True luxury hospitality in Dallas.",
+      "The house mixes are why we keep coming back. Staff actually know their tobacco.",
     stars: 5,
     initial: "JT",
     isFeatured: true,
@@ -49,9 +49,9 @@ const initialReviews = [
   },
   {
     author: "Marcus D.",
-    role: "Food Critic",
+    role: "Hookah Lover",
     quote:
-      "The Mediterranean spread is unlike anything else in the city. Feels like you're dining in another world.",
+      "Fresh fruit heads are unreal. Ordered the watermelon and it lasted the whole night.",
     stars: 5,
     initial: "MD",
     isFeatured: true,

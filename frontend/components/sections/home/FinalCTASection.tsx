@@ -57,7 +57,7 @@ export function FinalCTASection() {
           transition={{ delay: 0.25, duration: 0.7 }}
           className="mx-auto mt-6 max-w-md font-[family-name:var(--font-body)] text-sm sm:text-base text-white/50 leading-relaxed"
         >
-          Dallas&apos;s premier hookah lounge & dining destination. Book online or call us directly - luxury awaits.
+          Dallas&apos;s premier hookah lounge. Book online or just call us.
         </motion.p>
 
         {/* Phone number */}
@@ -101,7 +101,7 @@ export function FinalCTASection() {
           className="mt-10 flex flex-wrap items-center justify-center gap-4 sm:gap-8"
         >
           {[
-            "Private Dining",
+            "Private Booths",
             "Hookah Lounge",
             "Live Events",
             "VIP Service",
