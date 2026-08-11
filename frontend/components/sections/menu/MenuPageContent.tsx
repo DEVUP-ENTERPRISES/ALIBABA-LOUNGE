@@ -78,11 +78,11 @@ export function MenuPageContent() {
   }, [menuItems, category, subFilter, search]);
 
   return (
-    <div className="cinematic-backdrop relative min-h-screen overflow-x-hidden pt-24 pb-20 pb-mobile-cta md:pt-28 md:pb-24">
+    <div className="cinematic-backdrop relative min-h-screen overflow-x-hidden pt-24 pb-20 pb-mobile-cta">
       <FloatingParticles count={10} className="hidden opacity-30 md:block" />
       <SmokeOverlay className="opacity-40" />
 
-      <div className="relative mx-auto mb-10 max-w-7xl px-4 sm:px-6 md:mb-14 md:px-12 lg:px-20">
+      <div className="relative mx-auto mb-10 max-w-7xl px-5 sm:px-8 md:px-12 lg:px-20 md:mb-14">
         <div className="cinematic-frame relative min-h-[280px] sm:min-h-[360px] overflow-hidden rounded-2xl md:min-h-[430px] md:rounded-3xl">
           <Image
             src={categoryHero[category]}
@@ -122,7 +122,7 @@ export function MenuPageContent() {
         </div>
       </div>
 
-      <div className="relative mx-auto max-w-7xl px-4 sm:px-6 md:px-12 lg:px-20">
+      <div className="relative mx-auto max-w-7xl px-5 sm:px-8 md:px-12 lg:px-20">
         <SectionHeading
           eyebrow="What We Serve"
           title="Everything On The Menu"

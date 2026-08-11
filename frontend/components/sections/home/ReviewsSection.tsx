@@ -135,11 +135,11 @@ export function ReviewsSection() {
   const doubled = [...reviews, ...reviews];
 
   return (
-    <section id="reviews" className="relative overflow-hidden bg-[#080808] py-20 sm:py-28">
+    <section id="reviews" className="relative overflow-hidden bg-[#080808] py-14 sm:py-16 md:py-20 lg:py-24">
       {/* Background */}
       <div className="absolute inset-0 bg-[radial-gradient(ellipse_80%_50%_at_50%_100%,rgba(212,175,55,0.04),transparent)]" />
 
-      <div className="mx-auto max-w-7xl px-5 sm:px-8 mb-12 sm:mb-16">
+      <div className="mx-auto max-w-7xl px-5 sm:px-8 md:px-12 lg:px-20 mb-12 sm:mb-16">
         <SectionHeading
           eyebrow="Guest Reviews"
           title="What Our Guests Say"

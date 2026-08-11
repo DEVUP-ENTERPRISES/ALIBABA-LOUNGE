@@ -55,7 +55,7 @@ export function EventsPageContent() {
           LIVE BROADCAST
         </div>
 
-        <div className="relative mx-auto w-full max-w-5xl px-5 sm:px-8 py-24 text-center">
+        <div className="relative mx-auto w-full max-w-5xl px-5 sm:px-8 md:px-12 lg:px-20 py-14 text-center sm:py-16 md:py-20 lg:py-24">
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}

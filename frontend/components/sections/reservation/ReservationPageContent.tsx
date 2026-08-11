@@ -42,7 +42,7 @@ export function ReservationPageContent() {
       <div className="film-grain absolute inset-0" />
 
       {/* Hero image strip */}
-      <div className="relative mx-auto mb-14 max-w-7xl px-5 sm:px-8">
+      <div className="relative mx-auto mb-14 max-w-7xl px-5 sm:px-8 md:px-12 lg:px-20">
         <div className="cinematic-frame relative min-h-[330px] overflow-hidden rounded-2xl sm:min-h-[420px] sm:rounded-3xl">
           <Image
             src={menuImages.lounge}
@@ -74,7 +74,7 @@ export function ReservationPageContent() {
         </div>
       </div>
 
-      <div className="relative mx-auto max-w-6xl px-5 sm:px-8">
+      <div className="relative mx-auto max-w-6xl px-5 sm:px-8 md:px-12 lg:px-20">
         <SectionHeading
           eyebrow="Reservations"
           title="Your Table Awaits"

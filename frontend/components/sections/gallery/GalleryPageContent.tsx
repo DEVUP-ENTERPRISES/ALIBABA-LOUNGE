@@ -46,7 +46,7 @@ export function GalleryPageContent() {
       <div className="absolute inset-0 bg-[radial-gradient(ellipse_80%_40%_at_50%_10%,rgba(212,175,55,0.05),transparent_65%)]" />
       <div className="film-grain absolute inset-0" />
 
-      <section className="relative mx-auto max-w-7xl px-5 sm:px-8 md:px-12">
+      <section className="relative mx-auto max-w-7xl px-5 sm:px-8 md:px-12 lg:px-20">
         <SectionHeading
           eyebrow="Gallery"
           title="Inside Alibaba"

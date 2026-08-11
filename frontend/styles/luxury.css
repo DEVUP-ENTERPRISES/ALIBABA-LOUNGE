@@ -219,7 +219,12 @@
   }
 
   /* ── Mobile sticky CTA space ── */
-  .pb-mobile-cta { @apply pb-24 lg:pb-0; }
+  .pb-mobile-cta {
+    padding-bottom: calc(6rem + env(safe-area-inset-bottom, 0px));
+  }
+  @media (min-width: 1024px) {
+    .pb-mobile-cta { padding-bottom: 0; }
+  }
 
   /* ── Animations ── */
   @keyframes shimmer-sweep {
