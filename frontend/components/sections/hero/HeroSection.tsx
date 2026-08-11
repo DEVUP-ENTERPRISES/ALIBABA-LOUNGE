@@ -2,6 +2,7 @@
 
 import { memo, useCallback, useEffect, useRef, useState } from "react";
 import Link from "next/link";
+import Image from "next/image";
 import { motion } from "framer-motion";
 import { homeHash } from "@/lib/navigation";
 import { MagneticButton } from "@/components/ui/MagneticButton";
@@ -13,8 +14,6 @@ const HERO_PLAYLIST = [
   "/videos/grill.mp4",
   "/videos/pizza.mp4",
 ] as const;
-
-const LETTERS = "ALIBABA".split("");
 
 const HeroBackgroundVideo = memo(function HeroBackgroundVideo() {
   const timerRef = useRef<number | null>(null);
@@ -46,20 +45,6 @@ const HeroBackgroundVideo = memo(function HeroBackgroundVideo() {
     />
   );
 });
-
-const containerVariants = {
-  hidden: {},
-  show: { transition: { staggerChildren: 0.09, delayChildren: 0.35 } },
-};
-
-const letterVariants = {
-  hidden: { opacity: 0, y: 60, rotateX: -50, filter: "blur(8px)" },
-  show: {
-    opacity: 1, y: 0, rotateX: 0, filter: "blur(0px)",
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    transition: { duration: 0.8, ease: [0.16, 1, 0.3, 1] as any },
-  },
-};
 
 export function HeroSection() {
   return (
@@ -95,32 +80,50 @@ export function HeroSection() {
           </span>
         </motion.div>
 
-        {/* SHEESH letters */}
+        {/* Brand logo — cinematic reveal */}
         <motion.div
-          variants={containerVariants}
-          initial="hidden"
-          animate="show"
-          className="flex"
-          style={{ perspective: "800px" }}
-          aria-label="ALIBABA"
+          initial={{ opacity: 0, scale: 0.86, filter: "blur(18px)" }}
+          animate={{ opacity: 1, scale: 1, filter: "blur(0px)" }}
+          transition={{ duration: 1.5, ease: [0.16, 1, 0.3, 1] }}
+          className="group relative w-full max-w-[min(92vw,880px)]"
         >
-          {LETTERS.map((l, i) => (
-            <motion.span
-              key={i}
-              variants={letterVariants}
-              className="inline-block select-none font-[family-name:var(--font-display)] text-6xl font-light uppercase leading-none tracking-normal text-white sm:text-8xl md:text-9xl lg:text-[10rem] xl:text-[11.5rem]"
-              style={{
-                textShadow: "0 0 60px rgba(212,175,55,0.12), 0 8px 40px rgba(0,0,0,0.6)",
-              }}
-              whileHover={{
-                color: "#d4af37",
-                textShadow: "0 0 30px rgba(212,175,55,0.7), 0 0 80px rgba(212,175,55,0.35)",
-                transition: { duration: 0.18 },
-              }}
-            >
-              {l}
-            </motion.span>
-          ))}
+          {/* Gold bloom behind the mark */}
+          <motion.div
+            aria-hidden
+            initial={{ opacity: 0 }}
+            animate={{ opacity: [0, 0.85, 0.55] }}
+            transition={{ duration: 2.6, times: [0, 0.55, 1], ease: "easeOut" }}
+            className="pointer-events-none absolute -inset-x-16 -inset-y-24 -z-10 bg-[radial-gradient(ellipse_at_center,rgba(212,175,55,0.28),transparent_65%)] blur-2xl"
+          />
+
+          <Image
+            src="/alibaba-logo.png"
+            alt="Alibaba Hookah Lounge"
+            width={979}
+            height={324}
+            priority
+            sizes="(max-width: 768px) 92vw, 880px"
+            className="relative h-auto w-full drop-shadow-[0_18px_60px_rgba(0,0,0,0.65)]"
+          />
+
+          {/* Light sweep across the mark */}
+          <motion.div
+            aria-hidden
+            initial={{ x: "-130%" }}
+            animate={{ x: "130%" }}
+            transition={{ delay: 1.15, duration: 1.9, ease: [0.22, 1, 0.36, 1] }}
+            className="pointer-events-none absolute inset-0 -z-0 bg-gradient-to-r from-transparent via-white/22 to-transparent"
+            style={{
+              WebkitMaskImage: "url(/alibaba-logo.png)",
+              maskImage: "url(/alibaba-logo.png)",
+              WebkitMaskSize: "contain",
+              maskSize: "contain",
+              WebkitMaskRepeat: "no-repeat",
+              maskRepeat: "no-repeat",
+              WebkitMaskPosition: "center",
+              maskPosition: "center",
+            }}
+          />
         </motion.div>
 
         {/* Eatery & Lounge */}

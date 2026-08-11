@@ -2,9 +2,9 @@
 
 import { useEffect, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
+import Image from "next/image";
 
 const LOADER_SEEN_KEY = "sheesh-loader-seen";
-const letters = ["A", "L", "I", "B", "A", "B", "A"];
 
 export function LoadingScreen() {
   const [loading, setLoading] = useState(true);
@@ -24,7 +24,8 @@ export function LoadingScreen() {
       return () => window.clearTimeout(skipTimer);
     }
 
-    const t = window.setTimeout(() => setLoading(false), 1900);
+    // Logo reveal runs to ~2.1s (sweep ends at 0.75s + 1.35s); hold past it.
+    const t = window.setTimeout(() => setLoading(false), 2600);
     return () => clearTimeout(t);
   }, []);
 
@@ -54,19 +55,52 @@ export function LoadingScreen() {
               Est. 2024 / Dallas, TX
             </motion.p>
 
-            <div className="flex items-baseline gap-1 sm:gap-2">
-              {letters.map((letter, i) => (
-                <motion.span
-                  key={i}
-                  initial={{ opacity: 0, y: 36, filter: "blur(8px)" }}
-                  animate={{ opacity: 1, y: 0, filter: "blur(0px)" }}
-                  transition={{ delay: 0.12 + i * 0.07, duration: 0.65, ease: [0.16, 1, 0.3, 1] }}
-                  className="font-[family-name:var(--font-display)] text-5xl text-white tracking-[0.15em] uppercase sm:text-7xl md:text-8xl"
-                  style={{ textShadow: "0 0 40px rgba(212,175,55,0.2)" }}
-                >
-                  {letter}
-                </motion.span>
-              ))}
+            <div className="relative w-[min(78vw,520px)]">
+              {/* Gold bloom igniting behind the mark */}
+              <motion.div
+                aria-hidden
+                initial={{ opacity: 0, scale: 0.5 }}
+                animate={{ opacity: [0, 1, 0.6], scale: [0.5, 1.25, 1.1] }}
+                transition={{ duration: 1.8, times: [0, 0.5, 1], ease: "easeOut" }}
+                className="pointer-events-none absolute -inset-x-20 -inset-y-28 bg-[radial-gradient(ellipse_at_center,rgba(212,175,55,0.4),transparent_65%)] blur-3xl"
+              />
+
+              {/* The mark itself */}
+              <motion.div
+                initial={{ opacity: 0, scale: 0.82, filter: "blur(22px)" }}
+                animate={{ opacity: 1, scale: 1, filter: "blur(0px)" }}
+                transition={{ duration: 1.25, ease: [0.16, 1, 0.3, 1] }}
+                className="relative"
+              >
+                <Image
+                  src="/alibaba-logo.png"
+                  alt="Alibaba Hookah Lounge"
+                  width={979}
+                  height={324}
+                  priority
+                  sizes="(max-width: 640px) 78vw, 520px"
+                  className="h-auto w-full drop-shadow-[0_0_45px_rgba(212,175,55,0.35)]"
+                />
+
+                {/* Light sweeps across the letterforms only */}
+                <motion.div
+                  aria-hidden
+                  initial={{ x: "-140%" }}
+                  animate={{ x: "140%" }}
+                  transition={{ delay: 0.75, duration: 1.35, ease: [0.22, 1, 0.36, 1] }}
+                  className="pointer-events-none absolute inset-0 bg-gradient-to-r from-transparent via-white/45 to-transparent"
+                  style={{
+                    WebkitMaskImage: "url(/alibaba-logo.png)",
+                    maskImage: "url(/alibaba-logo.png)",
+                    WebkitMaskSize: "contain",
+                    maskSize: "contain",
+                    WebkitMaskRepeat: "no-repeat",
+                    maskRepeat: "no-repeat",
+                    WebkitMaskPosition: "center",
+                    maskPosition: "center",
+                  }}
+                />
+              </motion.div>
             </div>
 
             <motion.p
@@ -92,10 +126,10 @@ export function LoadingScreen() {
           <style>{`
             @keyframes loader-orb-pulse { 0%,100%{transform:scale(1);opacity:.06} 50%{transform:scale(1.3);opacity:.14} }
             @keyframes loader-bar-fill { from{width:0%} to{width:100%} }
-            @keyframes loader-screen-dismiss { 0%,82%{opacity:1;visibility:visible} 100%{opacity:0;visibility:hidden;pointer-events:none} }
+            @keyframes loader-screen-dismiss { 0%,85%{opacity:1;visibility:visible} 100%{opacity:0;visibility:hidden;pointer-events:none} }
             .loader-orb { animation: loader-orb-pulse 3s ease-in-out infinite; }
-            .loader-bar { animation: loader-bar-fill 1.7s cubic-bezier(0.16,1,0.3,1) forwards; }
-            .loader-screen { animation: loader-screen-dismiss 2.35s cubic-bezier(0.22,1,0.36,1) forwards; }
+            .loader-bar { animation: loader-bar-fill 2.4s cubic-bezier(0.16,1,0.3,1) forwards; }
+            .loader-screen { animation: loader-screen-dismiss 3s cubic-bezier(0.22,1,0.36,1) forwards; }
           `}</style>
         </motion.div>
       )}
