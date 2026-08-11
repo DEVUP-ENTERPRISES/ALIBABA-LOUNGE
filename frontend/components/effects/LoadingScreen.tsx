@@ -24,8 +24,9 @@ export function LoadingScreen() {
       return () => window.clearTimeout(skipTimer);
     }
 
-    // Logo reveal runs to ~2.1s (sweep ends at 0.75s + 1.35s); hold past it.
-    const t = window.setTimeout(() => setLoading(false), 2600);
+    // Reveal completes at ~1.75s (rule settles at 0.85s + 0.9s). Hold just
+    // past it — an intro that outstays the content it is hiding reads as lag.
+    const t = window.setTimeout(() => setLoading(false), 2000);
     return () => clearTimeout(t);
   }, []);
 
@@ -55,21 +56,21 @@ export function LoadingScreen() {
               Est. 2024 / Dallas, TX
             </motion.p>
 
-            <div className="relative w-[min(78vw,520px)]">
-              {/* Gold bloom igniting behind the mark */}
+            <div className="relative w-[min(80vw,540px)]">
+              {/* Restrained bloom. A strong gold glow behind a gold mark
+                  flattens it — this only lifts it off the black. */}
               <motion.div
                 aria-hidden
-                initial={{ opacity: 0, scale: 0.5 }}
-                animate={{ opacity: [0, 1, 0.6], scale: [0.5, 1.25, 1.1] }}
-                transition={{ duration: 1.8, times: [0, 0.5, 1], ease: "easeOut" }}
-                className="pointer-events-none absolute -inset-x-20 -inset-y-28 bg-[radial-gradient(ellipse_at_center,rgba(212,175,55,0.4),transparent_65%)] blur-3xl"
+                initial={{ opacity: 0, scale: 0.7 }}
+                animate={{ opacity: [0, 0.5, 0.3], scale: [0.7, 1.15, 1.05] }}
+                transition={{ duration: 1.6, times: [0, 0.55, 1], ease: "easeOut" }}
+                className="pointer-events-none absolute -inset-x-10 -inset-y-16 bg-[radial-gradient(ellipse_at_center,rgba(212,175,55,0.16),transparent_70%)] blur-2xl"
               />
 
-              {/* The mark itself */}
               <motion.div
-                initial={{ opacity: 0, scale: 0.82, filter: "blur(22px)" }}
+                initial={{ opacity: 0, scale: 0.94, filter: "blur(12px)" }}
                 animate={{ opacity: 1, scale: 1, filter: "blur(0px)" }}
-                transition={{ duration: 1.25, ease: [0.16, 1, 0.3, 1] }}
+                transition={{ duration: 0.95, ease: [0.16, 1, 0.3, 1] }}
                 className="relative"
               >
                 <Image
@@ -78,17 +79,17 @@ export function LoadingScreen() {
                   width={979}
                   height={324}
                   priority
-                  sizes="(max-width: 640px) 78vw, 520px"
-                  className="h-auto w-full drop-shadow-[0_0_45px_rgba(212,175,55,0.35)]"
+                  sizes="(max-width: 640px) 80vw, 540px"
+                  className="h-auto w-full"
                 />
 
-                {/* Light sweeps across the letterforms only */}
+                {/* Shine travelling through the letterforms themselves */}
                 <motion.div
                   aria-hidden
-                  initial={{ x: "-140%" }}
-                  animate={{ x: "140%" }}
-                  transition={{ delay: 0.75, duration: 1.35, ease: [0.22, 1, 0.36, 1] }}
-                  className="pointer-events-none absolute inset-0 bg-gradient-to-r from-transparent via-white/45 to-transparent"
+                  initial={{ x: "-120%" }}
+                  animate={{ x: "120%" }}
+                  transition={{ delay: 0.55, duration: 1.0, ease: [0.4, 0, 0.2, 1] }}
+                  className="pointer-events-none absolute inset-0 bg-gradient-to-r from-transparent via-white/70 to-transparent"
                   style={{
                     WebkitMaskImage: "url(/alibaba-logo.png)",
                     maskImage: "url(/alibaba-logo.png)",
@@ -101,16 +102,16 @@ export function LoadingScreen() {
                   }}
                 />
               </motion.div>
-            </div>
 
-            <motion.p
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              transition={{ delay: 0.65, duration: 0.7 }}
-              className="font-[family-name:var(--font-accent)] text-xs tracking-[0.45em] text-[#f5e6c8]/50 uppercase"
-            >
-              Eatery & Lounge
-            </motion.p>
+              {/* Hairline drawing outward beneath the mark */}
+              <motion.div
+                aria-hidden
+                initial={{ scaleX: 0, opacity: 0 }}
+                animate={{ scaleX: 1, opacity: 1 }}
+                transition={{ delay: 0.85, duration: 0.9, ease: [0.16, 1, 0.3, 1] }}
+                className="mx-auto mt-5 h-px w-3/5 bg-gradient-to-r from-transparent via-[#d4af37]/70 to-transparent"
+              />
+            </div>
           </div>
 
           {/* CSS progress bar - no rAF loop */}
@@ -128,8 +129,8 @@ export function LoadingScreen() {
             @keyframes loader-bar-fill { from{width:0%} to{width:100%} }
             @keyframes loader-screen-dismiss { 0%,85%{opacity:1;visibility:visible} 100%{opacity:0;visibility:hidden;pointer-events:none} }
             .loader-orb { animation: loader-orb-pulse 3s ease-in-out infinite; }
-            .loader-bar { animation: loader-bar-fill 2.4s cubic-bezier(0.16,1,0.3,1) forwards; }
-            .loader-screen { animation: loader-screen-dismiss 3s cubic-bezier(0.22,1,0.36,1) forwards; }
+            .loader-bar { animation: loader-bar-fill 1.85s cubic-bezier(0.16,1,0.3,1) forwards; }
+            .loader-screen { animation: loader-screen-dismiss 2.4s cubic-bezier(0.22,1,0.36,1) forwards; }
           `}</style>
         </motion.div>
       )}

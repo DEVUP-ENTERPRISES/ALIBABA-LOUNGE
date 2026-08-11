@@ -126,25 +126,15 @@ export function HeroSection() {
           />
         </motion.div>
 
-        {/* Eatery & Lounge */}
-        <motion.p
-          initial={{ opacity: 0, letterSpacing: "0.15em" }}
-          animate={{ opacity: 1, letterSpacing: "0.55em" }}
-          transition={{ delay: 0.9, duration: 1.3, ease: [0.16, 1, 0.3, 1] }}
-          className="mt-2 mb-7 font-[family-name:var(--font-accent)] text-[10px] tracking-[0.26em] text-[#f5e6c8]/75 uppercase sm:mt-4 sm:mb-10 sm:text-sm sm:tracking-[0.42em] md:mb-12 md:text-base"
-        >
-          Eatery & Lounge
-        </motion.p>
-
         {/* Desc + CTAs */}
         <motion.div
           initial={{ opacity: 0, y: 22 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 1.1, duration: 0.8 }}
-          className="flex flex-col items-center gap-6 sm:gap-8 max-w-lg text-center"
+          className="mt-8 flex max-w-lg flex-col items-center gap-6 text-center sm:mt-12 sm:gap-8"
         >
           <p className="font-[family-name:var(--font-body)] text-sm sm:text-[15px] text-white/70 leading-relaxed tracking-wide px-2">
-            Dallas&apos;s premier culinary destination - gourmet Mediterranean-desi cuisine, signature private shisha blends, and absolute sensory luxury.
+            Dallas&apos;s premier hookah lounge - signature private shisha blends, fresh fruit heads, craft drinks, and absolute sensory luxury.
           </p>
 
           <div className="flex flex-col sm:flex-row items-center gap-3 w-full sm:w-auto">
@@ -156,24 +146,6 @@ export function HeroSection() {
             </MagneticButton>
           </div>
 
-          {/* Quick stats */}
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ delay: 1.45, duration: 0.7 }}
-            className="flex items-center gap-8 sm:gap-12 pt-1"
-          >
-            {[
-              { value: "50K+", label: "Guests" },
-              { value: "100+", label: "Hookah Blends" },
-              { value: "4.9", label: "Rated" },
-            ].map((s, i) => (
-              <div key={i} className="flex flex-col items-center gap-0.5">
-                <span className="font-[family-name:var(--font-display)] text-base sm:text-xl text-[#d4af37]">{s.value}</span>
-                <span className="font-[family-name:var(--font-accent)] text-[8px] sm:text-[9px] tracking-[0.18em] text-white/30 uppercase">{s.label}</span>
-              </div>
-            ))}
-          </motion.div>
         </motion.div>
       </div>
 
