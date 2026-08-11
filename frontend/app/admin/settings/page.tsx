@@ -16,8 +16,8 @@ const defaultSettings: AdminSetting = {
   phone: "+1 (469) 586-5437",
   location: "Dallas, TX",
   email: "alibabahookah2238@gmail.com",
-  instagram: "@alibabahookahlounge",
-  instagramUrl: "https://instagram.com/alibabahookahlounge",
+  instagram: "@alibabalounge01",
+  instagramUrl: "https://instagram.com/alibabalounge01",
   hoursSunThu: "1 PM – 2 AM",
   hoursFriSat: "1 PM – 4 AM",
   eventsBanner: "",
@@ -218,7 +218,7 @@ export default function AdminSettingsPage() {
             <Input
               value={form.instagram}
               onChange={(e) => handleChange("instagram", e.target.value)}
-              placeholder="@alibabahookahlounge"
+              placeholder="@alibabalounge01"
             />
           </div>
           <div className="space-y-2">
@@ -226,7 +226,7 @@ export default function AdminSettingsPage() {
             <Input
               value={form.instagramUrl}
               onChange={(e) => handleChange("instagramUrl", e.target.value)}
-              placeholder="https://instagram.com/alibabahookahlounge"
+              placeholder="https://instagram.com/alibabalounge01"
             />
           </div>
         </div>

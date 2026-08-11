@@ -5,6 +5,7 @@ import { FeaturedMenuSection } from "@/components/sections/home/FeaturedMenuSect
 import { EventsPreviewSection } from "@/components/sections/home/EventsPreviewSection";
 import { CateringPreviewSection } from "@/components/sections/home/CateringPreviewSection";
 import { FranchisePreviewSection } from "@/components/sections/home/FranchisePreviewSection";
+import { InstagramSection } from "@/components/sections/home/InstagramSection";
 import { ReviewsSection } from "@/components/sections/home/ReviewsSection";
 import { FinalCTASection } from "@/components/sections/home/FinalCTASection";
 
@@ -24,6 +25,7 @@ export default function HomePage() {
       <div className="line-gold opacity-[0.08]" />
       <FranchisePreviewSection />
       <div className="line-gold opacity-[0.08]" />
+      <InstagramSection />
       <ReviewsSection />
       <FinalCTASection />
     </>

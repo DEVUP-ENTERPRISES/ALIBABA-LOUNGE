@@ -24,8 +24,8 @@ const defaultSettings: AdminSetting = {
   phone: "+1 (469) 586-5437",
   location: "Dallas, TX",
   email: "alibabahookah2238@gmail.com",
-  instagram: "@alibabahookahlounge",
-  instagramUrl: "https://instagram.com/alibabahookahlounge",
+  instagram: "@alibabalounge01",
+  instagramUrl: "https://instagram.com/alibabalounge01",
   hoursSunThu: "1 PM – 2 AM",
   hoursFriSat: "1 PM – 4 AM",
 };
@@ -73,7 +73,7 @@ export function Footer() {
             {/* Social */}
             <div className="mt-6 flex items-center gap-3">
               <a
-                href={settings.instagramUrl || "https://instagram.com/alibabahookahlounge"}
+                href={settings.instagramUrl || "https://instagram.com/alibabalounge01"}
                 target="_blank"
                 rel="noopener noreferrer"
                 aria-label={`Instagram ${settings.instagram}`}

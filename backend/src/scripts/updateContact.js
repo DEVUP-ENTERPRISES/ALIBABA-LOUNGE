@@ -27,6 +27,8 @@ const CONTACT = {
   phone: "+1 (469) 586-5437",
   hoursSunThu: "1 PM – 2 AM",
   hoursFriSat: "1 PM – 4 AM",
+  instagram: "@alibabalounge01",
+  instagramUrl: "https://instagram.com/alibabalounge01",
 };
 
 async function updateContact() {

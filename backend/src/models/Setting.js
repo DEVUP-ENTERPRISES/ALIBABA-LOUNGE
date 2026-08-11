@@ -12,10 +12,10 @@ const settingSchema = new mongoose.Schema(
     phone: { type: String, default: "+1 (469) 586-5437", trim: true },
     location: { type: String, default: "Dallas, TX", trim: true },
     email: { type: String, default: "alibabahookah2238@gmail.com", trim: true },
-    instagram: { type: String, default: "@alibabahookahlounge", trim: true },
+    instagram: { type: String, default: "@alibabalounge01", trim: true },
     instagramUrl: {
       type: String,
-      default: "https://instagram.com/alibabahookahlounge",
+      default: "https://instagram.com/alibabalounge01",
       trim: true,
     },
     hoursSunThu: { type: String, default: "1 PM – 2 AM", trim: true },
