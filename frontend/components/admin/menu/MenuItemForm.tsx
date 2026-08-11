@@ -93,9 +93,9 @@ export function MenuItemForm({ item, onCancel, onSave }: MenuItemFormProps) {
     >
       <ImageUploadField
         label="Item Image"
-        hint="High-quality food, drink, or hookah photography · preview before save"
+        hint="Hookah, drinks, or the lounge. Shown at 4:3 and cropped to fill — upload 4:3 (e.g. 1200×900) so nothing important is lost."
         initialPreview={item?.image ?? null}
-        aspect="video"
+        aspect="card"
         onFileChange={setImageFile}
       />
 

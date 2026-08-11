@@ -86,7 +86,7 @@ export default function AdminGalleryPage() {
               key={uploadKey}
               label="Gallery Image"
               hint="Luxury lounge, food, or event photography"
-              aspect="square"
+              aspect="card"
               onFileChange={setPendingFile}
               onPreviewChange={setPendingPreview}
             />
@@ -189,7 +189,7 @@ export default function AdminGalleryPage() {
             <ImageUploadField
               label="Replace Image"
               initialPreview={resolveImageUrl(editing.url)}
-              aspect="square"
+              aspect="card"
               onFileChange={setEditFile}
             />
             <div className="space-y-2">

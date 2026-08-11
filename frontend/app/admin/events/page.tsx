@@ -67,7 +67,7 @@ export default function AdminEventsPage() {
           <ImageUploadField
             label="Events Page Banner"
             initialPreview={menuImages.events}
-            aspect="wide"
+            aspect="event"
           />
         </div>
       </section>

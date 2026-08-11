@@ -136,7 +136,7 @@ export function InstagramSection() {
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true, margin: "-60px" }}
               transition={{ duration: 0.45, delay: Math.min(i * 0.05, 0.3) }}
-              className="group relative aspect-square w-[68vw] shrink-0 snap-start overflow-hidden rounded-2xl border border-white/[0.07] sm:w-[46vw] md:w-[31%] lg:w-[23%]"
+              className="group relative aspect-[4/3] w-[68vw] shrink-0 snap-start overflow-hidden rounded-2xl border border-white/[0.07] sm:w-[46vw] md:w-[31%] lg:w-[23%]"
             >
               <Image
                 src={post.url}

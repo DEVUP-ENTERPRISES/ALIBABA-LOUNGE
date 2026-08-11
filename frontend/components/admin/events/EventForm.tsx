@@ -53,7 +53,7 @@ export function EventForm({ event, onCancel, onSave }: EventFormProps) {
         label="Event Banner"
         hint="Cinematic event imagery · 21:9 recommended"
         initialPreview={event?.image ?? null}
-        aspect="wide"
+        aspect="event"
         onFileChange={setImageFile}
       />
 
