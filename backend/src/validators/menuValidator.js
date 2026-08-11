@@ -1,5 +1,22 @@
 const { body, param, query } = require("express-validator");
 
+
+// Multipart uploads cannot carry a real array, so the admin forms send tags
+// as a JSON string. Parse it back before isArray() runs, otherwise saving an
+// item together with an image fails validation with "Invalid value".
+const parseTags = (value) => {
+  if (typeof value !== "string") return value;
+  try {
+    const parsed = JSON.parse(value);
+    return Array.isArray(parsed) ? parsed : value;
+  } catch {
+    // Also tolerate a plain comma-separated list.
+    return value.includes(",")
+      ? value.split(",").map((v) => v.trim()).filter(Boolean)
+      : [value].filter(Boolean);
+  }
+};
+
 const menuIdParam = [param("id").isMongoId().withMessage("Invalid menu item id.")];
 
 const menuPayloadValidator = [
@@ -12,7 +29,7 @@ const menuPayloadValidator = [
   body("isAvailable").optional().isBoolean(),
   body("featured").optional().isBoolean(),
   body("layout").optional().isIn(["default", "wide"]),
-  body("tags").optional().isArray(),
+  body("tags").optional().customSanitizer(parseTags).isArray(),
   body("tags.*").optional().isIn(["Popular", "Staff Pick", "Customer Fav", "New"]),
 ];
 
@@ -27,7 +44,7 @@ const menuUpdateValidator = [
   body("isAvailable").optional().isBoolean(),
   body("featured").optional().isBoolean(),
   body("layout").optional().isIn(["default", "wide"]),
-  body("tags").optional().isArray(),
+  body("tags").optional().customSanitizer(parseTags).isArray(),
   body("tags.*").optional().isIn(["Popular", "Staff Pick", "Customer Fav", "New"]),
 ];
 

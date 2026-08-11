@@ -27,7 +27,8 @@ const reservationUpdateValidator = [
 const reservationListValidator = [
   query("status").optional().isIn(["pending", "confirmed", "cancelled", "Pending", "Approved", "Rejected"]),
   query("page").optional().isInt({ min: 1 }),
-  query("limit").optional().isInt({ min: 1, max: 100 }),
+  // Matches buildPagination's ceiling; the admin table requests 500.
+  query("limit").optional().isInt({ min: 1, max: 500 }),
 ];
 
 module.exports = {
