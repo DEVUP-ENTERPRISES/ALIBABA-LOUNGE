@@ -29,7 +29,7 @@ const p = (id, w = 800) =>
   `https://images.pexels.com/photos/${id}/pexels-photo-${id}.jpeg?auto=compress&cs=tinysrgb&w=${w}`;
 
 const images = {
-  soda: p(50593),
+  soda: p(2775860),
   juices: p(143133),
   chai: p(1414132),
   mocktails: p(1125720),

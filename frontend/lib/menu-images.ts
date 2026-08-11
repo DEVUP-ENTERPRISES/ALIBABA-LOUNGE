@@ -24,7 +24,7 @@ export const menuImages = {
   milkshakes: p(103566),
   juices: p(143133),
   chai: p(1414132),
-  soda: p(50593),
+  soda: p(2775860),
   desserts: p(45201),
   cake: p(291528),
   falooda: p(1120588),

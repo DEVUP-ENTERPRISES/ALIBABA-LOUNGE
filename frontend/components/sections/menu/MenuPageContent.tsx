@@ -26,36 +26,8 @@ const categoryHero: Record<MenuCategory, string> = {
   drinks: menuImages.mocktails,
 };
 
-function matchesSubcategory(
-  itemSub: string | undefined,
-  filter: string,
-  category: MenuCategory,
-) {
-  if (filter === "all") return true;
-  if (itemSub === filter) return true;
-  if (
-    category === "hookah" &&
-    filter === "selection" &&
-    itemSub === "premium"
-  ) {
-    return true;
-  }
-  if (
-    category === "hookah" &&
-    filter === "regular" &&
-    [
-      "starbuzz",
-      "fumari",
-      "afzal",
-      "mazaya",
-      "adalya",
-      "al-fakher",
-      "regular",
-    ].includes(itemSub || "")
-  ) {
-    return true;
-  }
-  return false;
+function matchesSubcategory(itemSub: string | undefined, filter: string) {
+  return filter === "all" || itemSub === filter;
 }
 
 export function MenuPageContent() {
@@ -96,11 +68,7 @@ export function MenuPageContent() {
   const filtered = useMemo(() => {
     return menuItems.filter((item) => {
       const matchCategory = item.category === category;
-      const matchSub = matchesSubcategory(
-        item.subcategory,
-        subFilter,
-        category,
-      );
+      const matchSub = matchesSubcategory(item.subcategory, subFilter);
       const matchSearch =
         search.trim() === "" ||
         item.name.toLowerCase().includes(search.toLowerCase()) ||
@@ -242,16 +210,7 @@ export function MenuPageContent() {
         >
           <AnimatePresence mode="popLayout">
             {filtered.map((item, i) => (
-              <MenuItemCard
-                key={item.id}
-                item={item}
-                index={i}
-                variant={
-                  item.featured || item.layout === "wide" || i % 7 === 0
-                    ? "featured"
-                    : "default"
-                }
-              />
+              <MenuItemCard key={item.id} item={item} index={i} />
             ))}
           </AnimatePresence>
         </motion.div>

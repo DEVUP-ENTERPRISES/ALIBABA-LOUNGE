@@ -5,21 +5,14 @@ import Image from "next/image";
 import { motion, useMotionValue, useSpring, useTransform } from "framer-motion";
 import type { MenuItem } from "@/lib/menu/types";
 import { MenuTagBadge } from "@/components/ui/MenuTagBadge";
-import { cn } from "@/lib/utils";
 import { resolveImageUrl } from "@/lib/image-url";
 
 interface MenuItemCardProps {
   item: MenuItem;
   index?: number;
-  variant?: "default" | "featured";
 }
 
-export function MenuItemCard({
-  item,
-  index = 0,
-  variant = "default",
-}: MenuItemCardProps) {
-  const isFeatured = variant === "featured" || item.layout === "wide";
+export function MenuItemCard({ item, index = 0 }: MenuItemCardProps) {
   const imageSrc = resolveImageUrl(item.image);
   const ref = useRef<HTMLElement>(null);
   const x = useMotionValue(0);
@@ -60,26 +53,16 @@ export function MenuItemCard({
       onMouseMove={handleMove}
       onMouseLeave={handleLeave}
       style={{ rotateX, rotateY, transformPerspective: 1200 }}
-      className={cn(
-        "cinematic-frame group relative flex flex-col overflow-hidden rounded-2xl bg-[#0c0c0e]/90 transition-[border-color,box-shadow] duration-500 hover:border-[#d4af37]/32 hover:shadow-[0_20px_60px_rgba(0,0,0,0.5),0_0_40px_rgba(212,175,55,0.08)] w-full",
-        isFeatured && "lg:col-span-2",
-      )}
+      className="cinematic-frame group relative flex h-full w-full flex-col overflow-hidden rounded-2xl bg-[#0c0c0e]/90 transition-[border-color,box-shadow] duration-500 hover:border-[#d4af37]/32 hover:shadow-[0_20px_60px_rgba(0,0,0,0.5),0_0_40px_rgba(212,175,55,0.08)]"
     >
-      <div
-        className={cn(
-          "relative w-full overflow-hidden",
-          isFeatured ? "aspect-[16/10] md:aspect-[21/9]" : "aspect-[5/4]",
-        )}
-      >
+      {/* Every card keeps the same 4:3 image window so the grid stays even. */}
+      <div className="relative w-full shrink-0 overflow-hidden aspect-[4/3]">
         <Image
           src={imageSrc}
           alt={item.name}
           fill
-          sizes={
-            isFeatured
-              ? "(max-width: 768px) 100vw, 66vw"
-              : "(max-width: 768px) 100vw, 33vw"
-          }
+          quality={90}
+          sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, (max-width: 1280px) 33vw, 25vw"
           className="object-cover transition-transform duration-[1.1s] ease-out group-hover:scale-[1.06]"
         />
         <div className="absolute inset-0 bg-gradient-to-t from-[#050505] via-[#050505]/25 to-[#050505]/10" />
@@ -100,12 +83,7 @@ export function MenuItemCard({
 
       <div className="relative flex flex-1 flex-col p-5 md:p-6">
         <div className="absolute top-0 right-6 left-6 h-px bg-gradient-to-r from-transparent via-[#d4af37]/25 to-transparent" />
-        <h3
-          className={cn(
-            "font-[family-name:var(--font-display)] leading-tight tracking-wide text-white",
-            isFeatured ? "text-2xl md:text-3xl" : "text-xl md:text-2xl",
-          )}
-        >
+        <h3 className="font-[family-name:var(--font-display)] text-xl leading-tight tracking-wide text-white md:text-2xl">
           {item.name}
         </h3>
         <p className="mt-3 flex-1 font-[family-name:var(--font-body)] text-sm leading-relaxed text-white/58 md:text-[15px]">
