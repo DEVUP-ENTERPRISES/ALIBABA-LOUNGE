@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import Image from "next/image";
 import { usePathname, useRouter } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
@@ -196,14 +197,18 @@ export function Navbar() {
             <Link
               href="/"
               onClick={closeMobile}
-              className="group flex flex-col leading-none"
+              aria-label="Alibaba Hookah Lounge — home"
+              className="group block"
             >
-              <span className="font-[family-name:var(--font-display)] text-[22px] tracking-[0.22em] text-white uppercase transition-colors duration-400 group-hover:text-[#f5e6c8]">
-                Alibaba
-              </span>
-              <span className="mt-[2px] font-[family-name:var(--font-accent)] text-[7px] tracking-[0.42em] text-[#d4af37]/70 uppercase transition-colors duration-400 group-hover:text-[#d4af37]">
-                Eatery &amp; Lounge
-              </span>
+              <Image
+                src="/alibaba-logo.png"
+                alt="Alibaba Hookah Lounge"
+                width={979}
+                height={324}
+                priority
+                sizes="176px"
+                className="h-11 w-auto transition-[filter,opacity] duration-400 group-hover:brightness-110 group-hover:drop-shadow-[0_0_16px_rgba(212,175,55,0.45)] sm:h-12"
+              />
             </Link>
           </div>
 
@@ -363,14 +368,17 @@ export function Navbar() {
                 <Link
                   href="/"
                   onClick={closeMobile}
-                  className="flex flex-col leading-none"
+                  aria-label="Alibaba Hookah Lounge — home"
+                  className="block"
                 >
-                  <span className="font-[family-name:var(--font-display)] text-xl tracking-[0.22em] text-white uppercase">
-                    Alibaba
-                  </span>
-                  <span className="font-[family-name:var(--font-accent)] text-[7px] tracking-[0.4em] text-[#d4af37]/60 uppercase">
-                    Eatery &amp; Lounge
-                  </span>
+                  <Image
+                    src="/alibaba-logo.png"
+                    alt="Alibaba Hookah Lounge"
+                    width={979}
+                    height={324}
+                    sizes="150px"
+                    className="h-9 w-auto"
+                  />
                 </Link>
                 <motion.button
                   whileTap={{ scale: 0.88 }}
