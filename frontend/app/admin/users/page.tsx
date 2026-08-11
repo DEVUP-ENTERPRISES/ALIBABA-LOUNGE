@@ -40,7 +40,7 @@ export default function AdminUsersPage() {
   const [total, setTotal]     = useState(0);
 
   useEffect(() => {
-    userApi.list("?limit=100")
+    userApi.list("?limit=500")
       .then((data) => {
         if (data) {
           const records = data.users as UserRecord[];

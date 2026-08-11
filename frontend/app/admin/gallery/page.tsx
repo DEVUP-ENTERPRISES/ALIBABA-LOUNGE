@@ -25,7 +25,7 @@ export default function AdminGalleryPage() {
   const [editFile, setEditFile] = useState<File | null>(null);
   const [uploadKey, setUploadKey] = useState(0);
 
-  const loadImages = async () => setImages(await galleryApi.list("?limit=100"));
+  const loadImages = async () => setImages(await galleryApi.list("?limit=500"));
 
   useEffect(() => {
     // eslint-disable-next-line react-hooks/set-state-in-effect -- loads server-backed gallery data on mount.

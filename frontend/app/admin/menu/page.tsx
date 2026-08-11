@@ -14,6 +14,9 @@ import { cn } from "@/lib/utils";
 import { menuApi } from "@/lib/admin/data-api";
 import { resolveImageUrl } from "@/lib/image-url";
 
+// Rows rendered per batch; "Show more" reveals another batch.
+const PAGE_SIZE = 50;
+
 export default function AdminMenuPage() {
   const [search, setSearch] = useState("");
   const [categoryFilter, setCategoryFilter] = useState("all");
@@ -22,11 +25,12 @@ export default function AdminMenuPage() {
   const [deleteId, setDeleteId] = useState<string | null>(null);
   const [menuItems, setMenuItems] = useState<MenuItem[]>([]);
   const [loading, setLoading] = useState(true);
+  const [visibleCount, setVisibleCount] = useState(PAGE_SIZE);
 
   const loadMenu = async () => {
     setLoading(true);
     try {
-      setMenuItems(await menuApi.list("?limit=100"));
+      setMenuItems(await menuApi.list("?limit=500"));
     } finally {
       setLoading(false);
     }
@@ -36,6 +40,12 @@ export default function AdminMenuPage() {
     // eslint-disable-next-line react-hooks/set-state-in-effect -- loads server-backed admin table data on mount.
     void loadMenu();
   }, []);
+
+  // A new search or category means a new result set — start from the top.
+  useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect -- resets paging when filters change.
+    setVisibleCount(PAGE_SIZE);
+  }, [search, categoryFilter]);
 
   const filtered = useMemo(() => {
     return menuItems.filter((item) => {
@@ -136,7 +146,7 @@ export default function AdminMenuPage() {
             </tr>
           </thead>
           <tbody>
-            {filtered.slice(0, 50).map((item) => (
+            {filtered.slice(0, visibleCount).map((item) => (
               <tr
                 key={item.id}
                 className="border-b border-white/[0.04] transition-colors hover:bg-white/[0.02]"
@@ -199,10 +209,19 @@ export default function AdminMenuPage() {
           </tbody>
         </table>
         {loading && <p className="px-4 py-4 text-center text-sm text-white/40">Loading menu...</p>}
-        {filtered.length > 50 && (
-          <p className="px-4 py-3 text-center text-xs text-white/35">
-            Showing 50 of {filtered.length} items
-          </p>
+        {filtered.length > visibleCount && (
+          <div className="px-4 py-3 text-center">
+            <p className="text-xs text-white/35">
+              Showing {visibleCount} of {filtered.length} items
+            </p>
+            <button
+              type="button"
+              onClick={() => setVisibleCount((n) => n + PAGE_SIZE)}
+              className="mt-2 rounded-full border border-[#d4af37]/40 px-4 py-1.5 text-xs text-[#f5e6c8] transition hover:border-[#d4af37] hover:bg-[#d4af37]/10"
+            >
+              Show more
+            </button>
+          </div>
         )}
       </div>
 

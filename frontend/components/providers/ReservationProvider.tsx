@@ -51,7 +51,7 @@ export function ReservationProvider({
     setLoading(true);
     setError(null);
     try {
-      setReservations(await reservationApi.list("?limit=100"));
+      setReservations(await reservationApi.list("?limit=500"));
     } catch (err) {
       setError(err instanceof Error ? err.message : "Unable to load reservations.");
       setReservations([]);

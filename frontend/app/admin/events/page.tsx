@@ -18,7 +18,7 @@ export default function AdminEventsPage() {
   const [deleteId, setDeleteId] = useState<string | null>(null);
   const [events, setEvents] = useState<AdminEvent[]>([]);
 
-  const loadEvents = async () => setEvents(await eventApi.list("?limit=100"));
+  const loadEvents = async () => setEvents(await eventApi.list("?limit=500"));
 
   useEffect(() => {
     // eslint-disable-next-line react-hooks/set-state-in-effect -- loads server-backed admin table data on mount.
