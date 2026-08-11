@@ -22,7 +22,7 @@ export function StickyReserveCTA() {
           animate={{ y: 0, opacity: 1 }}
           exit={{ y: 80, opacity: 0 }}
           transition={{ type: "spring", stiffness: 300, damping: 32 }}
-          className="fixed bottom-0 left-0 right-0 z-[8000] lg:hidden"
+          className="sticky-reserve-cta fixed bottom-0 left-0 right-0 z-[8000] lg:hidden"
         >
           {/* Top gold line */}
           <div className="h-px bg-gradient-to-r from-transparent via-[#d4af37]/40 to-transparent" />

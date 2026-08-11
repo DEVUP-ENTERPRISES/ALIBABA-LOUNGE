@@ -165,8 +165,13 @@ export function Navbar() {
   }, [pathname]);
   useEffect(() => {
     document.body.style.overflow = mobileOpen ? "hidden" : "";
+    // The fixed Reserve bar sits at z-8000, above the drawer. Flag the open
+    // state so CSS can hide it — otherwise it covers the drawer's own
+    // actions and shows a second, duplicate "Reserve a Table".
+    document.body.dataset.menuOpen = mobileOpen ? "true" : "false";
     return () => {
       document.body.style.overflow = "";
+      delete document.body.dataset.menuOpen;
     };
   }, [mobileOpen]);
 
@@ -417,7 +422,7 @@ export function Navbar() {
                           href={link.href}
                           onClick={closeMobile}
                           className={cn(
-                            "group flex items-center justify-between rounded-xl px-4 py-3.5 font-[family-name:var(--font-display)] text-2xl tracking-[0.1em] uppercase transition-all duration-300",
+                            "group flex items-center justify-between rounded-xl px-4 py-3 font-[family-name:var(--font-display)] text-xl tracking-[0.08em] uppercase transition-all duration-300",
                             active
                               ? "text-[#d4af37] bg-[#d4af37]/[0.07]"
                               : "text-white/60 hover:text-white hover:bg-white/[0.03]",
@@ -446,7 +451,7 @@ export function Navbar() {
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: 0.35, duration: 0.5 }}
-                className="px-6 pb-8 pt-4 border-t border-white/[0.06] space-y-3"
+                className="safe-bottom shrink-0 space-y-3 border-t border-white/[0.06] px-6 pt-4 pb-6"
               >
                 {user ? (
                   <>

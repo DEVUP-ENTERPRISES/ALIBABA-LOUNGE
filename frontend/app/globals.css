@@ -141,3 +141,17 @@ html {
     font-size: 16px;
   }
 }
+
+/* The mobile drawer owns the screen while it is open. The fixed Reserve
+   bar lives at z-8000 (above the drawer at z-50), so without this it
+   covers the drawer's own Sign Out / Account rows and renders a second,
+   duplicate "Reserve a Table". The drawer already has its own. */
+body[data-menu-open="true"] .sticky-reserve-cta {
+  opacity: 0;
+  pointer-events: none;
+  transform: translateY(100%);
+}
+
+.sticky-reserve-cta {
+  transition: opacity 0.25s ease, transform 0.25s ease;
+}
