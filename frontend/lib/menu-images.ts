@@ -2,6 +2,8 @@
 const p = (id: number, w = 800) =>
   `https://images.pexels.com/photos/${id}/pexels-photo-${id}.jpeg?auto=compress&cs=tinysrgb&w=${w}`;
 
+import { shopImages } from "@/lib/shop-images";
+
 export const menuImages = {
   appetizers: p(1642454),
   sandwiches: p(1633578),
@@ -16,10 +18,10 @@ export const menuImages = {
   fries: p(1893556),
   wings: p(60616),
   chaat: p(1640777),      // replaced unreliable high-ID
-  hookah: p(341481),           // hookah narguile smoke — atmospheric dark
-  hookahLounge: p(30562747),   // glowing hookah coals in traditional setup
-  hookahPremium: p(30694805),  // close-up hookah with glowing charcoal
-  hookahGreen: p(4538912),     // selective focus green hookah
+  hookah: shopImages.showcase,
+  hookahLounge: shopImages.mainLounge,
+  hookahPremium: shopImages.showcase,
+  hookahGreen: shopImages.seatingLounge,
   mocktails: p(1125720),
   milkshakes: p(103566),
   juices: p(143133),
@@ -28,12 +30,12 @@ export const menuImages = {
   desserts: p(45201),
   cake: p(291528),
   falooda: p(1120588),
-  lounge: p(1199957),
-  catering: p(3184191),
-  events: p(1105666),
-  hero: p(262978, 1920),
-  experience: p(1199957),
-  cuisine: p(958545),
+  lounge: shopImages.mainLounge,
+  catering: shopImages.seatingLounge,
+  events: shopImages.eventLounge,
+  hero: shopImages.mainLounge,
+  experience: shopImages.seatingLounge,
+  cuisine: shopImages.showcase,
 } as const;
 
 export type ImageKey = keyof typeof menuImages;

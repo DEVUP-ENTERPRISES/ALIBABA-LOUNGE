@@ -113,7 +113,7 @@ export function ExperienceSection() {
               className="grid grid-cols-3 gap-3 mt-1"
             >
               {[
-                { value: "7PM-3AM", label: "Hours" },
+                { value: "1PM-4AM", label: "Hours" },
                 { value: "VIP", label: "Seating" },
                 { value: "Live", label: "Events" },
               ].map((s) => (

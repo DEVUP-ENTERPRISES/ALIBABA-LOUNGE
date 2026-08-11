@@ -1,54 +1,70 @@
 "use client";
 
-import { memo, useCallback, useEffect, useRef, useState } from "react";
+import { memo, useEffect, useRef, useState } from "react";
 import Image from "next/image";
 import { motion } from "framer-motion";
 import { MagneticButton } from "@/components/ui/MagneticButton";
 
-const HERO_PLAYLIST = [
-  "/videos/hero.mp4",
-  "/videos/burger.mp4",
-  "/videos/grill.mp4",
-  "/videos/pizza.mp4",
-] as const;
+import { heroSlides } from "@/lib/shop-images";
 
-const HeroBackgroundVideo = memo(function HeroBackgroundVideo() {
+const SLIDE_MS = 6000;
+
+/**
+ * Rotating stills of the actual lounge.
+ *
+ * This replaced a 45 MB playlist of stock food videos — vegetables on a
+ * chopping board, burgers, pizza — which was both wrong for a hookah lounge
+ * and the heaviest thing on the page.
+ */
+const HeroBackdrop = memo(function HeroBackdrop() {
+  const [index, setIndex] = useState(0);
   const timerRef = useRef<number | null>(null);
-  const [videoIndex, setVideoIndex] = useState(0);
-  const [ready, setReady] = useState(false);
-  const [visible, setVisible] = useState(false);
 
-  useEffect(() => () => { if (timerRef.current) clearTimeout(timerRef.current); }, []);
-
-  const showVideo = useCallback(() => { setReady(true); setVisible(true); }, []);
-
-  const playNext = useCallback(() => {
-    setVisible(false);
-    if (timerRef.current) clearTimeout(timerRef.current);
-    timerRef.current = window.setTimeout(() => {
-      setReady(false);
-      setVideoIndex((i) => (i + 1) % HERO_PLAYLIST.length);
-    }, 500);
+  useEffect(() => {
+    timerRef.current = window.setInterval(
+      () => setIndex((i) => (i + 1) % heroSlides.length),
+      SLIDE_MS
+    );
+    return () => {
+      if (timerRef.current) window.clearInterval(timerRef.current);
+    };
   }, []);
 
   return (
-    <video
-      src={HERO_PLAYLIST[videoIndex]}
-      autoPlay muted loop={false} playsInline preload="metadata"
-      onCanPlay={showVideo}
-      onEnded={playNext}
-      className={`absolute inset-0 z-10 h-full w-full object-cover transition-opacity duration-700 ease-in-out ${ready && visible ? "opacity-60" : "opacity-0"}`}
-      style={{ filter: "contrast(1.06) saturate(1.15) brightness(0.88)" }}
-    />
+    <div className="absolute inset-0 z-10">
+      {heroSlides.map((src, i) => (
+        <motion.div
+          key={src}
+          initial={false}
+          animate={{ opacity: i === index ? 0.55 : 0, scale: i === index ? 1.06 : 1 }}
+          transition={{
+            opacity: { duration: 1.4, ease: "easeInOut" },
+            scale: { duration: SLIDE_MS / 1000 + 1.4, ease: "linear" },
+          }}
+          className="absolute inset-0"
+        >
+          <Image
+            src={src}
+            alt=""
+            fill
+            priority={i === 0}
+            quality={82}
+            sizes="100vw"
+            className="object-cover"
+            style={{ filter: "contrast(1.05) saturate(1.08) brightness(0.9)" }}
+          />
+        </motion.div>
+      ))}
+    </div>
   );
 });
 
 export function HeroSection() {
   return (
     <section className="relative flex min-h-[92dvh] w-full flex-col items-center justify-center overflow-hidden bg-[#050505] sm:min-h-[100dvh]">
-      {/* Video bg */}
+      {/* Lounge backdrop */}
       <div className="absolute inset-0 z-0 bg-black">
-        <HeroBackgroundVideo />
+        <HeroBackdrop />
         <div className="absolute inset-0 z-20 bg-gradient-to-b from-black/72 via-black/12 to-[#050505] pointer-events-none" />
         <div className="absolute inset-0 z-20 bg-gradient-to-r from-[#050505]/55 via-transparent to-[#050505]/55 pointer-events-none" />
         <div className="absolute inset-0 z-20 bg-[radial-gradient(ellipse_at_center,transparent_25%,rgba(0,0,0,0.55)_100%)] pointer-events-none" />
