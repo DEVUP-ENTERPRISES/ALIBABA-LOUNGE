@@ -2,7 +2,14 @@
 
 import { createContext, useCallback, useContext, useEffect, useMemo, useState } from "react";
 import { useRouter } from "next/navigation";
-import { API_BASE_URL, parseApiError, type AdminProfile } from "@/lib/admin/api";
+import {
+  API_BASE_URL,
+  clearAdminToken,
+  getAdminToken,
+  parseApiError,
+  setAdminToken,
+  type AdminProfile,
+} from "@/lib/admin/api";
 import { ADMIN_BASE } from "@/lib/admin/navigation";
 
 interface LoginPayload {
@@ -30,13 +37,20 @@ export function AdminAuthProvider({ children }: { children: React.ReactNode }) {
 
   const refreshAdmin = useCallback(async () => {
     try {
+      const token = getAdminToken();
+      const headers: Record<string, string> = { Accept: "application/json" };
+      if (token) {
+        headers.Authorization = `Bearer ${token}`;
+      }
+
       const response = await fetch(`${API_BASE_URL}/auth/me`, {
         method: "GET",
         credentials: "include",
-        headers: { Accept: "application/json" },
+        headers,
       });
 
       if (!response.ok) {
+        clearAdminToken();
         setAdmin(null);
         setStatus("unauthenticated");
         return null;
@@ -47,6 +61,7 @@ export function AdminAuthProvider({ children }: { children: React.ReactNode }) {
       setStatus("authenticated");
       return data.admin;
     } catch {
+      clearAdminToken();
       setAdmin(null);
       setStatus("unauthenticated");
       return null;
@@ -74,7 +89,15 @@ export function AdminAuthProvider({ children }: { children: React.ReactNode }) {
         throw new Error(await parseApiError(response));
       }
 
-      const data = (await response.json()) as { admin: AdminProfile };
+      const data = (await response.json()) as {
+        admin: AdminProfile;
+        token?: string;
+      };
+
+      if (data.token) {
+        setAdminToken(data.token, rememberMe);
+      }
+
       setAdmin(data.admin);
       setStatus("authenticated");
       return data.admin;
@@ -84,12 +107,19 @@ export function AdminAuthProvider({ children }: { children: React.ReactNode }) {
 
   const logout = useCallback(async () => {
     try {
+      const token = getAdminToken();
+      const headers: Record<string, string> = { Accept: "application/json" };
+      if (token) {
+        headers.Authorization = `Bearer ${token}`;
+      }
+
       await fetch(`${API_BASE_URL}/auth/logout`, {
         method: "POST",
         credentials: "include",
-        headers: { Accept: "application/json" },
+        headers,
       });
     } finally {
+      clearAdminToken();
       setAdmin(null);
       setStatus("unauthenticated");
       router.replace(`${ADMIN_BASE}/login`);

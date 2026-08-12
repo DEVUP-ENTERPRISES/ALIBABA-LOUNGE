@@ -46,7 +46,10 @@ function AdminRouteGuard({ children }: { children: React.ReactNode }) {
 
 export function AdminLayoutClient({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
-  const isLogin = pathname === `${ADMIN_BASE}/login`;
+  const isLogin =
+    pathname === `${ADMIN_BASE}/login` ||
+    pathname === "/admin/login" ||
+    (typeof pathname === "string" && pathname.endsWith("/login"));
 
   return (
     <AdminAuthProvider>

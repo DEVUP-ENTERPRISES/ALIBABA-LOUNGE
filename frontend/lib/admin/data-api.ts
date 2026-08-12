@@ -1,4 +1,4 @@
-import { API_BASE_URL, parseApiError, resolveApiAssetUrl } from "@/lib/admin/api";
+import { API_BASE_URL, getAdminToken, parseApiError, resolveApiAssetUrl } from "@/lib/admin/api";
 import type {
   AdminEvent,
   AdminFranchiseApp,
@@ -34,6 +34,11 @@ async function request<T>(
     headers.set("Content-Type", "application/json");
   }
   headers.set("Accept", "application/json");
+
+  const token = getAdminToken();
+  if (token && !headers.has("Authorization")) {
+    headers.set("Authorization", `Bearer ${token}`);
+  }
 
   const response = await fetch(`${API_BASE_URL}${path}`, {
     ...options,
