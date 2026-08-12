@@ -6,32 +6,33 @@ import { usePathname } from "next/navigation";
 /**
  * Page transition on navigation.
  *
- * Keyed on pathname — without that this mounts once and never animates
- * again, so nav clicks swapped pages with no transition at all.
+ * The page content is a plain keyed motion.div, deliberately NOT wrapped in
+ * AnimatePresence. AnimatePresence keeps the outgoing child mounted until its
+ * exit resolves, and since page content sits in normal document flow that put
+ * two whole pages in the document at once — the old page's footer above the
+ * new page's hero, so the site appeared to start again below itself.
  *
- * `mode="wait"` is avoided: holding the incoming page until the outgoing
- * one finishes doubles the perceived wait. Instead the new page fades up
- * while a brief gold veil passes over the top, which reads as a deliberate
- * transition rather than a flicker.
+ * Changing the key lets React swap the tree atomically: exactly one page is
+ * ever in the DOM. The fade-up still plays because the new element mounts with
+ * its own initial state.
+ *
+ * The veil keeps AnimatePresence — it is fixed-position, so overlapping copies
+ * cannot affect layout.
  */
 export function PageTransition({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
 
   return (
     <>
-      <AnimatePresence initial={false}>
-        <motion.div
-          key={pathname}
-          initial={{ opacity: 0, y: 14 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.62, ease: [0.22, 1, 0.36, 1] }}
-        >
-          {children}
-        </motion.div>
-      </AnimatePresence>
+      <motion.div
+        key={pathname}
+        initial={{ opacity: 0, y: 14 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.62, ease: [0.22, 1, 0.36, 1] }}
+      >
+        {children}
+      </motion.div>
 
-      {/* Gold veil sweeping over the swap. Pointer-events off so it never
-          blocks a click landing on the page underneath. */}
       <AnimatePresence initial={false}>
         <motion.div
           key={`veil-${pathname}`}
