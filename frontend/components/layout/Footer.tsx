@@ -52,7 +52,10 @@ export function Footer() {
       <div className="absolute inset-0 film-grain opacity-60" />
       <div className="absolute top-0 left-1/2 h-px w-2/3 -translate-x-1/2 bg-gradient-to-r from-transparent via-[#d4af37]/50 to-transparent" />
 
-      <div className="relative mx-auto max-w-7xl px-5 sm:px-8 pt-14 sm:pt-20 pb-8">
+      {/* pb-mobile-cta clears the fixed order bar below lg — without it the
+          bar sat on top of the copyright line. Padding also matches the
+          horizontal scale used across the site. */}
+      <div className="pb-mobile-cta relative mx-auto max-w-7xl px-5 pt-14 sm:px-8 sm:pt-20 md:px-12 lg:px-20 lg:pb-8">
         <div className="grid gap-10 sm:gap-12 md:grid-cols-2 lg:grid-cols-4">
           {/* Brand */}
           <motion.div
