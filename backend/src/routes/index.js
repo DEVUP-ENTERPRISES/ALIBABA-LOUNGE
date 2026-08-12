@@ -9,6 +9,7 @@ const menuRoutes = require("./menuRoutes");
 const orderRoutes = require("./orderRoutes");
 const reservationRoutes = require("./reservationRoutes");
 const settingRoutes = require("./settingRoutes");
+const suggestionRoutes = require("./suggestionRoutes");
 const tableRoutes = require("./tableRoutes");
 const reviewRoutes = require("./reviewRoutes");
 const userRoutes = require("./userRoutes");
@@ -32,6 +33,7 @@ router.use("/dashboard", dashboardRoutes);
 router.use("/admins", adminRoutes);
 router.use("/users", userRoutes);
 router.use("/settings", settingRoutes);
+router.use("/suggestions", suggestionRoutes);
 router.use("/tables", tableRoutes);
 router.use("/reviews", reviewRoutes);
 

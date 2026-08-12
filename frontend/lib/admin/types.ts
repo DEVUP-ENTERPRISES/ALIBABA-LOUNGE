@@ -81,3 +81,73 @@ export interface AdminReview {
   isApproved: boolean;
   createdAt?: string;
 }
+
+// ── Floor & orders ───────────────────────────────────────────
+
+export type TableSection = "main-dining" | "backyard" | "patio" | "bar";
+export type TableStatus = "available" | "occupied" | "reserved" | "cleaning";
+
+export interface FloorTable {
+  id: string;
+  code: string;
+  section: TableSection;
+  seats: number;
+  status: TableStatus;
+  sortOrder: number;
+  isActive: boolean;
+  openOrders: number;
+}
+
+export type OrderStatus =
+  | "placed"
+  | "accepted"
+  | "preparing"
+  | "served"
+  | "completed"
+  | "cancelled";
+
+export interface OrderItem {
+  menuItem: string;
+  title: string;
+  price: number;
+  quantity: number;
+  category: string;
+  notes?: string;
+}
+
+export interface Order {
+  id: string;
+  orderNumber: number;
+  table: string;
+  tableCode: string;
+  tableSection?: TableSection;
+  customer?: string | null;
+  customerName: string;
+  customerPhone: string;
+  items: OrderItem[];
+  status: OrderStatus;
+  assignedTo?: string | null;
+  assignedName: string;
+  subtotal: number;
+  tax: number;
+  total: number;
+  notes: string;
+  placedAt: string;
+  acceptedAt?: string | null;
+  servedAt?: string | null;
+  completedAt?: string | null;
+}
+
+export type StaffRole = "super-admin" | "admin" | "manager" | "server";
+
+export interface StaffMember {
+  id: string;
+  name: string;
+  displayName: string;
+  email: string;
+  phone: string;
+  role: StaffRole;
+  isActive: boolean;
+  lastLoginAt?: string | null;
+  createdAt?: string;
+}

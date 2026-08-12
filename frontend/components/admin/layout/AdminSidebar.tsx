@@ -15,6 +15,8 @@ import {
   X,
   Users,
   Star,
+  LayoutGrid,
+  UserCog,
 } from "lucide-react";
 import { adminNavItems, ADMIN_BASE } from "@/lib/admin/navigation";
 import { cn } from "@/lib/utils";
@@ -30,6 +32,9 @@ const icons: Record<string, React.ComponentType<{ className?: string }>> = {
   image: ImageIcon,
   star: Star,
   users: Users,
+  "clipboard-list": ClipboardList,
+  "layout-grid": LayoutGrid,
+  "user-cog": UserCog,
   settings: Settings,
 };
 

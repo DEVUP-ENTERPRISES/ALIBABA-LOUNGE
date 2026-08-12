@@ -7,6 +7,10 @@ import type {
   AdminReview,
   AdminSetting,
   GalleryImage,
+  FloorTable,
+  Order,
+  OrderStatus,
+  StaffMember,
 } from "@/lib/admin/types";
 import type { MenuItem } from "@/lib/menu/types";
 
@@ -267,5 +271,106 @@ export const reviewApi = {
   },
   async remove(id: string) {
     await request(`/reviews/${id}`, { method: "DELETE" });
+  },
+};
+
+// ── Floor ────────────────────────────────────────────────────
+
+export const tableApi = {
+  async list(params = "") {
+    const data = await request<{ tables: FloorTable[] }>(`/tables${params}`);
+    return data.tables;
+  },
+  async create(payload: JsonRecord) {
+    const data = await request<{ table: FloorTable }>("/tables", {
+      method: "POST",
+      body: JSON.stringify(payload),
+    });
+    return data.table;
+  },
+  async update(id: string, payload: JsonRecord) {
+    const data = await request<{ table: FloorTable }>(`/tables/${id}`, {
+      method: "PUT",
+      body: JSON.stringify(payload),
+    });
+    return data.table;
+  },
+  async remove(id: string) {
+    await request(`/tables/${id}`, { method: "DELETE" });
+  },
+};
+
+// ── Orders ───────────────────────────────────────────────────
+
+export const orderApi = {
+  /** Staff queue. Defaults to open orders, oldest first. */
+  async list(params = "") {
+    const data = await request<{ orders: Order[] }>(`/orders${params}`);
+    return data.orders;
+  },
+  async mine() {
+    const data = await request<{ orders: Order[] }>("/orders/mine");
+    return data.orders;
+  },
+  async create(payload: JsonRecord) {
+    const data = await request<{ order: Order }>("/orders", {
+      method: "POST",
+      body: JSON.stringify(payload),
+    });
+    return data.order;
+  },
+  async accept(id: string) {
+    const data = await request<{ order: Order }>(`/orders/${id}/accept`, { method: "PUT" });
+    return data.order;
+  },
+  async setStatus(id: string, status: OrderStatus) {
+    const data = await request<{ order: Order }>(`/orders/${id}/status`, {
+      method: "PUT",
+      body: JSON.stringify({ status }),
+    });
+    return data.order;
+  },
+  async addItems(id: string, items: { menuItem: string; quantity?: number; notes?: string }[]) {
+    const data = await request<{ order: Order }>(`/orders/${id}/items`, {
+      method: "PUT",
+      body: JSON.stringify({ items }),
+    });
+    return data.order;
+  },
+  async assign(id: string, assignedTo: string) {
+    const data = await request<{ order: Order }>(`/orders/${id}/assign`, {
+      method: "PUT",
+      body: JSON.stringify({ assignedTo }),
+    });
+    return data.order;
+  },
+};
+
+// ── Staff ────────────────────────────────────────────────────
+
+export const staffApi = {
+  async list(params = "") {
+    const data = await request<{ admins: StaffMember[] }>(`/admins${params}`);
+    return data.admins;
+  },
+  async create(payload: JsonRecord) {
+    const data = await request<{ admin: StaffMember }>("/admins", {
+      method: "POST",
+      body: JSON.stringify(payload),
+    });
+    return data.admin;
+  },
+  async update(id: string, payload: JsonRecord) {
+    const data = await request<{ admin: StaffMember }>(`/admins/${id}`, {
+      method: "PUT",
+      body: JSON.stringify(payload),
+    });
+    return data.admin;
+  },
+  async resetPassword(id: string, password: string) {
+    await request(`/admins/${id}/password`, {
+      method: "PUT",
+      body: JSON.stringify({ password }),
+    });
   },
 };
