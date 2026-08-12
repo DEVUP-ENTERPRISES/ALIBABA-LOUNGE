@@ -337,6 +337,12 @@ export const orderApi = {
     });
     return data.order;
   },
+  async stats() {
+    return request<{
+      me: { today: number; month: number; openNow: number; name: string };
+      leaderboard: { name: string; orders: number; revenue: number }[];
+    }>("/orders/stats/me");
+  },
   async assign(id: string, assignedTo: string) {
     const data = await request<{ order: Order }>(`/orders/${id}/assign`, {
       method: "PUT",

@@ -1,4 +1,5 @@
 const Menu = require("../models/Menu");
+const Order = require("../models/Order");
 const env = require("../config/env");
 const { asyncHandler } = require("../utils/asyncHandler");
 
@@ -116,6 +117,79 @@ async function modelSuggestions(cart, menu) {
   }
 }
 
+
+/**
+ * A short, playful line for the last-call prompt.
+ *
+ * The model writes it when a key is present; otherwise one of these is picked.
+ * They are deliberately warm rather than pushy — this is a lounge, not a
+ * checkout funnel, and a guest who feels sold to does not come back.
+ */
+const FALLBACK_LINES = [
+  "Hold on — a hookah without something cold is a crime.",
+  "One thing missing before we fire up the coals.",
+  "Your bowl is sorted. Your glass is not.",
+  "Regulars never leave this off the order.",
+  "Trust us on this one — it makes the whole session.",
+  "Almost perfect. Almost.",
+  "The good sessions always have one of these on the table.",
+];
+
+function fallbackLine() {
+  return FALLBACK_LINES[Math.floor(Math.random() * FALLBACK_LINES.length)];
+}
+
+async function modelLine(cart, picked) {
+  const key = process.env.OPENROUTER_API_KEY;
+  if (!key) return null;
+
+  const controller = new AbortController();
+  const timer = setTimeout(() => controller.abort(), TIMEOUT_MS);
+  try {
+    const res = await fetch("https://openrouter.ai/api/v1/chat/completions", {
+      method: "POST",
+      signal: controller.signal,
+      headers: {
+        Authorization: `Bearer ${key}`,
+        "Content-Type": "application/json",
+        "HTTP-Referer": env.clientUrl,
+        "X-Title": "Alibaba Hookah Lounge",
+      },
+      body: JSON.stringify({
+        model: MODEL,
+        max_tokens: 40,
+        temperature: 0.9,
+        messages: [
+          {
+            role: "system",
+            content:
+              "You write one playful line for a hookah lounge in Dallas, shown " +
+              "just before a guest places their order, nudging them toward " +
+              "something they left off. Under 12 words. Warm and a little " +
+              "cheeky, never pushy, no emoji, no exclamation marks, no hashtags. " +
+              "Reply with the line only.",
+          },
+          {
+            role: "user",
+            content: `They ordered: ${cart.map((i) => i.title).join(", ")}. We want to suggest: ${picked
+              .map((i) => i.title)
+              .join(", ")}.`,
+          },
+        ],
+      }),
+    });
+    if (!res.ok) return null;
+    const data = await res.json();
+    const line = (data?.choices?.[0]?.message?.content || "").trim().replace(/^["']|["']$/g, "");
+    // Guard against a chatty model: a paragraph is not a nudge.
+    return line && line.length <= 90 ? line : null;
+  } catch {
+    return null;
+  } finally {
+    clearTimeout(timer);
+  }
+}
+
 function formatItem(m) {
   return {
     id: m._id,
@@ -129,8 +203,36 @@ function formatItem(m) {
 }
 
 const getSuggestions = asyncHandler(async (req, res) => {
-  const ids = (req.body.itemIds || []).slice(0, 30);
+  let ids = (req.body.itemIds || []).slice(0, 30);
+
+  // The half-hour nudge has an empty cart, so base ideas on what is already
+  // running on the table instead of returning nothing.
+  if (ids.length === 0 && req.body.tableId) {
+    const openTab = await Order.findOne({
+      table: req.body.tableId,
+      status: { $in: ["placed", "accepted", "preparing", "served"] },
+    })
+      .select("items.menuItem")
+      .lean();
+    if (openTab) ids = openTab.items.map((i) => String(i.menuItem)).slice(0, 30);
+  }
+
   if (ids.length === 0) return res.json({ success: true, suggestions: [], source: "none" });
+
+  // Anything already running on the table counts as "has it" too, otherwise
+  // a second round suggests what the guest is already smoking or drinking.
+  if (req.body.tableId) {
+    const openTab = await Order.findOne({
+      table: req.body.tableId,
+      status: { $in: ["placed", "accepted", "preparing", "served"] },
+    })
+      .select("items.menuItem")
+      .lean();
+    if (openTab) {
+      const onTab = openTab.items.map((i) => String(i.menuItem));
+      ids = [...new Set([...ids.map(String), ...onTab])];
+    }
+  }
 
   const [cart, menu] = await Promise.all([
     Menu.find({ _id: { $in: ids } }),
@@ -141,9 +243,17 @@ const getSuggestions = asyncHandler(async (req, res) => {
   const fromModel = await modelSuggestions(cart, menu);
   const picked = fromModel || ruleBasedSuggestions(cart, menu);
 
+  // Last call runs once, right before the order is sent, so it also carries a
+  // line of copy. Ordinary in-page suggestions stay silent.
+  let headline = null;
+  if (req.body.mode === "last-call" && picked.length > 0) {
+    headline = (await modelLine(cart, picked)) || fallbackLine();
+  }
+
   res.json({
     success: true,
     source: fromModel ? "model" : "rules",
+    headline,
     suggestions: picked.map(formatItem),
   });
 });

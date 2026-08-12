@@ -10,6 +10,7 @@ const {
   updateOrderStatus,
   addOrderItems,
   assignOrder,
+  getServerStats,
 } = require("../controllers/orderController");
 const { protect, requireRole } = require("../middleware/authMiddleware");
 const { firebaseAuth, firebaseAuthOptional } = require("../middleware/firebaseAuthMiddleware");
@@ -58,6 +59,8 @@ router.get(
   validateRequest,
   listOrders
 );
+
+router.get("/stats/me", ...anyStaff, getServerStats);
 
 router.get("/:id", ...anyStaff, param("id").isMongoId(), validateRequest, getOrder);
 

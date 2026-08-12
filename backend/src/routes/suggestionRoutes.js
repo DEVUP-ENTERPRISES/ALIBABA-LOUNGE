@@ -11,6 +11,8 @@ router.post(
   "/",
   body("itemIds").isArray({ max: 30 }),
   body("itemIds.*").isMongoId(),
+  body("tableId").optional().isMongoId(),
+  body("mode").optional().isIn(["last-call"]),
   validateRequest,
   getSuggestions
 );

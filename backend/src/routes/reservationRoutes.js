@@ -6,7 +6,7 @@ const {
   getReservations,
   updateReservation,
 } = require("../controllers/reservationController");
-const { protect } = require("../middleware/authMiddleware");
+const { protect, requireRole } = require("../middleware/authMiddleware");
 const { firebaseAuth } = require("../middleware/firebaseAuthMiddleware");
 const { validateRequest } = require("../middleware/validateRequest");
 const {
@@ -26,9 +26,9 @@ router.get("/mine", firebaseAuth, async (req, res) => {
 });
 
 router.post("/", reservationCreateValidator, validateRequest, createReservation);
-router.get("/", protect, reservationListValidator, validateRequest, getReservations);
-router.get("/:id", protect, idParam, validateRequest, getReservation);
-router.put("/:id", protect, reservationUpdateValidator, validateRequest, updateReservation);
-router.delete("/:id", protect, idParam, validateRequest, deleteReservation);
+router.get("/", protect, requireRole("super-admin", "admin", "manager"), reservationListValidator, validateRequest, getReservations);
+router.get("/:id", protect, requireRole("super-admin", "admin", "manager"), idParam, validateRequest, getReservation);
+router.put("/:id", protect, requireRole("super-admin", "admin", "manager"), reservationUpdateValidator, validateRequest, updateReservation);
+router.delete("/:id", protect, requireRole("super-admin", "admin", "manager"), idParam, validateRequest, deleteReservation);
 
 module.exports = router;

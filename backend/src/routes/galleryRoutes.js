@@ -5,7 +5,7 @@ const {
   getGalleryImages,
   updateGalleryImage,
 } = require("../controllers/galleryController");
-const { protect } = require("../middleware/authMiddleware");
+const { protect, requireRole } = require("../middleware/authMiddleware");
 const { upload } = require("../middleware/uploadMiddleware");
 const { validateRequest } = require("../middleware/validateRequest");
 const {
@@ -17,8 +17,8 @@ const {
 const router = express.Router();
 
 router.get("/", getGalleryImages);
-router.post("/", protect, upload.single("image"), galleryPayloadValidator, validateRequest, createGalleryImage);
-router.put("/:id", protect, upload.single("image"), galleryUpdateValidator, validateRequest, updateGalleryImage);
-router.delete("/:id", protect, galleryIdParam, validateRequest, deleteGalleryImage);
+router.post("/", protect, requireRole("super-admin", "admin"), upload.single("image"), galleryPayloadValidator, validateRequest, createGalleryImage);
+router.put("/:id", protect, requireRole("super-admin", "admin"), upload.single("image"), galleryUpdateValidator, validateRequest, updateGalleryImage);
+router.delete("/:id", protect, requireRole("super-admin", "admin"), galleryIdParam, validateRequest, deleteGalleryImage);
 
 module.exports = router;

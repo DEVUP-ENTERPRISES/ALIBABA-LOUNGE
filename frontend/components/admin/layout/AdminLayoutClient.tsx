@@ -5,18 +5,25 @@ import { usePathname, useRouter } from "next/navigation";
 import { AdminShell } from "@/components/admin/layout/AdminShell";
 import { ReservationProvider } from "@/components/providers/ReservationProvider";
 import { AdminAuthProvider, useAdminAuth } from "@/contexts/AdminAuthContext";
-import { ADMIN_BASE } from "@/lib/admin/navigation";
+import { ADMIN_BASE, canAccess, landingFor } from "@/lib/admin/navigation";
 
 function AdminRouteGuard({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
   const router = useRouter();
-  const { status } = useAdminAuth();
+  const { status, admin } = useAdminAuth();
 
   useEffect(() => {
     if (status === "unauthenticated") {
       router.replace(`${ADMIN_BASE}/login?next=${encodeURIComponent(pathname)}`);
+      return;
     }
-  }, [pathname, router, status]);
+    // Hiding a link is not access control — a server typing the URL for menu
+    // management or settings must still be turned away. The API enforces this
+    // too; this stops the page from rendering at all.
+    if (status === "authenticated" && !canAccess(admin?.role, pathname)) {
+      router.replace(landingFor(admin?.role));
+    }
+  }, [pathname, router, status, admin?.role]);
 
   if (status === "loading") {
     return (

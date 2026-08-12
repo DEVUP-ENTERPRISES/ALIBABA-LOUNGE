@@ -37,7 +37,7 @@ export interface AdminProfile {
   id: string;
   name: string;
   email: string;
-  role: "admin" | "super-admin";
+  role: "super-admin" | "admin" | "manager" | "server";
   isActive: boolean;
   lastLoginAt?: string | null;
 }

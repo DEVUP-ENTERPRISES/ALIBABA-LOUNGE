@@ -18,6 +18,15 @@ type ScrollTarget = string | number | HTMLElement;
 
 interface SmoothScrollContextValue {
   scrollTo: (target: ScrollTarget, options?: { offset?: number }) => void;
+  /**
+   * Pause smooth scrolling while an overlay is open.
+   *
+   * Lenis takes over wheel and touch for the whole document, so a panel with
+   * its own overflow cannot scroll while it is running. This version has no
+   * `prevent` option — that arrived in Lenis 1.1 — so the overlay pauses it
+   * and resumes on close.
+   */
+  setPaused: (paused: boolean) => void;
 }
 
 const SmoothScrollContext = createContext<SmoothScrollContextValue | null>(
@@ -131,8 +140,15 @@ export function SmoothScrollProvider({
     return () => window.removeEventListener("hashchange", onHashChange);
   }, [scrollTo]);
 
+  const setPaused = useCallback((paused: boolean) => {
+    const lenis = lenisRef.current;
+    if (!lenis) return;
+    if (paused) lenis.stop();
+    else lenis.start();
+  }, []);
+
   return (
-    <SmoothScrollContext.Provider value={{ scrollTo }}>
+    <SmoothScrollContext.Provider value={{ scrollTo, setPaused }}>
       {children}
     </SmoothScrollContext.Provider>
   );
@@ -150,6 +166,8 @@ export function useSmoothScroll() {
           });
         }
       },
+      // No provider (or reduced motion): nothing to pause, native scroll wins.
+      setPaused: () => {},
     }
   );
 }

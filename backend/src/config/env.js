@@ -39,7 +39,7 @@ const env = {
   },
   rateLimit: {
     windowMs: Number(process.env.RATE_LIMIT_WINDOW_MS) || 15 * 60 * 1000,
-    max: Number(process.env.RATE_LIMIT_MAX) || 100,
+    max: Number(process.env.RATE_LIMIT_MAX) || 1200,
   },
   firebase: {
     projectId: process.env.FIREBASE_PROJECT_ID || "",

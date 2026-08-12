@@ -45,6 +45,11 @@ app.use(
 app.use(
   rateLimit({
     windowMs: env.rateLimit.windowMs,
+    // This is DoS protection, not business logic, so it has to be generous.
+    // Every device in the venue shares one public IP: staff tablets polling
+    // the order board, plus guests browsing and ordering. At 100 per 15
+    // minutes a single worker's polling alone exhausted the whole venue's
+    // budget and everyone got 429s. Login has its own tight limiter.
     max: env.rateLimit.max,
     standardHeaders: true,
     legacyHeaders: false,

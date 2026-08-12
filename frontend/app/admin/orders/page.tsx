@@ -1,13 +1,16 @@
 "use client";
 
 import { useCallback, useEffect, useMemo, useState } from "react";
-import { Check, ChefHat, Clock, RefreshCw, Utensils } from "lucide-react";
+import { Bell, BellOff, Check, ChefHat, Clock, Lock, RefreshCw, Trophy, Utensils } from "lucide-react";
 import { orderApi } from "@/lib/admin/data-api";
 import type { Order, OrderStatus } from "@/lib/admin/types";
 import { formatUsTime } from "@/lib/format";
+import { useOrderAlerts } from "@/hooks/useOrderAlerts";
 import { cn } from "@/lib/utils";
 
-const POLL_MS = 10000;
+// Every device in the venue shares one public IP against the rate limit,
+// so poll conservatively. 15s is still faster than a server crosses the room.
+const POLL_MS = 15000;
 
 const COLUMNS: { status: OrderStatus; label: string; hint: string }[] = [
   { status: "placed", label: "New", hint: "Waiting to be claimed" },
@@ -34,18 +37,26 @@ export default function AdminOrdersPage() {
   const [busyId, setBusyId] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [tick, setTick] = useState(0);
+  const [freshCount, setFreshCount] = useState(0);
+  const [stats, setStats] = useState<Awaited<ReturnType<typeof orderApi.stats>> | null>(null);
+  const alerts = useOrderAlerts();
 
   const load = useCallback(async (showSpinner = false) => {
     if (showSpinner) setLoading(true);
     try {
-      setOrders(await orderApi.list("?scope=open&limit=200"));
+      const next = await orderApi.list("?scope=open&limit=200");
+      setOrders(next);
+      orderApi.stats().then(setStats).catch(() => {});
+      const n = alerts.check(next.filter((o) => o.status === "placed"));
+      if (n > 0) setFreshCount(n);
       setError(null);
     } catch (err) {
       setError(err instanceof Error ? err.message : "Could not load orders.");
     } finally {
       setLoading(false);
     }
-  }, []);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [alerts.check]);
 
   useEffect(() => {
     void load(true);
@@ -95,15 +106,90 @@ export default function AdminOrdersPage() {
             Oldest first. Claim an order to make it yours.
           </p>
         </div>
+        <div className="flex items-center gap-2">
+          <button
+            type="button"
+            onClick={() => (alerts.enabled ? alerts.disable() : void alerts.enable())}
+            className={cn(
+              "inline-flex items-center gap-2 rounded-full border px-4 py-2 text-xs transition-colors",
+              alerts.enabled
+                ? "border-[#d4af37]/50 bg-[#d4af37]/10 text-[#d4af37]"
+                : "border-white/10 text-white/55 hover:text-white/80"
+            )}
+            title={alerts.enabled ? "Alerts on — tap to mute" : "Turn on sound and vibration"}
+          >
+            {alerts.enabled ? <Bell className="size-3.5" /> : <BellOff className="size-3.5" />}
+            {alerts.enabled ? "Alerts on" : "Turn on alerts"}
+          </button>
+          <button
+            type="button"
+            onClick={() => void load(true)}
+            className="inline-flex items-center gap-2 rounded-full border border-white/10 px-4 py-2 text-xs text-white/60 transition-colors hover:border-[#d4af37]/40 hover:text-[#d4af37]"
+          >
+            <RefreshCw className={cn("size-3.5", loading && "animate-spin")} />
+            Refresh
+          </button>
+        </div>
+      </div>
+
+      {stats && (
+        <div className="flex flex-wrap items-center gap-3">
+          <div className="flex items-center gap-3 rounded-2xl border border-[#d4af37]/25 bg-[#d4af37]/[0.06] px-4 py-3">
+            <span className="flex size-9 items-center justify-center rounded-full bg-[#d4af37]/15">
+              <Trophy className="size-4 text-[#d4af37]" />
+            </span>
+            <span>
+              <span className="block font-[family-name:var(--font-display)] text-xl leading-none text-white">
+                {stats.me.today}
+              </span>
+              <span className="block text-[10px] tracking-[0.16em] text-white/45 uppercase">
+                closed today
+              </span>
+            </span>
+          </div>
+          <Chip label="This month" value={stats.me.month} />
+          <Chip label="On you now" value={stats.me.openNow} />
+
+          {stats.leaderboard.length > 1 && (
+            <div className="hide-scrollbar flex items-center gap-2 overflow-x-auto">
+              {stats.leaderboard.map((l, i) => (
+                <span
+                  key={l.name}
+                  className={cn(
+                    "shrink-0 rounded-full border px-3 py-1.5 text-[11px]",
+                    i === 0
+                      ? "border-[#d4af37]/45 text-[#d4af37]"
+                      : "border-white/10 text-white/45"
+                  )}
+                >
+                  {i === 0 && "★ "}
+                  {l.name} · {l.orders}
+                </span>
+              ))}
+            </div>
+          )}
+        </div>
+      )}
+
+      {freshCount > 0 && (
         <button
           type="button"
-          onClick={() => void load(true)}
-          className="inline-flex items-center gap-2 rounded-full border border-white/10 px-4 py-2 text-xs text-white/60 transition-colors hover:border-[#d4af37]/40 hover:text-[#d4af37]"
+          onClick={() => setFreshCount(0)}
+          className="flex w-full items-center justify-between rounded-xl border border-[#d4af37]/40 bg-[#d4af37]/10 px-4 py-3 text-sm text-[#f5e6c8]"
         >
-          <RefreshCw className={cn("size-3.5", loading && "animate-spin")} />
-          Refresh
+          <span>
+            {freshCount} new order{freshCount === 1 ? "" : "s"} just came in
+          </span>
+          <span className="text-xs text-white/45">Dismiss</span>
         </button>
-      </div>
+      )}
+
+      {!alerts.enabled && (
+        <p className="rounded-xl border border-white/[0.08] bg-white/[0.03] px-4 py-3 text-xs text-white/45">
+          Sound and vibration are off. Tap <strong className="text-white/70">Turn on alerts</strong> so
+          you do not miss a table — browsers require a tap before they will make noise.
+        </p>
+      )}
 
       {error && (
         <p role="alert" className="rounded-xl border border-rose-500/30 bg-rose-500/10 px-4 py-3 text-sm text-rose-300">
@@ -141,7 +227,10 @@ export default function AdminOrdersPage() {
                           <span className="font-[family-name:var(--font-display)] text-lg text-[#d4af37]">
                             {o.tableCode}
                           </span>
-                          <span className="text-[11px] text-white/35">#{o.orderNumber}</span>
+                          <span className="flex items-center gap-1.5 text-[11px] text-white/35">
+                            <Lock className="size-3 text-[#d4af37]/70" />
+                            #{o.orderNumber}
+                          </span>
                         </div>
 
                         <div className="mt-1 flex items-center gap-2 text-[11px]">
@@ -206,6 +295,17 @@ export default function AdminOrdersPage() {
           );
         })}
       </div>
+    </div>
+  );
+}
+
+function Chip({ label, value }: { label: string; value: number }) {
+  return (
+    <div className="rounded-2xl border border-white/[0.08] px-4 py-3">
+      <span className="block font-[family-name:var(--font-display)] text-xl leading-none text-white">
+        {value}
+      </span>
+      <span className="block text-[10px] tracking-[0.16em] text-white/45 uppercase">{label}</span>
     </div>
   );
 }

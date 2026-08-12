@@ -17,8 +17,9 @@ import {
   Star,
   LayoutGrid,
   UserCog,
+  Heart,
 } from "lucide-react";
-import { adminNavItems, ADMIN_BASE } from "@/lib/admin/navigation";
+import { navItemsFor, ADMIN_BASE } from "@/lib/admin/navigation";
 import { cn } from "@/lib/utils";
 import { useAdminAuth } from "@/contexts/AdminAuthContext";
 
@@ -35,6 +36,7 @@ const icons: Record<string, React.ComponentType<{ className?: string }>> = {
   "clipboard-list": ClipboardList,
   "layout-grid": LayoutGrid,
   "user-cog": UserCog,
+  heart: Heart,
   settings: Settings,
 };
 
@@ -46,7 +48,7 @@ interface AdminSidebarProps {
 
 export function AdminSidebar({ open, onClose, collapsed }: AdminSidebarProps) {
   const pathname = usePathname();
-  const { logout } = useAdminAuth();
+  const { admin, logout } = useAdminAuth();
 
   return (
     <>
@@ -86,7 +88,7 @@ export function AdminSidebar({ open, onClose, collapsed }: AdminSidebarProps) {
         </div>
 
         <nav className="flex-1 space-y-1 overflow-y-auto p-3">
-          {adminNavItems.map((item) => {
+          {navItemsFor(admin?.role).map((item) => {
             const Icon = icons[item.icon];
             const active = pathname === item.href;
             return (

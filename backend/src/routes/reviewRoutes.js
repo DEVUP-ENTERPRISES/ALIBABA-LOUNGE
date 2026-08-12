@@ -5,7 +5,7 @@ const {
   updateReview,
   deleteReview,
 } = require("../controllers/reviewController");
-const { attachAdmin, protect } = require("../middleware/authMiddleware");
+const { attachAdmin, protect, requireRole } = require("../middleware/authMiddleware");
 const { validateRequest } = require("../middleware/validateRequest");
 const {
   reviewIdParam,
@@ -17,8 +17,8 @@ const {
 const router = express.Router();
 
 router.get("/", attachAdmin, reviewListValidator, validateRequest, getReviews);
-router.post("/", protect, reviewPayloadValidator, validateRequest, createReview);
-router.put("/:id", protect, reviewUpdateValidator, validateRequest, updateReview);
-router.delete("/:id", protect, reviewIdParam, validateRequest, deleteReview);
+router.post("/", protect, requireRole("super-admin", "admin"), reviewPayloadValidator, validateRequest, createReview);
+router.put("/:id", protect, requireRole("super-admin", "admin"), reviewUpdateValidator, validateRequest, updateReview);
+router.delete("/:id", protect, requireRole("super-admin", "admin"), reviewIdParam, validateRequest, deleteReview);
 
 module.exports = router;

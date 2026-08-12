@@ -4,8 +4,13 @@ import { useEffect, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { UtensilsCrossed, Phone } from "lucide-react";
 import Link from "next/link";
+import { usePathname } from "next/navigation";
+
+/** Pages that already own the bottom of the screen. */
+const HIDE_ON = ["/order", "/reservation"];
 
 export function StickyReserveCTA() {
+  const pathname = usePathname();
   const [visible, setVisible] = useState(false);
 
   useEffect(() => {
@@ -14,9 +19,14 @@ export function StickyReserveCTA() {
     return () => window.removeEventListener("scroll", onScroll);
   }, []);
 
+  // The order page has its own cart bar pinned to the bottom, and a second
+  // "Order at your table" button there would sit behind it and point at the
+  // page you are already on.
+  const suppressed = HIDE_ON.some((p) => pathname === p || pathname.startsWith(`${p}/`));
+
   return (
     <AnimatePresence>
-      {visible && (
+      {visible && !suppressed && (
         <motion.div
           initial={{ y: 80, opacity: 0 }}
           animate={{ y: 0, opacity: 1 }}
@@ -29,11 +39,11 @@ export function StickyReserveCTA() {
 
           <div className="glass-ultra safe-bottom flex items-center gap-3 px-4 py-3">
             <Link
-              href="/reservation"
+              href="/order"
               className="flex flex-1 items-center justify-center gap-2 rounded-xl bg-gradient-to-r from-[#8b6914] via-[#d4af37] to-[#8b6914] py-3.5 font-[family-name:var(--font-accent)] text-[11px] font-medium tracking-[0.15em] text-[#050505] uppercase shadow-[0_0_20px_rgba(212,175,55,0.3)] active:scale-[0.97] transition-transform"
             >
               <UtensilsCrossed className="size-4" />
-              Reserve a Table
+              Order at Your Table
             </Link>
             <a
               href="tel:+14695865437"

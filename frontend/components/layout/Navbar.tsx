@@ -396,7 +396,8 @@ export function Navbar() {
 
               {/* Nav links */}
               <div
-                className="flex-1 min-h-0 overflow-y-auto px-5 py-5 sm:px-6 sm:py-6"
+                data-lenis-prevent
+                className="hide-scrollbar flex-1 min-h-0 overflow-y-auto overscroll-contain px-5 py-5 sm:px-6 sm:py-6"
                 style={{
                   touchAction: "pan-y",
                   WebkitOverflowScrolling: "touch",

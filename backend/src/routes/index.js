@@ -2,6 +2,7 @@ const express = require("express");
 
 const adminRoutes = require("./adminRoutes");
 const authRoutes = require("./authRoutes");
+const billingRoutes = require("./billingRoutes");
 const dashboardRoutes = require("./dashboardRoutes");
 const eventRoutes = require("./eventRoutes");
 const galleryRoutes = require("./galleryRoutes");
@@ -30,6 +31,7 @@ router.use("/orders", orderRoutes);
 router.use("/events", eventRoutes);
 router.use("/gallery", galleryRoutes);
 router.use("/dashboard", dashboardRoutes);
+router.use("/billing", billingRoutes);
 router.use("/admins", adminRoutes);
 router.use("/users", userRoutes);
 router.use("/settings", settingRoutes);

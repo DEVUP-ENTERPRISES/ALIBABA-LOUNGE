@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { OrderPageContent } from "@/components/sections/order/OrderPageContent";
+import { AgeGate } from "@/components/order/AgeGate";
 
 export const metadata: Metadata = {
   title: "Order at Your Table",
@@ -8,5 +9,9 @@ export const metadata: Metadata = {
 };
 
 export default function OrderPage() {
-  return <OrderPageContent />;
+  return (
+    <AgeGate>
+      <OrderPageContent />
+    </AgeGate>
+  );
 }

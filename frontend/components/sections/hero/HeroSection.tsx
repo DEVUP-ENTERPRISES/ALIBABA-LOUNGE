@@ -157,11 +157,11 @@ export function HeroSection() {
           </p>
 
           <div className="flex flex-col sm:flex-row items-center gap-3 w-full sm:w-auto">
-            <MagneticButton href="/menu" variant="gold" className="w-full sm:w-auto sm:min-w-[176px]">
-              Explore Menu
+            <MagneticButton href="/order" variant="gold" className="w-full sm:w-auto sm:min-w-[176px]">
+              Order at Your Table
             </MagneticButton>
-            <MagneticButton href="/reservation" variant="outline" className="w-full sm:w-auto sm:min-w-[176px]">
-              Reserve Table
+            <MagneticButton href="/menu" variant="outline" className="w-full sm:w-auto sm:min-w-[176px]">
+              View Menu
             </MagneticButton>
           </div>
 

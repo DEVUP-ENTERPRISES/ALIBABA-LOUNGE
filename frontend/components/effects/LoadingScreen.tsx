@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { getCookie, setCookie } from "@/lib/cookies";
 
 const LOADER_SEEN_KEY = "sheesh-loader-seen";
 const HOLD_MS = 3000;
@@ -22,12 +23,7 @@ export function LoadingScreen() {
   const [leaving, setLeaving] = useState(false);
 
   useEffect(() => {
-    let seen = false;
-    try {
-      seen = window.sessionStorage.getItem(LOADER_SEEN_KEY) === "true";
-    } catch {
-      seen = false;
-    }
+    const seen = getCookie(LOADER_SEEN_KEY) === "true";
 
     if (seen) {
       setLoading(false);
@@ -39,11 +35,8 @@ export function LoadingScreen() {
     // fast refresh — read it back as already-seen and skipped the intro.
     const fade = window.setTimeout(() => setLeaving(true), HOLD_MS);
     const done = window.setTimeout(() => {
-      try {
-        window.sessionStorage.setItem(LOADER_SEEN_KEY, "true");
-      } catch {
-        /* storage unavailable — intro simply replays */
-      }
+      // Session cookie, so the intro plays once per visit rather than once ever.
+      setCookie(LOADER_SEEN_KEY, "true");
       setLoading(false);
     }, HOLD_MS + 750);
 

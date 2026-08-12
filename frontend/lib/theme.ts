@@ -17,6 +17,7 @@ export const fonts = {
 export const navLinks = [
   { href: "/", label: "Home" },
   { href: "/menu", label: "Menu" },
+  { href: "/order", label: "Order" },
   { href: "/events", label: "Events" },
   { href: "/reservation", label: "Reservations" },
   { href: "/gallery", label: "Gallery" },

@@ -69,10 +69,18 @@ export function MenuItemCard({ item, index = 0 }: MenuItemCardProps) {
         />
         <div className="absolute inset-0 bg-gradient-to-t from-[#050505] via-[#050505]/25 to-[#050505]/10" />
         <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top,rgba(212,175,55,0.14),transparent_55%)] opacity-0 transition-opacity duration-700 group-hover:opacity-100" />
+        {/* Tobacco flavours carry no separate charge — the hookah is priced,
+            the flavour is a choice. Showing "$0" would read as an error. */}
         <div className="absolute top-4 right-4">
-          <span className="inline-flex items-center rounded-full border border-[#d4af37]/40 bg-[#050505]/80 px-4 py-1.5 font-[family-name:var(--font-display)] text-lg text-[#d4af37] shadow-[0_0_20px_rgba(212,175,55,0.12)] backdrop-blur-md md:text-xl">
-            ${item.price}
-          </span>
+          {item.price > 0 ? (
+            <span className="inline-flex items-center rounded-full border border-[#d4af37]/40 bg-[#050505]/80 px-4 py-1.5 font-[family-name:var(--font-display)] text-lg text-[#d4af37] shadow-[0_0_20px_rgba(212,175,55,0.12)] backdrop-blur-md md:text-xl">
+              ${item.price}
+            </span>
+          ) : (
+            <span className="inline-flex items-center rounded-full border border-white/15 bg-[#050505]/80 px-3 py-1.5 font-[family-name:var(--font-accent)] text-[9px] tracking-[0.16em] text-white/60 uppercase backdrop-blur-md">
+              Flavour
+            </span>
+          )}
         </div>
         {item.tags && item.tags.length > 0 && (
           <div className="absolute top-4 left-4 flex flex-wrap gap-1.5">

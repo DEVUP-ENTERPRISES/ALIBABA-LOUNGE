@@ -4,6 +4,7 @@ import { useEffect, useMemo, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { ChefHat, Flame, Search, Sparkles } from "lucide-react";
 import Image from "next/image";
+import Link from "next/link";
 import { SectionHeading } from "@/components/ui/SectionHeading";
 import { MenuItemCard } from "@/components/ui/MenuItemCard";
 import { Input } from "@/components/ui/input";
@@ -129,9 +130,17 @@ export function MenuPageContent() {
           subtitle="49 flavors across six brands, 13 house special mixes, fresh fruit heads, and a full drinks list."
         />
 
-        <div className="mx-auto mt-8 max-w-3xl rounded-3xl border border-white/10 bg-[#050505]/90 px-5 py-5 text-center text-sm text-white/70 shadow-[0_20px_60px_rgba(0,0,0,0.28)] sm:px-6 sm:text-base">
-          Prices shown are per hookah. Ask your server about add-ons - ice base,
-          fruit heads, and refills are all on the menu.
+        <div className="mx-auto mt-8 flex max-w-3xl flex-col items-center gap-4 rounded-3xl border border-white/10 bg-[#050505]/90 px-5 py-5 text-center text-sm text-white/70 shadow-[0_20px_60px_rgba(0,0,0,0.28)] sm:px-6 sm:text-base">
+          <p>
+            Prices are per hookah — the flavour you pick is included. Add-ons,
+            fruit heads and refills are all on the menu.
+          </p>
+          <Link
+            href="/order"
+            className="luxury-focus-ring inline-flex min-h-11 items-center justify-center rounded-full bg-gradient-to-r from-[#8b6914] via-[#d4af37] to-[#8b6914] px-6 py-2.5 font-[family-name:var(--font-accent)] text-[11px] font-medium tracking-[0.18em] text-[#050505] uppercase"
+          >
+            Order at your table
+          </Link>
         </div>
 
         <div className="relative mx-auto mt-8 max-w-2xl">

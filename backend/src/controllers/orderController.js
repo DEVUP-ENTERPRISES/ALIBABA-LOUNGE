@@ -10,6 +10,9 @@ const { buildPagination, paginationPayload } = require("../utils/query");
 
 const OPEN_STATUSES = ["placed", "accepted", "preparing", "served"];
 
+/** Flat platform fee per completed order, in USD. Never charged to the guest. */
+const PLATFORM_FEE_USD = 1;
+
 function formatOrder(order) {
   return {
     id: order._id,
@@ -27,6 +30,7 @@ function formatOrder(order) {
     subtotal: order.subtotal,
     tax: order.tax,
     total: order.total,
+    platformFee: order.platformFee,
     notes: order.notes,
     placedAt: order.placedAt,
     acceptedAt: order.acceptedAt,
@@ -67,12 +71,54 @@ const createOrder = asyncHandler(async (req, res) => {
 
   const items = await buildItems(req.body.items);
 
+  // Flavours are free because the hookah carries the price. An order made
+  // only of flavours would total $0, so require something chargeable. The
+  // UI blocks this too, but the client can always be bypassed.
+  if (!items.some((i) => i.price > 0)) {
+    throw new AppError(
+      "Add a hookah or a drink — flavours are included with a hookah.",
+      400
+    );
+  }
+
   // req.firebaseUser is set when the customer is signed in.
   let customer = null;
   let customerName = (req.body.customerName || "").trim();
   if (req.firebaseUser?.email) {
     customer = await User.findOne({ email: req.firebaseUser.email }).select("_id displayName");
     if (customer && !customerName) customerName = customer.displayName || "";
+  }
+
+  // One table, one running tab.
+  //
+  // A guest ordering a second round must not create a second bill. Real
+  // service runs a single tab per table until it is closed and paid, so a
+  // new order on an occupied table is appended to the open one instead.
+  // Without this, one guest at one table produced two bills that had to be
+  // settled separately.
+  const openTab = await Order.findOne({
+    table: table._id,
+    status: { $in: OPEN_STATUSES },
+  }).sort({ placedAt: 1 });
+
+  if (openTab) {
+    openTab.items.push(...items);
+    if (!openTab.customerName && customerName) openTab.customerName = customerName;
+    if (!openTab.customer && customer) openTab.customer = customer._id;
+    if (req.body.notes) {
+      openTab.notes = [openTab.notes, req.body.notes.trim()].filter(Boolean).join(" · ");
+    }
+    // A new round means the kitchen has work again.
+    if (openTab.status === "served") openTab.status = "preparing";
+    openTab.recalculate();
+    await openTab.save();
+
+    await openTab.populate("table", "code section");
+    return res.status(200).json({
+      success: true,
+      merged: true,
+      order: formatOrder(openTab),
+    });
   }
 
   const order = new Order({
@@ -85,7 +131,40 @@ const createOrder = asyncHandler(async (req, res) => {
     notes: (req.body.notes || "").trim(),
   });
   order.recalculate();
-  await order.save();
+
+  try {
+    await order.save();
+  } catch (err) {
+    // Someone opened a tab on this table between our check and this insert.
+    // The unique index rejected us, so fold the items into theirs instead of
+    // failing the guest or leaving the table with two bills.
+    if (err?.code === 11000) {
+      // The winning insert may not be visible to us yet, so look a few times
+      // over a short window rather than failing a guest on a timing detail.
+      let winner = null;
+      for (let attempt = 0; attempt < 5 && !winner; attempt++) {
+        if (attempt > 0) await new Promise((r) => setTimeout(r, 60 * attempt));
+        winner = await Order.findOne({
+          table: table._id,
+          status: { $in: OPEN_STATUSES },
+        }).sort({ placedAt: 1 });
+      }
+
+      if (winner) {
+        winner.items.push(...items);
+        if (!winner.customerName && customerName) winner.customerName = customerName;
+        winner.recalculate();
+        await winner.save();
+        await winner.populate("table", "code section");
+        return res.status(200).json({
+          success: true,
+          merged: true,
+          order: formatOrder(winner),
+        });
+      }
+    }
+    throw err;
+  }
 
   // A table with a live order is occupied.
   if (table.status === "available") {
@@ -93,7 +172,7 @@ const createOrder = asyncHandler(async (req, res) => {
     await table.save();
   }
 
-  res.status(201).json({ success: true, order: formatOrder(order) });
+  res.status(201).json({ success: true, merged: false, order: formatOrder(order) });
 });
 
 /** Staff queue. Defaults to open orders, oldest first — the service order. */
@@ -200,7 +279,11 @@ const updateOrderStatus = asyncHandler(async (req, res) => {
 
   order.status = status;
   if (status === "served") order.servedAt = new Date();
-  if (status === "completed") order.completedAt = new Date();
+  if (status === "completed") {
+    order.completedAt = new Date();
+    // One flat fee per completed order, frozen at completion.
+    order.platformFee = PLATFORM_FEE_USD;
+  }
   await order.save();
 
   // Free the table once nothing is open on it.
@@ -252,8 +335,44 @@ const assignOrder = asyncHandler(async (req, res) => {
   res.json({ success: true, order: formatOrder(order) });
 });
 
+/** How much each server has closed today and this month. */
+const getServerStats = asyncHandler(async (req, res) => {
+  const now = new Date();
+  const dayStart = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+  const monthStart = new Date(now.getFullYear(), now.getMonth(), 1);
+
+  const mine = { assignedTo: req.admin._id, status: "completed" };
+  const [today, month, openNow] = await Promise.all([
+    Order.countDocuments({ ...mine, completedAt: { $gte: dayStart } }),
+    Order.countDocuments({ ...mine, completedAt: { $gte: monthStart } }),
+    Order.countDocuments({ assignedTo: req.admin._id, status: { $in: OPEN_STATUSES } }),
+  ]);
+
+  // Managers also see the whole floor, so they can spot who is carrying it.
+  let leaderboard = [];
+  if (["super-admin", "admin", "manager"].includes(req.admin.role)) {
+    leaderboard = await Order.aggregate([
+      { $match: { status: "completed", completedAt: { $gte: dayStart }, assignedTo: { $ne: null } } },
+      { $group: { _id: "$assignedName", orders: { $sum: 1 }, revenue: { $sum: "$total" } } },
+      { $sort: { orders: -1 } },
+      { $limit: 8 },
+    ]);
+  }
+
+  res.json({
+    success: true,
+    me: { today, month, openNow, name: req.admin.displayName || req.admin.name },
+    leaderboard: leaderboard.map((l) => ({
+      name: l._id || "Unassigned",
+      orders: l.orders,
+      revenue: Math.round(l.revenue * 100) / 100,
+    })),
+  });
+});
+
 module.exports = {
   createOrder,
+  getServerStats,
   listOrders,
   listMyOrders,
   getOrder,
