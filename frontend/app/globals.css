@@ -179,6 +179,23 @@ body[data-menu-open="true"] .sticky-reserve-cta {
   pointer-events: none;
 }
 
+/* Failsafe.
+   The overlay is removed by React. If the bundle fails to load — a stale
+   cache, a dead chunk, a network blip — it would otherwise sit on top of the
+   site forever and the page would look frozen. This retires it on a CSS
+   timer, which runs whether or not any JavaScript does. It lands well after
+   the scripted exit, so it never interferes in the normal case. */
+.ab-loader {
+  animation: ab-loader-failsafe 0.4s linear 6s forwards;
+}
+@keyframes ab-loader-failsafe {
+  to {
+    opacity: 0;
+    visibility: hidden;
+    pointer-events: none;
+  }
+}
+
 .ab-loader__glow {
   position: absolute;
   inset: 0;

@@ -1,17 +1,29 @@
 /**
- * Minimal service worker.
+ * Service worker.
  *
- * Exists so the app is installable and survives a flaky connection at the
- * table. Deliberately network-first: menu prices and table availability must
- * never be served stale, so the cache is only a fallback when the network
- * fails outright.
+ * Deliberately does NOT precache HTML.
+ *
+ * Next.js references build-hashed JS chunks from each HTML document. A cached
+ * page from an earlier deploy points at chunks that no longer exist, so the
+ * app loads a shell whose scripts 404, React never hydrates, and the intro
+ * overlay — which only leaves via JS — sits on top of a frozen screen. That
+ * is what made the installed app appear stuck.
+ *
+ * So: HTML is always network-first with no precache, hashed build assets are
+ * safe to cache forever because their names change per build, and only the
+ * offline page is stored up front.
  */
-const CACHE = "alibaba-v1";
-const SHELL = ["/", "/order", "/menu", "/offline", "/alibaba-logo.png"];
+const VERSION = "v2";
+const HTML_CACHE = `alibaba-html-${VERSION}`;
+const ASSET_CACHE = `alibaba-assets-${VERSION}`;
+const OFFLINE_URL = "/offline";
 
 self.addEventListener("install", (event) => {
   event.waitUntil(
-    caches.open(CACHE).then((c) => c.addAll(SHELL)).then(() => self.skipWaiting())
+    caches
+      .open(HTML_CACHE)
+      .then((c) => c.add(OFFLINE_URL))
+      .then(() => self.skipWaiting())
   );
 });
 
@@ -19,7 +31,13 @@ self.addEventListener("activate", (event) => {
   event.waitUntil(
     caches
       .keys()
-      .then((keys) => Promise.all(keys.filter((k) => k !== CACHE).map((k) => caches.delete(k))))
+      .then((keys) =>
+        Promise.all(
+          keys
+            .filter((k) => k !== HTML_CACHE && k !== ASSET_CACHE)
+            .map((k) => caches.delete(k))
+        )
+      )
       .then(() => self.clients.claim())
   );
 });
@@ -29,23 +47,39 @@ self.addEventListener("fetch", (event) => {
   if (request.method !== "GET") return;
 
   const url = new URL(request.url);
-  if (url.origin !== self.location.origin) return;      // never touch the API
-  if (url.pathname.startsWith("/admin")) return;        // staff always live
+  if (url.origin !== self.location.origin) return; // never touch the API
+  if (url.pathname.startsWith("/admin")) return;   // staff always live
+
+  // Navigations: network only, falling back to the offline page. Never serve
+  // a cached document, or its script tags may point at a dead build.
+  if (request.mode === "navigate") {
+    event.respondWith(
+      fetch(request).catch(() => caches.match(OFFLINE_URL))
+    );
+    return;
+  }
+
+  // Hashed build output and static files: safe to cache, names change per build.
+  const cacheable =
+    url.pathname.startsWith("/_next/static/") ||
+    url.pathname.startsWith("/icons/") ||
+    url.pathname.startsWith("/splash/") ||
+    url.pathname.startsWith("/shop-images/") ||
+    /\.(?:png|jpe?g|webp|svg|woff2?|ico)$/.test(url.pathname);
+
+  if (!cacheable) return;
 
   event.respondWith(
-    fetch(request)
-      .then((res) => {
-        if (res.ok && request.mode === "navigate") {
-          const copy = res.clone();
-          caches.open(CACHE).then((c) => c.put(request, copy));
-        }
-        return res;
-      })
-      .catch(async () => {
-        const cached = await caches.match(request);
-        if (cached) return cached;
-        if (request.mode === "navigate") return caches.match("/offline");
-        return Response.error();
-      })
+    caches.match(request).then(
+      (hit) =>
+        hit ||
+        fetch(request).then((res) => {
+          if (res.ok) {
+            const copy = res.clone();
+            caches.open(ASSET_CACHE).then((c) => c.put(request, copy));
+          }
+          return res;
+        })
+    )
   );
 });
