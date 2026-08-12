@@ -80,12 +80,17 @@ orderSchema.methods.recalculate = function recalculate() {
   return this;
 };
 
-orderSchema.pre("save", async function assignOrderNumber(next) {
-  if (this.orderNumber) return next();
+// Async pre-hooks are not handed a `next` callback by Mongoose; returning
+// from the promise is what signals completion.
+orderSchema.pre("save", async function assignOrderNumber() {
+  if (this.orderNumber) return;
   // Sequential per venue. Low volume, so a max+1 read is fine here.
-  const last = await this.constructor.findOne().sort({ orderNumber: -1 }).select("orderNumber").lean();
+  const last = await this.constructor
+    .findOne()
+    .sort({ orderNumber: -1 })
+    .select("orderNumber")
+    .lean();
   this.orderNumber = (last?.orderNumber || 1000) + 1;
-  next();
 });
 
 module.exports = mongoose.model("Order", orderSchema);

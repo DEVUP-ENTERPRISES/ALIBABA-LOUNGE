@@ -6,6 +6,7 @@ const dashboardRoutes = require("./dashboardRoutes");
 const eventRoutes = require("./eventRoutes");
 const galleryRoutes = require("./galleryRoutes");
 const menuRoutes = require("./menuRoutes");
+const orderRoutes = require("./orderRoutes");
 const reservationRoutes = require("./reservationRoutes");
 const settingRoutes = require("./settingRoutes");
 const tableRoutes = require("./tableRoutes");
@@ -24,6 +25,7 @@ router.get("/", (_req, res) => {
 router.use("/auth", authRoutes);
 router.use("/reservations", reservationRoutes);
 router.use("/menu", menuRoutes);
+router.use("/orders", orderRoutes);
 router.use("/events", eventRoutes);
 router.use("/gallery", galleryRoutes);
 router.use("/dashboard", dashboardRoutes);
