@@ -24,11 +24,19 @@ const adminSchema = new mongoose.Schema(
       minlength: [8, "Password must be at least 8 characters."],
       select: false,
     },
+    // super-admin  full access, manages staff
+    // admin        back office: menu, events, settings
+    // manager      floor oversight: all orders, reassign, close
+    // server       works the floor: claim and serve orders only
     role: {
       type: String,
-      enum: ["admin", "super-admin"],
+      enum: ["super-admin", "admin", "manager", "server"],
       default: "admin",
+      index: true,
     },
+    // Shown to the floor instead of the full name.
+    displayName: { type: String, trim: true, maxlength: 60, default: "" },
+    phone: { type: String, trim: true, maxlength: 40, default: "" },
     isActive: {
       type: Boolean,
       default: true,

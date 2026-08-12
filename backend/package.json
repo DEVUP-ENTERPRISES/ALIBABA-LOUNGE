@@ -16,7 +16,8 @@
     "seed:hookah": "node src/scripts/seedHookah.js",
     "menu:prune": "node src/scripts/pruneMenu.js",
     "settings:contact": "node src/scripts/updateContact.js",
-    "seed:reviews": "node src/scripts/updateReviews.js"
+    "seed:reviews": "node src/scripts/updateReviews.js",
+    "seed:tables": "node src/scripts/seedTables.js"
   },
   "keywords": [
     "express",

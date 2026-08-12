@@ -11,8 +11,6 @@ import type { AdminSetting } from "@/lib/admin/types";
 const footerNav = [
   { href: "/menu", label: "Our Menu" },
   { href: "/events", label: "Events" },
-  { href: "/catering", label: "Catering" },
-  { href: "/franchise", label: "Franchise" },
   { href: "/gallery", label: "Gallery" },
   { href: "/reservation", label: "Reserve" },
 ];
