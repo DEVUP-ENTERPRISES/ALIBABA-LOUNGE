@@ -99,7 +99,8 @@
   }
   body {
     @apply bg-[#050505] text-foreground antialiased;
-    overflow-x: hidden;
+    /* See the note on html below — clip contains without scrolling. */
+    overflow-x: clip;
   }
   ::selection {
     background: rgba(212, 175, 55, 0.35);
@@ -128,9 +129,45 @@ body.custom-cursor-active * {
   padding-bottom: env(safe-area-inset-bottom, 0px);
 }
 
-/* Never let a stray wide child scroll the whole page sideways. */
+/* Never let a stray wide child scroll the whole page sideways.
+
+   `clip`, not `hidden`. `overflow-x: hidden` forces the computed
+   `overflow-y` to `auto`, which turns <html> into a scroll container in its
+   own right — the page then has two nested scrollers and scroll started on
+   the body has somewhere to get stuck. `clip` contains the overflow without
+   creating a scroll container, so the viewport keeps scrolling the page.
+   Falls back to the old behaviour on browsers without `clip`. */
 html {
-  overflow-x: hidden;
+  overflow-x: clip;
+}
+@supports not (overflow: clip) {
+  html,
+  body {
+    overflow-x: hidden;
+  }
+}
+
+/* ──────────────────────────────────────────────────────────────
+   Lenis
+
+   The library ships a stylesheet that was never imported, so none of
+   this was in effect. `html.lenis { height: auto }` matters most: the
+   class is on <html> in production (verified), and without the rule a
+   height set elsewhere can leave the page with nothing to scroll.
+   ────────────────────────────────────────────────────────────── */
+html.lenis,
+html.lenis body {
+  height: auto;
+}
+.lenis.lenis-smooth {
+  scroll-behavior: auto !important;
+}
+/* Sheets and drawers scroll themselves without dragging the page. */
+.lenis.lenis-smooth [data-lenis-prevent] {
+  overscroll-behavior: contain;
+}
+.lenis.lenis-stopped {
+  overflow: hidden;
 }
 
 /* iOS zooms the page when a font smaller than 16px receives focus. */
@@ -347,8 +384,12 @@ body[data-menu-open="true"] .sticky-reserve-cta {
    would fight the user's expectations, so they are scoped to standalone.
    ────────────────────────────────────────────────────────────── */
 @media all and (display-mode: standalone) {
-  /* A native app does not rubber-band the whole page or pull-to-refresh. */
-  html,
+  /* A native app does not rubber-band the whole page or pull-to-refresh.
+
+     Deliberately body only. On <html> this stops scroll chaining out of the
+     body, and in an installed window that can leave the page unable to
+     scroll at all while taps still work — exactly the reported symptom.
+     Suppressing pull-to-refresh only needs the rule on body. */
   body {
     overscroll-behavior-y: none;
   }
