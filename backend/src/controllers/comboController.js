@@ -12,7 +12,7 @@ const { asyncHandler } = require("../utils/asyncHandler");
  * price. Without a key, hand-written names are used and nothing else changes.
  */
 
-const MODEL = process.env.OPENROUTER_MODEL || "anthropic/claude-3.5-haiku";
+const MODEL = process.env.OPENROUTER_MODEL || "anthropic/claude-haiku-4.5";
 const TIMEOUT_MS = 4000;
 
 /** Roughly one hookah between three or four people. */
@@ -138,7 +138,10 @@ async function nameCombos(combos, seats) {
       },
       body: JSON.stringify({
         model: MODEL,
-        max_tokens: 400,
+        // Six packages at roughly 35 tokens each, with room to spare. Too
+        // low and the JSON truncates mid-array, the parse fails, and every
+        // name silently falls back to the hand-written one.
+        max_tokens: 900,
         temperature: 0.9,
         messages: [
           {
@@ -148,8 +151,10 @@ async function nameCombos(combos, seats) {
               "package you get an id and its contents. Reply with ONLY a JSON " +
               "array of {id, title, tagline}. Title: 2-4 words, confident, a " +
               "little cheeky. Tagline: under 12 words, warm and playful, never " +
-              "pushy. No emoji, no exclamation marks, no hashtags. Keep every " +
-              "id exactly as given.",
+              "pushy. No emoji, no exclamation marks, no hashtags. Return " +
+              "exactly one object per package you are given, in the same " +
+              "order, copying each id string across verbatim. Never renumber " +
+              "the ids and never invent a package.",
           },
           {
             role: "user",
@@ -172,8 +177,13 @@ async function nameCombos(combos, seats) {
     if (!Array.isArray(parsed)) return null;
 
     const byId = new Map(parsed.map((p) => [String(p.id), p]));
-    return combos.map((c) => {
-      const w = byId.get(c.id);
+    // Asked to echo the ids, the model often renumbers them 1, 2, 3 instead.
+    // When it returned the right number of packages we can still trust the
+    // order, so fall back to position rather than throwing the copy away.
+    const positional = parsed.length === combos.length;
+
+    return combos.map((c, i) => {
+      const w = byId.get(c.id) || (positional ? parsed[i] : null);
       return w?.title
         ? { ...c, kind: String(w.title).slice(0, 40), note: String(w.tagline || c.note).slice(0, 90) }
         : c;

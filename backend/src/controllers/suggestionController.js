@@ -13,7 +13,7 @@ const { asyncHandler } = require("../utils/asyncHandler");
  * suggestion is a nicety and must never delay an order.
  */
 
-const MODEL = process.env.OPENROUTER_MODEL || "anthropic/claude-3.5-haiku";
+const MODEL = process.env.OPENROUTER_MODEL || "anthropic/claude-haiku-4.5";
 const TIMEOUT_MS = 3500;
 
 /** Deterministic pairings, also the fallback when the model is unavailable. */
