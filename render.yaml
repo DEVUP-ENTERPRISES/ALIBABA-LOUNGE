@@ -7,6 +7,20 @@ services:
     buildCommand: npm ci
     startCommand: npm start
     healthCheckPath: /health
+
+    # Deploy on every push to the tracked branch...
+    autoDeploy: true
+
+    # ...but only when the API actually changed. Without this, a CSS tweak in
+    # the frontend restarts the API, and on the free plan that means a cold
+    # start for whoever is mid-order.
+    buildFilter:
+      paths:
+        - backend/**
+        - render.yaml
+      ignoredPaths:
+        - backend/**/*.md
+        - backend/.env.example
     envVars:
       - key: NODE_ENV
         value: production
