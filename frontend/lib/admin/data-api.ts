@@ -1,8 +1,6 @@
 import { API_BASE_URL, getAdminToken, parseApiError, resolveApiAssetUrl } from "@/lib/admin/api";
 import type {
   AdminEvent,
-  AdminFranchiseApp,
-  AdminInquiry,
   AdminReservation,
   AdminReview,
   AdminSetting,
@@ -180,38 +178,6 @@ export const galleryApi = {
   },
 };
 
-export const inquiryApi = {
-  async createCatering(payload: JsonRecord) {
-    const data = await request<{ inquiry: AdminInquiry }>("/inquiries/catering", {
-      method: "POST",
-      body: JSON.stringify(payload),
-    });
-    return data.inquiry;
-  },
-  async listCatering() {
-    const data = await request<{ inquiries: AdminInquiry[] }>("/inquiries/catering");
-    return data.inquiries;
-  },
-  async updateCatering(id: string, payload: JsonRecord) {
-    const data = await request<{ inquiry: AdminInquiry }>(`/inquiries/catering/${id}`, {
-      method: "PUT",
-      body: JSON.stringify(payload),
-    });
-    return data.inquiry;
-  },
-  async createFranchise(payload: JsonRecord) {
-    const data = await request<{ application: AdminFranchiseApp }>("/inquiries/franchise", {
-      method: "POST",
-      body: JSON.stringify(payload),
-    });
-    return data.application;
-  },
-  async listFranchise() {
-    const data = await request<{ applications: AdminFranchiseApp[] }>("/inquiries/franchise");
-    return data.applications;
-  },
-};
-
 export const userApi = {
   async list(params = "") {
     return request<{ users: unknown[]; total: number }>(`/users${params}`);
@@ -225,8 +191,6 @@ export const dashboardApi = {
         reservations: number;
         pendingBookings: number;
         confirmedReservations: number;
-        cateringInquiries: number;
-        franchiseApplications: number;
         menuItems: number;
         upcomingEvents: number;
       };

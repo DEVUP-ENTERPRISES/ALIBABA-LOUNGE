@@ -128,8 +128,8 @@ export function AdminLoginForm() {
               Hospitality control, refined.
             </h1>
             <p className="mt-6 max-w-lg text-base leading-8 text-zinc-400">
-              A secure command center for reservations, guest flow, events,
-              catering, and franchise operations.
+              A secure command center for reservations, guest flow, table
+              orders, and events.
             </p>
           </div>
 

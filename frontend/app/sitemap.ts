@@ -10,8 +10,6 @@ const ROUTES = [
   { path: "/reservation", priority: 0.9 },
   { path: "/events", priority: 0.8 },
   { path: "/gallery", priority: 0.7 },
-  { path: "/catering", priority: 0.7 },
-  { path: "/franchise", priority: 0.6 },
 ];
 
 export default function sitemap(): MetadataRoute.Sitemap {

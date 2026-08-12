@@ -19,8 +19,6 @@ export default function AdminDashboardPage() {
   const stats = data?.stats ?? {
     reservations: 0,
     pendingBookings: 0,
-    cateringInquiries: 0,
-    franchiseApplications: 0,
     menuItems: 0,
     upcomingEvents: 0,
     confirmedReservations: 0,
@@ -30,11 +28,9 @@ export default function AdminDashboardPage() {
 
   return (
     <div className="space-y-6 lg:space-y-8">
-      <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-6">
+      <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
         <AdminStatCard label="Reservations" value={stats.reservations} change="+12% this week" accent />
         <AdminStatCard label="Pending Bookings" value={stats.pendingBookings} change="Needs review" />
-        <AdminStatCard label="Catering Inquiries" value={stats.cateringInquiries} />
-        <AdminStatCard label="Franchise Apps" value={stats.franchiseApplications} />
         <AdminStatCard label="Menu Items" value={stats.menuItems} />
         <AdminStatCard label="Upcoming Events" value={stats.upcomingEvents} />
       </div>

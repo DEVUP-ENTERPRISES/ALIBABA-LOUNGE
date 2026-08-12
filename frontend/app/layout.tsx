@@ -32,7 +32,7 @@ const SITE_URL =
 
 const SITE_NAME = "Alibaba Hookah Lounge";
 const SITE_DESCRIPTION =
-  "Dallas's premier hookah lounge & dining destination. Where luxury meets flavor.";
+  "Dallas hookah lounge with six tobacco brands, house mixes, fresh fruit heads and a full drinks list. Open late, every night.";
 
 export const metadata: Metadata = {
   metadataBase: new URL(SITE_URL),
@@ -45,9 +45,10 @@ export const metadata: Metadata = {
   keywords: [
     "Alibaba Hookah Lounge",
     "hookah lounge",
-    "Dallas restaurant",
-    "luxury dining",
-    "catering",
+    "hookah Dallas",
+    "shisha Dallas",
+    "hookah bar near me",
+    "late night Dallas",
   ],
   alternates: {
     canonical: "/",
