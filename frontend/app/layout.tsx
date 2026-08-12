@@ -2,6 +2,7 @@ import type { Metadata, Viewport } from "next";
 import { Playfair_Display, Manrope } from "next/font/google";
 import "./globals.css";
 import { cn } from "@/lib/utils";
+import { AppleSplash } from "@/components/pwa/AppleSplash";
 
 const display = Playfair_Display({
   subsets: ["latin"],
@@ -104,6 +105,9 @@ export default function RootLayout({
         accent.variable
       )}
     >
+      <head>
+        <AppleSplash />
+      </head>
       <body
         className={cn(
           "relative min-h-screen overflow-x-hidden bg-[#050505] font-[family-name:var(--font-body)] antialiased",

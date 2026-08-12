@@ -322,3 +322,46 @@ body[data-menu-open="true"] .sticky-reserve-cta {
     animation-delay: 0ms;
   }
 }
+
+/* ──────────────────────────────────────────────────────────────
+   Installed-app behaviour
+
+   Only applies when launched from the home screen. In a browser tab these
+   would fight the user's expectations, so they are scoped to standalone.
+   ────────────────────────────────────────────────────────────── */
+@media all and (display-mode: standalone) {
+  /* A native app does not rubber-band the whole page or pull-to-refresh. */
+  html,
+  body {
+    overscroll-behavior-y: none;
+  }
+
+  /* Long-press should not offer "copy link" on buttons and cards. */
+  button,
+  a,
+  [role="button"] {
+    -webkit-touch-callout: none;
+  }
+
+  /* Text selection on chrome elements reads as a web page, not an app.
+     Inputs and real copy remain selectable. */
+  body {
+    -webkit-user-select: none;
+    user-select: none;
+  }
+  input,
+  textarea,
+  p,
+  li,
+  h1,
+  h2,
+  h3 {
+    -webkit-user-select: text;
+    user-select: text;
+  }
+}
+
+/* Grey tap flash on Android reads as a web page. Focus rings stay. */
+* {
+  -webkit-tap-highlight-color: transparent;
+}
