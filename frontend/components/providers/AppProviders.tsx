@@ -10,6 +10,7 @@ import { AuthProvider } from "@/contexts/AuthContext";
 import { WelcomeToast } from "@/components/effects/WelcomeToast";
 import { ScrollProgressBar } from "@/components/effects/ScrollProgressBar";
 import { StickyReserveCTA } from "@/components/effects/StickyReserveCTA";
+import { InstallPrompt } from "@/components/pwa/InstallPrompt";
 
 export function AppProviders({ children }: { children: React.ReactNode }) {
   return (
@@ -21,6 +22,7 @@ export function AppProviders({ children }: { children: React.ReactNode }) {
           <AmbientGlow />
           <WelcomeToast />
           <StickyReserveCTA />
+          <InstallPrompt />
           <PageTransition>{children}</PageTransition>
         </ReservationProvider>
       </SmoothScrollProvider>

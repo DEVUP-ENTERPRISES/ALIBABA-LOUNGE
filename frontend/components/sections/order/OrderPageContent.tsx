@@ -15,7 +15,13 @@ import { resolveImageUrl } from "@/lib/image-url";
 import { useAuth } from "@/contexts/AuthContext";
 import { useSmoothScroll } from "@/contexts/SmoothScrollContext";
 import { useNudgeDue, useOpenTab } from "@/hooks/useOpenTab";
+import { getCookie, setCookie, getJsonCookie, setJsonCookie, deleteCookie } from "@/lib/cookies";
 import { cn } from "@/lib/utils";
+
+const CART_KEY = "alibaba-cart";
+const SEAT_KEY = "alibaba-seat";
+/** Long enough to survive a session at the table, short enough to go stale. */
+const CART_TTL_SECONDS = 4 * 60 * 60;
 
 type CartLine = { item: MenuItem; quantity: number };
 type Step = "table" | "menu" | "review" | "done";
@@ -79,6 +85,7 @@ export function OrderPageContent() {
   const [notes, setNotes] = useState("");
   const [placed, setPlaced] = useState<Order | null>(null);
   const [cartOpen, setCartOpen] = useState(false);
+  const [cartRestored, setCartRestored] = useState(false);
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
@@ -89,6 +96,44 @@ export function OrderPageContent() {
     tableApi.list().then(setTables).catch(() => {});
     menuApi.list("?limit=500&isAvailable=true").then(setMenu).catch(() => {});
   }, []);
+
+  /**
+   * Keep the cart across a reload or a stray Back press.
+   *
+   * Losing a built-up order because someone swiped back is the fastest way to
+   * lose the order entirely — they will not rebuild it. Stored as ids and
+   * quantities only; prices are re-read from the menu, so a stale cookie can
+   * never carry an old price into a new order.
+   */
+  useEffect(() => {
+    if (menu.length === 0 || cartRestored) return;
+    const saved = getJsonCookie<{ id: string; q: number }[]>(CART_KEY);
+    if (saved?.length) {
+      const byId = new Map(menu.map((m) => [m.id, m]));
+      const lines = saved
+        .map((r) => {
+          const item = byId.get(r.id);
+          return item ? { item, quantity: Math.max(1, Math.min(50, r.q)) } : null;
+        })
+        .filter(Boolean) as CartLine[];
+      // eslint-disable-next-line react-hooks/set-state-in-effect
+      if (lines.length) setCart(lines);
+    }
+    // eslint-disable-next-line react-hooks/set-state-in-effect
+    setCartRestored(true);
+  }, [menu, cartRestored]);
+
+  // Persist on every change, once the initial restore has run.
+  useEffect(() => {
+    if (!cartRestored) return;
+    if (cart.length === 0) deleteCookie(CART_KEY);
+    else
+      setJsonCookie(
+        CART_KEY,
+        cart.map((l) => ({ id: l.item.id, q: l.quantity })),
+        CART_TTL_SECONDS
+      );
+  }, [cart, cartRestored]);
 
   useEffect(() => {
     // Prefill once auth resolves; the name is not known during first render.
@@ -106,6 +151,19 @@ export function OrderPageContent() {
       document.body.style.overflow = "";
     };
   }, [cartOpen, setPaused]);
+
+  // A seat chosen earlier in this session, even if nothing was ordered yet.
+  useEffect(() => {
+    if (table || tables.length === 0) return;
+    const seatId = getCookie(SEAT_KEY);
+    if (!seatId) return;
+    const seat = tables.find((t) => t.id === seatId);
+    if (seat) {
+      // eslint-disable-next-line react-hooks/set-state-in-effect
+      setTable(seat);
+      setStep("menu");
+    }
+  }, [table, tables]);
 
   // Returning guest with a live tab: skip the table step. Their own table
   // reads as locked to everyone else, so asking them to pick it again would
@@ -293,6 +351,9 @@ export function OrderPageContent() {
         notes: notes.trim(),
       });
       setPlaced(order);
+      // These items are now on the tab; leaving them in the cart would restore
+      // an already-sent order if the guest reopens the page.
+      setCart([]);
       remember({
         tableId: table.id,
         tableCode: order.tableCode,
@@ -365,6 +426,8 @@ export function OrderPageContent() {
               type="button"
               onClick={() => {
                 clear();
+                deleteCookie(SEAT_KEY);
+                deleteCookie(CART_KEY);
                 setCart([]);
                 setPlaced(null);
                 setTable(null);
@@ -479,6 +542,10 @@ export function OrderPageContent() {
                     if (taken) return;
                     setTable(t);
                     setStep("menu");
+                    // Persist immediately. Reloading or pressing Back used to
+                    // drop the guest back to the table picker with a cart they
+                    // could no longer see.
+                    setCookie(SEAT_KEY, t.id, { maxAgeSeconds: CART_TTL_SECONDS });
                   }}
                   className={cn(
                     "group rounded-xl border p-3 text-center transition-all",

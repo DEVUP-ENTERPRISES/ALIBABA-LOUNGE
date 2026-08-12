@@ -1,0 +1,21 @@
+{
+  "name": "Alibaba Hookah Lounge",
+  "short_name": "Alibaba",
+  "description": "Order hookah and drinks from your table at Alibaba Hookah Lounge, Dallas.",
+  "start_url": "/order",
+  "scope": "/",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#050505",
+  "theme_color": "#050505",
+  "categories": ["food", "lifestyle"],
+  "icons": [
+    { "src": "/icons/icon-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any" },
+    { "src": "/icons/icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any" },
+    { "src": "/icons/icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable" }
+  ],
+  "shortcuts": [
+    { "name": "Order at your table", "url": "/order", "icons": [{ "src": "/icons/icon-192.png", "sizes": "192x192" }] },
+    { "name": "View menu", "url": "/menu" }
+  ]
+}

@@ -1,7 +1,7 @@
 "use client";
 
 import { useCallback, useEffect, useMemo, useState } from "react";
-import { Bell, BellOff, Check, ChefHat, Clock, Lock, RefreshCw, Trophy, Utensils } from "lucide-react";
+import { Bell, BellOff, Check, ChefHat, Clock, Lock, RefreshCw, Trophy, Utensils, X } from "lucide-react";
 import { orderApi } from "@/lib/admin/data-api";
 import type { Order, OrderStatus } from "@/lib/admin/types";
 import { formatUsTime } from "@/lib/format";
@@ -46,7 +46,13 @@ export default function AdminOrdersPage() {
     try {
       const next = await orderApi.list("?scope=open&limit=200");
       setOrders(next);
-      orderApi.stats().then(setStats).catch(() => {});
+      // Stats are decorative; the queue must render even if they fail or the
+      // API has not been redeployed with the endpoint yet.
+      try {
+        void orderApi.stats?.().then(setStats).catch(() => {});
+      } catch {
+        /* ignore */
+      }
       const n = alerts.check(next.filter((o) => o.status === "placed"));
       if (n > 0) setFreshCount(n);
       setError(null);
@@ -284,6 +290,27 @@ export default function AdminOrdersPage() {
                             <ActionButton busy={busy} onClick={() => act(o.id, () => orderApi.setStatus(o.id, "completed"))}>
                               <Check className="size-3.5" /> Close &amp; pay
                             </ActionButton>
+                          )}
+
+                          {/* Cancelling is destructive and cannot be undone,
+                              so it confirms and stays visually quiet. */}
+                          {o.status !== "served" && (
+                            <button
+                              type="button"
+                              disabled={busy}
+                              onClick={() => {
+                                if (
+                                  window.confirm(
+                                    `Cancel order #${o.orderNumber} for table ${o.tableCode}? This cannot be undone.`
+                                  )
+                                ) {
+                                  act(o.id, () => orderApi.setStatus(o.id, "cancelled"));
+                                }
+                              }}
+                              className="mt-2 flex w-full items-center justify-center gap-1.5 rounded-lg border border-white/10 py-1.5 text-[11px] text-white/35 transition-colors hover:border-rose-500/40 hover:text-rose-300 disabled:opacity-40"
+                            >
+                              <X className="size-3" /> Cancel
+                            </button>
                           )}
                         </div>
                       </li>
