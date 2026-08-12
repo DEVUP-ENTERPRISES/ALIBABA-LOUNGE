@@ -6,8 +6,6 @@ export const routes = {
   menu: "/menu",
   events: "/events",
   reservation: "/reservation",
-  catering: "/catering",
-  franchise: "/franchise",
   gallery: "/gallery",
 } as const;
 
@@ -17,8 +15,6 @@ export const homeSections = {
   menu: "menu",
   hookah: "hookah",
   events: "events",
-  catering: "catering",
-  franchise: "franchise",
   reviews: "reviews",
   reserve: "reserve",
 } as const;

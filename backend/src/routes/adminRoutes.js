@@ -8,19 +8,27 @@ const {
 } = require("../controllers/adminController");
 const { protect, requireRole } = require("../middleware/authMiddleware");
 const { validateRequest } = require("../middleware/validateRequest");
-const { body, param } = require("express-validator");
+const { body, param, query } = require("express-validator");
 
 const router = express.Router();
 const superAdminOnly = [protect, requireRole("super-admin")];
 
-router.get("/", ...superAdminOnly, listAdmins);
+router.get(
+  "/",
+  ...superAdminOnly,
+  query("role").optional().isIn(["super-admin", "admin", "manager", "server"]),
+  validateRequest,
+  listAdmins
+);
 router.post(
   "/",
   ...superAdminOnly,
   body("name").trim().notEmpty(),
   body("email").isEmail().normalizeEmail(),
   body("password").isLength({ min: 8 }),
-  body("role").optional().isIn(["admin", "super-admin"]),
+  body("role").optional().isIn(["super-admin", "admin", "manager", "server"]),
+  body("displayName").optional().trim().isLength({ max: 60 }),
+  body("phone").optional().trim().isLength({ max: 40 }),
   validateRequest,
   createAdmin
 );
@@ -38,7 +46,9 @@ router.put(
   param("id").isMongoId(),
   body("name").optional().trim().notEmpty(),
   body("email").optional().isEmail().normalizeEmail(),
-  body("role").optional().isIn(["admin", "super-admin"]),
+  body("role").optional().isIn(["super-admin", "admin", "manager", "server"]),
+  body("displayName").optional().trim().isLength({ max: 60 }),
+  body("phone").optional().trim().isLength({ max: 40 }),
   body("isActive").optional().isBoolean(),
   validateRequest,
   updateAdmin

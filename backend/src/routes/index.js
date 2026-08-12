@@ -5,10 +5,10 @@ const authRoutes = require("./authRoutes");
 const dashboardRoutes = require("./dashboardRoutes");
 const eventRoutes = require("./eventRoutes");
 const galleryRoutes = require("./galleryRoutes");
-const inquiryRoutes = require("./inquiryRoutes");
 const menuRoutes = require("./menuRoutes");
 const reservationRoutes = require("./reservationRoutes");
 const settingRoutes = require("./settingRoutes");
+const tableRoutes = require("./tableRoutes");
 const reviewRoutes = require("./reviewRoutes");
 const userRoutes = require("./userRoutes");
 
@@ -26,11 +26,11 @@ router.use("/reservations", reservationRoutes);
 router.use("/menu", menuRoutes);
 router.use("/events", eventRoutes);
 router.use("/gallery", galleryRoutes);
-router.use("/inquiries", inquiryRoutes);
 router.use("/dashboard", dashboardRoutes);
 router.use("/admins", adminRoutes);
 router.use("/users", userRoutes);
 router.use("/settings", settingRoutes);
+router.use("/tables", tableRoutes);
 router.use("/reviews", reviewRoutes);
 
 module.exports = router;

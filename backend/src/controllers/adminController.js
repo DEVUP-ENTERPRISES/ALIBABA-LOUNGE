@@ -4,13 +4,16 @@ const { asyncHandler } = require("../utils/asyncHandler");
 const { buildPagination, paginationPayload } = require("../utils/query");
 
 function formatAdmin(admin) {
-  return admin.toAuthJSON ? admin.toAuthJSON() : {
+  return {
     id: admin._id,
     name: admin.name,
+    displayName: admin.displayName || "",
     email: admin.email,
+    phone: admin.phone || "",
     role: admin.role,
     isActive: admin.isActive,
     lastLoginAt: admin.lastLoginAt,
+    createdAt: admin.createdAt,
   };
 }
 
@@ -22,6 +25,7 @@ const createAdmin = asyncHandler(async (req, res) => {
 const listAdmins = asyncHandler(async (req, res) => {
   const { page, limit, skip } = buildPagination(req.query);
   const filter = {};
+  if (req.query.role) filter.role = req.query.role;
   if (req.query.search) filter.$or = [
     { name: new RegExp(req.query.search, "i") },
     { email: new RegExp(req.query.search, "i") },
