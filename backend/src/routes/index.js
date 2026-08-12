@@ -3,6 +3,7 @@ const express = require("express");
 const adminRoutes = require("./adminRoutes");
 const authRoutes = require("./authRoutes");
 const billingRoutes = require("./billingRoutes");
+const comboRoutes = require("./comboRoutes");
 const dashboardRoutes = require("./dashboardRoutes");
 const eventRoutes = require("./eventRoutes");
 const galleryRoutes = require("./galleryRoutes");
@@ -36,6 +37,7 @@ router.use("/admins", adminRoutes);
 router.use("/users", userRoutes);
 router.use("/settings", settingRoutes);
 router.use("/suggestions", suggestionRoutes);
+router.use("/combos", comboRoutes);
 router.use("/tables", tableRoutes);
 router.use("/reviews", reviewRoutes);
 

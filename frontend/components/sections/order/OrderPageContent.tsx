@@ -24,6 +24,22 @@ const SEAT_KEY = "alibaba-seat";
 const CART_TTL_SECONDS = 4 * 60 * 60;
 
 type CartLine = { item: MenuItem; quantity: number };
+
+interface ComboItem {
+  id: string;
+  name: string;
+  price: number;
+  quantity: number;
+  subcategory: string;
+  image: string;
+}
+interface Combo {
+  id: string;
+  kind: string;
+  note: string;
+  items: ComboItem[];
+  total: number;
+}
 type Step = "table" | "menu" | "review" | "done";
 
 /**
@@ -78,6 +94,8 @@ export function OrderPageContent() {
   const [stageIndex, setStageIndex] = useState(0);
   const [lastCall, setLastCall] = useState<{ headline: string; items: MenuItem[] } | null>(null);
   const [lastCallBusy, setLastCallBusy] = useState(false);
+  const [combos, setCombos] = useState<Combo[]>([]);
+  const [combosOpen, setCombosOpen] = useState(false);
   const [sub, setSub] = useState<string>("all");
   const [cart, setCart] = useState<CartLine[]>([]);
   const [name, setName] = useState("");
@@ -181,6 +199,49 @@ export function OrderPageContent() {
   }, [tabReady, tab, table, tables]);
 
   const stage = STAGES[stageIndex];
+
+  /**
+   * Packages sized to the table.
+   *
+   * A group of ten does not want to assemble an order item by item, and left
+   * to themselves they under-order. The server builds these from the live
+   * menu, so every price is real.
+   */
+  useEffect(() => {
+    if (!table) return;
+    let alive = true;
+    fetch(`${API_BASE_URL}/combos?tableId=${table.id}`)
+      .then((r) => (r.ok ? r.json() : null))
+      .then((data) => {
+        if (!alive || !data?.combos?.length) return;
+        setCombos(data.combos);
+        // Offer them straight away, but only while the cart is untouched —
+        // nobody wants a package pushed at them mid-order.
+        setCombosOpen(cart.length === 0);
+      })
+      .catch(() => {});
+    return () => {
+      alive = false;
+    };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [table?.id]);
+
+  const addCombo = (combo: Combo) => {
+    const byId = new Map(menu.map((m) => [m.id, m]));
+    setCart((prev) => {
+      const next = [...prev];
+      for (const ci of combo.items) {
+        const item = byId.get(ci.id);
+        if (!item) continue;
+        const found = next.find((l) => l.item.id === item.id);
+        if (found) found.quantity += ci.quantity;
+        else next.push({ item, quantity: ci.quantity });
+      }
+      return next;
+    });
+    setCombosOpen(false);
+    setCartOpen(true);
+  };
 
   const subcategories = useMemo(() => {
     const present = new Set(
@@ -662,6 +723,17 @@ export function OrderPageContent() {
                 })}
               </div>
               <p className="mt-3 text-center text-xs text-white/40">{stage.blurb}</p>
+
+              {combos.length > 0 && !combosOpen && (
+                <button
+                  type="button"
+                  onClick={() => setCombosOpen(true)}
+                  className="mx-auto mt-3 flex items-center gap-2 rounded-full border border-[#d4af37]/35 bg-[#d4af37]/[0.06] px-4 py-2 text-[11px] text-[#f5e6c8] transition-colors hover:bg-[#d4af37]/12"
+                >
+                  <Sparkles className="size-3.5 text-[#d4af37]" />
+                  Packages for {table?.seats} — one tap
+                </button>
+              )}
             </div>
 
             <div className="hide-scrollbar mt-4 flex justify-start gap-2 overflow-x-auto sm:justify-center">
@@ -897,6 +969,100 @@ export function OrderPageContent() {
               >
                 No thanks, I am good
               </button>
+            </motion.div>
+          </>
+        )}
+      </AnimatePresence>
+
+      {/* Party packages */}
+      <AnimatePresence>
+        {combosOpen && combos.length > 0 && (
+          <>
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              onClick={() => setCombosOpen(false)}
+              className="fixed inset-0 z-[8200] bg-black/75 backdrop-blur-sm"
+            />
+            <motion.div
+              initial={{ y: "100%" }}
+              animate={{ y: 0 }}
+              exit={{ y: "100%" }}
+              transition={{ type: "spring", damping: 30, stiffness: 260 }}
+              data-lenis-prevent
+              className="hide-scrollbar safe-bottom fixed inset-x-0 bottom-0 z-[8300] max-h-[90dvh] overflow-y-auto overscroll-contain rounded-t-3xl border-t border-[#d4af37]/30 bg-[#0a0a0c]"
+            >
+              <div className="mx-auto max-w-2xl px-5 pt-3 pb-6">
+                <div className="mx-auto mb-4 h-1 w-10 rounded-full bg-white/15" />
+
+                <div className="flex items-start justify-between gap-3">
+                  <div>
+                    <p className="font-[family-name:var(--font-accent)] text-[10px] tracking-[0.22em] text-[#d4af37] uppercase">
+                      Table {table?.code} · {table?.seats} seats
+                    </p>
+                    <h2 className="mt-1.5 font-[family-name:var(--font-display)] text-2xl leading-tight text-white">
+                      Sorted for {table?.seats}, in one tap
+                    </h2>
+                    <p className="mt-1.5 text-xs text-white/45">
+                      Built for your table size. Change anything after.
+                    </p>
+                  </div>
+                  <button
+                    type="button"
+                    onClick={() => setCombosOpen(false)}
+                    aria-label="Close"
+                    className="mt-1 flex size-9 shrink-0 items-center justify-center rounded-full border border-white/10 text-white/50"
+                  >
+                    <X className="size-4" />
+                  </button>
+                </div>
+
+                <div className="mt-5 space-y-3">
+                  {combos.map((c) => (
+                    <button
+                      key={c.id}
+                      type="button"
+                      onClick={() => addCombo(c)}
+                      className="group w-full rounded-2xl border border-white/[0.08] bg-white/[0.02] p-4 text-left transition-colors hover:border-[#d4af37]/45 hover:bg-[#d4af37]/[0.04]"
+                    >
+                      <div className="flex items-baseline justify-between gap-3">
+                        <span className="font-[family-name:var(--font-display)] text-lg text-white">
+                          {c.kind}
+                        </span>
+                        <span className="shrink-0 font-[family-name:var(--font-display)] text-lg text-[#d4af37]">
+                          ${c.total.toFixed(2)}
+                        </span>
+                      </div>
+
+                      <p className="mt-1 text-xs leading-relaxed text-white/50">{c.note}</p>
+
+                      <div className="mt-3 flex flex-wrap gap-1.5">
+                        {c.items.map((i) => (
+                          <span
+                            key={i.id}
+                            className="rounded-full border border-white/[0.08] px-2.5 py-1 text-[11px] text-white/60"
+                          >
+                            {i.quantity}× {i.name}
+                          </span>
+                        ))}
+                      </div>
+
+                      <span className="mt-3 flex items-center gap-1.5 text-[11px] font-semibold tracking-[0.12em] text-[#d4af37] uppercase">
+                        <Plus className="size-3" /> Add this
+                      </span>
+                    </button>
+                  ))}
+                </div>
+
+                <button
+                  type="button"
+                  onClick={() => setCombosOpen(false)}
+                  className="mt-5 w-full rounded-xl border border-white/10 py-3 text-[11px] tracking-[0.14em] text-white/45 uppercase transition-colors hover:text-white/75"
+                >
+                  I will build my own
+                </button>
+              </div>
             </motion.div>
           </>
         )}
