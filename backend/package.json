@@ -18,7 +18,8 @@
     "settings:contact": "node src/scripts/updateContact.js",
     "seed:reviews": "node src/scripts/updateReviews.js",
     "seed:tables": "node src/scripts/seedTables.js",
-    "menu:flavours": "node src/scripts/zeroFlavourPrices.js"
+    "menu:flavours": "node src/scripts/zeroFlavourPrices.js",
+    "backfill:reservations": "node src/scripts/backfillReservationRefs.js"
   },
   "keywords": [
     "express",

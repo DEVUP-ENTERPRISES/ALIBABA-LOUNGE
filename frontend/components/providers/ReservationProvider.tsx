@@ -3,7 +3,11 @@
 import { createContext, useCallback, useContext, useEffect, useMemo, useState } from "react";
 import { ReservationModal } from "@/components/reservations/ReservationModal";
 import { reservationApi } from "@/lib/admin/data-api";
-import type { AdminReservation, ReservationStatus } from "@/lib/admin/types";
+import type {
+  AdminReservation,
+  ReservationLifecycle,
+  ReservationStatus,
+} from "@/lib/admin/types";
 
 interface NewReservationPayload {
   guestName: string;
@@ -20,8 +24,13 @@ interface ReservationContextValue {
   loading: boolean;
   error: string | null;
   refreshReservations: () => Promise<void>;
-  addReservation: (payload: NewReservationPayload) => Promise<void>;
-  updateReservationStatus: (id: string, status: ReservationStatus) => Promise<void>;
+  addReservation: (payload: NewReservationPayload) => Promise<AdminReservation>;
+  updateReservationStatus: (
+    id: string,
+    status: ReservationStatus | ReservationLifecycle,
+    extra?: { table?: string; statusNote?: string }
+  ) => Promise<AdminReservation>;
+  assignTable: (id: string, table: string) => Promise<AdminReservation>;
   openModal: () => void;
   closeModal: () => void;
   isModalOpen: boolean;
@@ -72,13 +81,33 @@ export function ReservationProvider({
   const addReservation = async (payload: NewReservationPayload) => {
     const reservation = await reservationApi.create(payload);
     setReservations((prev) => [reservation, ...prev]);
+    // Returned, not swallowed: the confirmation screen needs the reference
+    // code, which is the only thing a guest who never signs in can hold on to.
+    return reservation;
   };
 
-  const updateReservationStatus = async (id: string, status: ReservationStatus) => {
-    const updated = await reservationApi.update(id, { status: statusToApi[status] });
-    setReservations((prev) =>
-      prev.map((r) => (r.id === id ? updated : r))
-    );
+  /**
+   * Move a booking along.
+   *
+   * Goes to the dedicated status endpoint rather than the general update:
+   * status changes reserve and release tables, so they run the clash and
+   * capacity checks. The plain update route ignores status entirely.
+   */
+  const updateReservationStatus = async (
+    id: string,
+    status: ReservationStatus | ReservationLifecycle,
+    extra: { table?: string; statusNote?: string } = {}
+  ) => {
+    const wire = statusToApi[status as ReservationStatus] ?? status;
+    const updated = await reservationApi.setStatus(id, wire, extra);
+    setReservations((prev) => prev.map((r) => (r.id === id ? updated : r)));
+    return updated;
+  };
+
+  const assignTable = async (id: string, table: string) => {
+    const updated = await reservationApi.assignTable(id, table);
+    setReservations((prev) => prev.map((r) => (r.id === id ? updated : r)));
+    return updated;
   };
 
   const value = useMemo(
@@ -89,6 +118,7 @@ export function ReservationProvider({
       refreshReservations,
       addReservation,
       updateReservationStatus,
+      assignTable,
       openModal: () => setIsModalOpen(true),
       closeModal: () => setIsModalOpen(false),
       isModalOpen,

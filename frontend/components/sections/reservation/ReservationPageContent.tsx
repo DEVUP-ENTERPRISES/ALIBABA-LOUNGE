@@ -1,7 +1,7 @@
 "use client";
 
 import Image from "next/image";
-import { CalendarCheck, Clock, Users, Phone, Star } from "lucide-react";
+import { CalendarCheck, Clock, Users, Phone, Search, Star } from "lucide-react";
 import { motion } from "framer-motion";
 import { SectionHeading } from "@/components/ui/SectionHeading";
 import { MagneticButton } from "@/components/ui/MagneticButton";
@@ -130,6 +130,16 @@ export function ReservationPageContent() {
               (469) 586-5437
             </MagneticButton>
           </div>
+
+          {/* Guests book without an account, so the only way back to a booking
+              is the code on the confirmation. This is the door for it. */}
+          <a
+            href="/reservation/status"
+            className="mt-6 inline-flex items-center gap-2 font-[family-name:var(--font-body)] text-xs text-white/40 transition-colors hover:text-[#d4af37]"
+          >
+            <Search className="size-3.5" />
+            Already booked? Track it with your code
+          </a>
         </motion.div>
 
         {/* Hours */}

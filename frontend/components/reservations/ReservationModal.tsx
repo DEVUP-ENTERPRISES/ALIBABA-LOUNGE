@@ -1,7 +1,7 @@
 "use client";
 
 import { AnimatePresence, motion } from "framer-motion";
-import { Check, X } from "lucide-react";
+import { Check, Copy, Search, X } from "lucide-react";
 import { useEffect, useState } from "react";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
@@ -17,7 +17,7 @@ interface ReservationModalProps {
     date: string;
     time: string;
     notes?: string;
-  }) => void | Promise<void>;
+  }) => Promise<{ reference?: string } | void> | void;
 }
 
 const defaultFormState = {
@@ -33,6 +33,8 @@ const defaultFormState = {
 export function ReservationModal({ open, onClose, onConfirm }: ReservationModalProps) {
   const [form, setForm] = useState(defaultFormState);
   const [submitted, setSubmitted] = useState(false);
+  const [reference, setReference] = useState<string | null>(null);
+  const [copied, setCopied] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [submitting, setSubmitting] = useState(false);
 
@@ -44,6 +46,8 @@ export function ReservationModal({ open, onClose, onConfirm }: ReservationModalP
       // eslint-disable-next-line react-hooks/set-state-in-effect
       setForm(defaultFormState);
       setSubmitted(false);
+      setReference(null);
+      setCopied(false);
       setError(null);
     }
   }, [open]);
@@ -76,7 +80,8 @@ export function ReservationModal({ open, onClose, onConfirm }: ReservationModalP
 
     setSubmitting(true);
     try {
-      await onConfirm(form);
+      const created = await onConfirm(form);
+      setReference(created?.reference ?? null);
       setSubmitted(true);
     } catch (err) {
       setError(err instanceof Error ? err.message : "Unable to submit reservation.");
@@ -139,14 +144,54 @@ export function ReservationModal({ open, onClose, onConfirm }: ReservationModalP
                       <Check className="h-10 w-10" />
                     </div>
                     <div>
-                      <p className="text-sm uppercase tracking-[0.35em] text-[#d4af37]">Confirmed</p>
+                      {/* Not "Confirmed" — it is a request until someone on the
+                          floor gives it a table. Saying otherwise sets the guest
+                          up to turn up to nothing. */}
+                      <p className="text-sm uppercase tracking-[0.35em] text-[#d4af37]">Request sent</p>
                       <h3 className="mt-3 text-2xl font-[family-name:var(--font-display)] text-white">
-                        Reservation sent
+                        We have your table request
                       </h3>
                       <p className="mt-2 text-sm text-white/60">
-                        Your booking request has been successfully stored. Admin can approve or reject it from the dashboard.
+                        Our floor team will assign you a table and confirm shortly.
                       </p>
                     </div>
+
+                    {reference && (
+                      <div className="w-full rounded-2xl border border-[#d4af37]/30 bg-[#d4af37]/[0.06] p-4">
+                        <p className="font-[family-name:var(--font-accent)] text-[10px] tracking-[0.22em] text-[#d4af37] uppercase">
+                          Your reservation code
+                        </p>
+                        <p className="mt-1.5 font-[family-name:var(--font-display)] text-3xl tracking-[0.12em] text-white">
+                          {reference}
+                        </p>
+                        <p className="mt-1.5 text-xs text-white/45">
+                          Keep this. It is how you check your booking and how we find
+                          you at the door.
+                        </p>
+                        <div className="mt-3 flex flex-wrap justify-center gap-2">
+                          <button
+                            type="button"
+                            onClick={() => {
+                              void navigator.clipboard?.writeText(reference).then(
+                                () => setCopied(true),
+                                () => setCopied(false)
+                              );
+                            }}
+                            className="flex items-center gap-1.5 rounded-full border border-white/12 px-3.5 py-2 text-xs text-white/65 transition-colors hover:border-[#d4af37]/50 hover:text-white"
+                          >
+                            <Copy className="size-3.5" />
+                            {copied ? "Copied" : "Copy code"}
+                          </button>
+                          <a
+                            href={`/reservation/status?code=${reference}`}
+                            className="flex items-center gap-1.5 rounded-full border border-white/12 px-3.5 py-2 text-xs text-white/65 transition-colors hover:border-[#d4af37]/50 hover:text-white"
+                          >
+                            <Search className="size-3.5" /> Track it
+                          </a>
+                        </div>
+                      </div>
+                    )}
+
                     <button
                       type="button"
                       onClick={onClose}

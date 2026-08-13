@@ -10,7 +10,20 @@ export interface AdminReservation {
   time: string;
   partySize: number;
   notes?: string;
+  /** The three legacy labels the admin chips are built around. */
   status: ReservationStatus;
+  /** The real state, which has more cases than the chips do. */
+  rawStatus: ReservationLifecycle;
+  reference: string;
+  table: string | null;
+  tableCode: string;
+  tableSeats: number | null;
+  tableSection: string | null;
+  statusNote: string;
+  confirmedAt?: string | null;
+  seatedAt?: string | null;
+  completedAt?: string | null;
+  cancelledAt?: string | null;
   createdAt: string;
 }
 
@@ -96,6 +109,48 @@ export interface FloorTable {
   sortOrder: number;
   isActive: boolean;
   openOrders: number;
+}
+
+/** Every state a booking can be in, as the server names them. */
+export type ReservationLifecycle =
+  | "pending"
+  | "confirmed"
+  | "seated"
+  | "completed"
+  | "cancelled"
+  | "no-show";
+
+/**
+ * What a guest holding only a reference code may see.
+ *
+ * Narrower than AdminReservation on purpose: the endpoint behind it is public,
+ * so it carries a first name and no contact details at all.
+ */
+export interface ReservationView {
+  reference: string;
+  firstName: string;
+  date: string;
+  time: string;
+  guests: number;
+  status: ReservationLifecycle;
+  tableCode: string | null;
+  statusNote: string;
+  confirmedAt?: string | null;
+  seatedAt?: string | null;
+  completedAt?: string | null;
+  cancelledAt?: string | null;
+  createdAt: string;
+}
+
+/** A table offered for a booking, with the reason it is or is not usable. */
+export interface TableOption {
+  id: string;
+  code: string;
+  section: string;
+  seats: number;
+  fits: boolean;
+  free: boolean;
+  heldBy: { reference: string; time: string; name: string } | null;
 }
 
 export type OrderStatus =

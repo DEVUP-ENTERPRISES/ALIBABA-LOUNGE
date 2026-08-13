@@ -4,6 +4,8 @@ import type {
   AdminReservation,
   AdminReview,
   AdminSetting,
+  ReservationView,
+  TableOption,
   GalleryImage,
   FloorTable,
   Order,
@@ -102,6 +104,56 @@ export const reservationApi = {
   },
   async remove(id: string) {
     await request(`/reservations/${id}`, { method: "DELETE" });
+  },
+
+  /** Look a booking up by the code on the confirmation. No sign-in needed. */
+  async lookup(reference: string) {
+    const data = await request<{ reservation: ReservationView }>(
+      `/reservations/lookup/${encodeURIComponent(reference.trim().toUpperCase())}`
+    );
+    return data.reservation;
+  },
+
+  /** Which tables can take this party at this time, and what blocks the rest. */
+  async availability(params: {
+    date: string;
+    time: string;
+    guests?: number;
+    reservation?: string;
+  }) {
+    const q = new URLSearchParams({
+      date: params.date,
+      time: params.time,
+      ...(params.guests ? { guests: String(params.guests) } : {}),
+      ...(params.reservation ? { reservation: params.reservation } : {}),
+    });
+    return request<{
+      tables: TableOption[];
+      recommended: string[];
+      holdMinutes: number;
+    }>(`/reservations/availability?${q.toString()}`);
+  },
+
+  /** Seat a booking at a table. Refused if it clashes or is too small. */
+  async assignTable(id: string, table: string) {
+    const data = await request<{ reservation: AdminReservation }>(
+      `/reservations/${id}/table`,
+      { method: "PUT", body: JSON.stringify({ table }) }
+    );
+    return data.reservation;
+  },
+
+  /** Move a booking along its evening; may assign the table in the same call. */
+  async setStatus(
+    id: string,
+    status: string,
+    extra: { table?: string; statusNote?: string } = {}
+  ) {
+    const data = await request<{ reservation: AdminReservation }>(
+      `/reservations/${id}/status`,
+      { method: "PUT", body: JSON.stringify({ status, ...extra }) }
+    );
+    return data.reservation;
   },
 };
 

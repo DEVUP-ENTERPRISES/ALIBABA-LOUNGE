@@ -15,12 +15,27 @@ function formatReservation(doc) {
     guests: doc.guests,
     notes: doc.specialRequest,
     specialRequest: doc.specialRequest,
+    // The admin table has always shown these three labels. Keep them so the
+    // existing chips carry on working, and expose the real status alongside
+    // for the states that have no legacy label.
     status: {
       pending: "Pending",
       confirmed: "Approved",
       cancelled: "Rejected",
     }[doc.status] || doc.status,
     rawStatus: doc.status,
+
+    reference: doc.reference,
+    table: doc.table?._id?.toString?.() ?? doc.table?.toString?.() ?? null,
+    tableCode: doc.table?.code ?? doc.tableCode ?? "",
+    tableSeats: doc.table?.seats ?? null,
+    tableSection: doc.table?.section ?? null,
+    statusNote: doc.statusNote || "",
+
+    confirmedAt: doc.confirmedAt,
+    seatedAt: doc.seatedAt,
+    completedAt: doc.completedAt,
+    cancelledAt: doc.cancelledAt,
     createdAt: doc.createdAt?.toISOString?.().split("T")[0] ?? doc.createdAt,
     updatedAt: doc.updatedAt,
   };
