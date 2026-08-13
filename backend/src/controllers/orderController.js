@@ -217,6 +217,110 @@ const getOrder = asyncHandler(async (req, res) => {
 });
 
 /**
+ * What the guest is allowed to see about their own order.
+ *
+ * The confirmation screen had no way to learn that a server had accepted the
+ * order, so it sat on "a server will confirm shortly" forever — the guest had
+ * no idea whether anyone had picked it up. This is the endpoint it polls.
+ *
+ * Deliberately unauthenticated: most guests order without signing in, so
+ * there is no token to check. It therefore returns no personal data — no
+ * name, no phone, no notes — only the progress of the order and what was
+ * ordered, all of which the guest is sitting in front of anyway.
+ */
+const getOrderStatus = asyncHandler(async (req, res) => {
+  const order = await Order.findById(req.params.id)
+    .select(
+      "orderNumber tableCode status items subtotal total assignedName placedAt acceptedAt servedAt completedAt"
+    )
+    .lean();
+
+  if (!order) throw new AppError("Order not found.", 404);
+
+  res.json({
+    success: true,
+    order: {
+      id: order._id,
+      orderNumber: order.orderNumber,
+      tableCode: order.tableCode,
+      status: order.status,
+      items: (order.items || []).map((i) => ({
+        title: i.title,
+        quantity: i.quantity,
+        price: i.price,
+      })),
+      subtotal: order.subtotal,
+      total: order.total,
+      // First name only. "Accepted by Sarah" is warm; a full staff name on a
+      // public endpoint is more than the guest needs.
+      serverName: order.assignedName ? String(order.assignedName).split(" ")[0] : null,
+      placedAt: order.placedAt,
+      acceptedAt: order.acceptedAt,
+      servedAt: order.servedAt,
+      completedAt: order.completedAt,
+    },
+  });
+});
+
+/**
+ * Move an open tab to a different table.
+ *
+ * Groups move — a bigger table frees up, or they were given the wrong number
+ * to begin with. Without this the tab is welded to the first table tapped and
+ * the only way out is to abandon it, which leaves the floor plan lying about
+ * where people are sitting.
+ *
+ * The unique partial index means the destination cannot already have an open
+ * tab, so that is checked first and reported in words rather than as a
+ * duplicate-key error.
+ */
+const moveOrderTable = asyncHandler(async (req, res) => {
+  const order = await Order.findById(req.params.id);
+  if (!order) throw new AppError("Order not found.", 404);
+  if (!OPEN_STATUSES.includes(order.status)) {
+    throw new AppError("This order is closed and can no longer be moved.", 400);
+  }
+
+  const target = await Table.findById(req.body.table);
+  if (!target) throw new AppError("Choose a table.", 404);
+  if (!target.isActive) throw new AppError("That table is not in service.", 400);
+
+  const from = String(order.table);
+  if (from === String(target._id)) {
+    return res.json({ success: true, order: formatOrder(order), moved: false });
+  }
+
+  const clash = await Order.findOne({
+    table: target._id,
+    status: { $in: OPEN_STATUSES },
+  }).select("orderNumber");
+  if (clash) {
+    throw new AppError(
+      `Table ${target.code} already has an open tab (#${clash.orderNumber}).`,
+      409
+    );
+  }
+
+  order.table = target._id;
+  order.tableCode = target.code;
+  await order.save();
+
+  // Hand the old table back and take the new one, but never stamp over a
+  // table someone has deliberately marked reserved or cleaning.
+  await Table.updateOne(
+    { _id: from, status: "occupied" },
+    { $set: { status: "available" } }
+  );
+  await Table.updateOne(
+    { _id: target._id, status: "available" },
+    { $set: { status: "occupied" } }
+  );
+
+  const populated = await order.populate("table", "code section");
+  res.json({ success: true, order: formatOrder(populated), moved: true });
+});
+
+/**
  * Claim an order.
  *
  * The status guard in the filter makes this atomic: if two workers tap accept
@@ -376,6 +480,8 @@ module.exports = {
   listOrders,
   listMyOrders,
   getOrder,
+  getOrderStatus,
+  moveOrderTable,
   acceptOrder,
   updateOrderStatus,
   addOrderItems,

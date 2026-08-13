@@ -8,6 +8,7 @@ import type {
   FloorTable,
   Order,
   OrderStatus,
+  OrderStatusView,
   StaffMember,
 } from "@/lib/admin/types";
 import type { MenuItem } from "@/lib/menu/types";
@@ -282,6 +283,19 @@ export const orderApi = {
       body: JSON.stringify(payload),
     });
     return data.order;
+  },
+  /** Progress of one order, for the guest watching their confirmation. */
+  async status(id: string) {
+    const data = await request<{ order: OrderStatusView }>(`/orders/${id}/status`);
+    return data.order;
+  },
+  /** Follow a group that has moved to a different table. */
+  async moveTable(id: string, table: string) {
+    const data = await request<{ order: Order; moved: boolean }>(`/orders/${id}/table`, {
+      method: "PUT",
+      body: JSON.stringify({ table }),
+    });
+    return data;
   },
   async accept(id: string) {
     const data = await request<{ order: Order }>(`/orders/${id}/accept`, { method: "PUT" });

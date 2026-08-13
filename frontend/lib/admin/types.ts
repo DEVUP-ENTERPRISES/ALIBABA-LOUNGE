@@ -106,6 +106,28 @@ export type OrderStatus =
   | "completed"
   | "cancelled";
 
+/**
+ * The slice of an order a guest is allowed to see.
+ *
+ * Deliberately narrower than `Order` — the endpoint behind it is public, so
+ * it carries no name, phone or notes. Keep the two apart so nothing personal
+ * drifts into it later.
+ */
+export interface OrderStatusView {
+  id: string;
+  orderNumber: number;
+  tableCode: string;
+  status: OrderStatus;
+  items: { title: string; quantity: number; price: number }[];
+  subtotal: number;
+  total: number;
+  serverName: string | null;
+  placedAt: string;
+  acceptedAt?: string | null;
+  servedAt?: string | null;
+  completedAt?: string | null;
+}
+
 export interface OrderItem {
   menuItem: string;
   title: string;

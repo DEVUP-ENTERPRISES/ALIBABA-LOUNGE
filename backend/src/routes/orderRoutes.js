@@ -6,6 +6,8 @@ const {
   listOrders,
   listMyOrders,
   getOrder,
+  getOrderStatus,
+  moveOrderTable,
   acceptOrder,
   updateOrderStatus,
   addOrderItems,
@@ -45,6 +47,27 @@ router.post(
 );
 
 router.get("/mine", firebaseAuth, listMyOrders);
+
+// Progress of a single order, for the guest watching the confirmation screen.
+// Open for the same reason ordering is: most guests never sign in, so there is
+// no token to check. It returns no personal data — see the controller.
+router.get(
+  "/:id/status",
+  param("id").isMongoId(),
+  validateRequest,
+  getOrderStatus
+);
+
+// Moving tables mid-session is normal; the tab follows the group. Held to the
+// same trust model as placing the order — whoever holds the order id.
+router.put(
+  "/:id/table",
+  firebaseAuthOptional,
+  param("id").isMongoId(),
+  body("table").isMongoId().withMessage("Choose a table."),
+  validateRequest,
+  moveOrderTable
+);
 
 // ── Staff ────────────────────────────────────────────────────
 router.get(

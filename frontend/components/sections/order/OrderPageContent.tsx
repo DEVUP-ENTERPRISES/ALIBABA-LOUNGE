@@ -3,7 +3,20 @@
 import { useEffect, useMemo, useState } from "react";
 import Image from "next/image";
 import { AnimatePresence, motion } from "framer-motion";
-import { Check, Clock, Lock, Minus, Plus, ShoppingBag, Sparkles, X } from "lucide-react";
+import {
+  ArrowLeftRight,
+  Check,
+  Clock,
+  Flame,
+  Lock,
+  Minus,
+  PartyPopper,
+  Plus,
+  ShoppingBag,
+  Sparkles,
+  Trash2,
+  X,
+} from "lucide-react";
 import { SectionHeading } from "@/components/ui/SectionHeading";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
@@ -15,11 +28,14 @@ import { resolveImageUrl } from "@/lib/image-url";
 import { useAuth } from "@/contexts/AuthContext";
 import { useSmoothScroll } from "@/contexts/SmoothScrollContext";
 import { useNudgeDue, useOpenTab } from "@/hooks/useOpenTab";
+import { STATUS_STEPS, statusIndex, useOrderStatus } from "@/hooks/useOrderStatus";
 import { getCookie, setCookie, getJsonCookie, setJsonCookie, deleteCookie } from "@/lib/cookies";
 import { cn } from "@/lib/utils";
 
 const CART_KEY = "alibaba-cart";
 const SEAT_KEY = "alibaba-seat";
+/** The order whose progress this phone is watching. */
+const LAST_ORDER_KEY = "alibaba-last-order";
 /** Long enough to survive a session at the table, short enough to go stale. */
 const CART_TTL_SECONDS = 4 * 60 * 60;
 
@@ -109,6 +125,15 @@ export function OrderPageContent() {
 
   // Suggestions come from the server; it decides whether to use the model.
   const [suggestions, setSuggestions] = useState<MenuItem[]>([]);
+  // Switching seats mid-order. `switching` keeps the cart alive while the
+  // table grid is shown again, so picking a new table does not start over.
+  const [switching, setSwitching] = useState(false);
+  const [moveBusy, setMoveBusy] = useState(false);
+  const [confirmClear, setConfirmClear] = useState(false);
+  // An order placed in an earlier visit to this page. Closing the app used
+  // to lose the confirmation screen entirely, leaving no way to find out
+  // whether anyone had picked the order up.
+  const [resumedId, setResumedId] = useState<string | null>(null);
 
   useEffect(() => {
     tableApi.list().then(setTables).catch(() => {});
@@ -198,6 +223,59 @@ export function OrderPageContent() {
     }
   }, [tabReady, tab, table, tables]);
 
+  // Live progress for the order just placed, so the confirmation screen
+  // stops being a dead end.
+  const { order: live, justChanged, acknowledge } = useOrderStatus(placed?.id ?? resumedId);
+  const current = live?.status ?? placed?.status ?? "placed";
+  const currentIndex = statusIndex(current);
+  const finished = current === "completed" || current === "cancelled";
+
+  // Pick the tab back up after a reload, a lock screen, or the app being
+  // swiped away. Only while it is still live — a settled tab should not
+  // reopen days later.
+  useEffect(() => {
+    if (placed || resumedId) return;
+    const id = getCookie(LAST_ORDER_KEY);
+    if (!id) return;
+
+    let alive = true;
+    orderApi
+      .status(id)
+      .then((o) => {
+        if (!alive) return;
+        const live = ["placed", "accepted", "preparing", "served"].includes(o.status);
+        if (live) {
+          setResumedId(id);
+          setStep("done");
+        } else {
+          deleteCookie(LAST_ORDER_KEY);
+        }
+      })
+      .catch(() => deleteCookie(LAST_ORDER_KEY));
+    return () => {
+      alive = false;
+    };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  // Once the floor closes the tab, stop claiming the guest has one open.
+  // Without this the cookie kept insisting for its full four hours and the
+  // next visit landed on a dead tab.
+  useEffect(() => {
+    if (!live || !["completed", "cancelled"].includes(live.status)) return;
+    clear();
+    deleteCookie(LAST_ORDER_KEY);
+    deleteCookie(CART_KEY);
+    deleteCookie(SEAT_KEY);
+  }, [live, clear]);
+
+  // The banner announces itself and then gets out of the way.
+  useEffect(() => {
+    if (!justChanged) return;
+    const t = window.setTimeout(acknowledge, 6000);
+    return () => window.clearTimeout(t);
+  }, [justChanged, acknowledge]);
+
   const stage = STAGES[stageIndex];
 
   /**
@@ -241,6 +319,66 @@ export function OrderPageContent() {
     });
     setCombosOpen(false);
     setCartOpen(true);
+  };
+
+  /** Wipe every trace of this session and go back to the table grid. */
+  const startFresh = () => {
+    clear();
+    deleteCookie(SEAT_KEY);
+    deleteCookie(CART_KEY);
+    deleteCookie(LAST_ORDER_KEY);
+    setCart([]);
+    setPlaced(null);
+    setResumedId(null);
+    setTable(null);
+    setNotes("");
+    setError(null);
+    setSwitching(false);
+    setStep("table");
+  };
+
+  /**
+   * Sit the group somewhere else.
+   *
+   * Before anything is ordered this is just a different seat. Once an order
+   * exists the tab has to move with them on the server too, otherwise the
+   * floor plan keeps showing them at the table they left.
+   */
+  const moveToTable = async (t: FloorTable) => {
+    setError(null);
+
+    // A tab resumed after a reload has no `placed` record, only the id we
+    // remembered. It still has to move on the server.
+    const openId = placed?.id ?? resumedId;
+
+    if (!openId) {
+      setTable(t);
+      setCookie(SEAT_KEY, t.id, { maxAgeSeconds: CART_TTL_SECONDS });
+      setSwitching(false);
+      setStep("menu");
+      return;
+    }
+
+    setMoveBusy(true);
+    try {
+      const res = await orderApi.moveTable(openId, t.id);
+      setPlaced(res.order);
+      setTable(t);
+      setCookie(SEAT_KEY, t.id, { maxAgeSeconds: CART_TTL_SECONDS });
+      remember({
+        tableId: t.id,
+        tableCode: t.code,
+        orderNumber: res.order.orderNumber,
+      });
+      setSwitching(false);
+      setStep("done");
+      if (typeof navigator !== "undefined" && "vibrate" in navigator) navigator.vibrate(40);
+    } catch (err) {
+      // Usually the destination already has an open tab. The server says which.
+      setError(err instanceof Error ? err.message : "Could not move the tab.");
+    } finally {
+      setMoveBusy(false);
+    }
   };
 
   const subcategories = useMemo(() => {
@@ -314,6 +452,9 @@ export function OrderPageContent() {
         ? prev.map((l) => (l.item.id === item.id ? { ...l, quantity: l.quantity + 1 } : l))
         : [...prev, { item, quantity: 1 }];
     });
+
+  const removeLine = (id: string) =>
+    setCart((prev) => prev.filter((l) => l.item.id !== id));
 
   const changeQty = (id: string, delta: number) =>
     setCart((prev) =>
@@ -412,6 +553,10 @@ export function OrderPageContent() {
         notes: notes.trim(),
       });
       setPlaced(order);
+      setResumedId(order.id);
+      // Remember which order this phone is watching, so closing the app and
+      // coming back lands on the live confirmation rather than a blank menu.
+      setCookie(LAST_ORDER_KEY, order.id, { maxAgeSeconds: CART_TTL_SECONDS });
       // These items are now on the tab; leaving them in the cart would restore
       // an already-sent order if the guest reopens the page.
       setCart([]);
@@ -431,27 +576,168 @@ export function OrderPageContent() {
   };
 
   // ── Confirmation ───────────────────────────────────────────
-  if (step === "done" && placed) {
+  if (step === "done" && (placed || live)) {
     return (
       <div className="cinematic-backdrop relative min-h-screen pt-24 pb-20 pb-mobile-cta">
+        {/* The moment something happens, say so. A guest with the phone face
+            down gets the buzz from useOrderStatus; this is for when they are
+            looking at it.
+
+            It clears the 72px navbar geometrically rather than by z-index:
+            the page is wrapped in an animating motion.div, which creates a
+            stacking context, so nothing inside it can paint above the navbar
+            however high its z-index. */}
+        <AnimatePresence>
+          {justChanged && (
+            <motion.div
+              initial={{ y: -80, opacity: 0 }}
+              animate={{ y: 0, opacity: 1 }}
+              exit={{ y: -80, opacity: 0 }}
+              transition={{ type: "spring", damping: 24, stiffness: 300 }}
+              role="status"
+              aria-live="polite"
+              onClick={acknowledge}
+              className="fixed inset-x-3 top-[calc(env(safe-area-inset-top,0px)+5.25rem)] z-[9000] mx-auto max-w-md cursor-pointer rounded-2xl border border-[#d4af37]/40 bg-[#0a0a0c]/97 p-4 shadow-[0_20px_50px_rgba(0,0,0,0.65)] backdrop-blur-xl"
+            >
+              <div className="flex items-center gap-3">
+                <span className="flex size-10 shrink-0 items-center justify-center rounded-full bg-[#d4af37]/15">
+                  {justChanged === "completed" ? (
+                    <PartyPopper className="size-5 text-[#d4af37]" />
+                  ) : justChanged === "preparing" ? (
+                    <Flame className="size-5 text-[#d4af37]" />
+                  ) : (
+                    <Check className="size-5 text-[#d4af37]" />
+                  )}
+                </span>
+                <div className="min-w-0 flex-1 text-left">
+                  <p className="font-[family-name:var(--font-display)] text-base leading-tight text-white">
+                    {justChanged === "accepted" && live?.serverName
+                      ? `${live.serverName} has your order`
+                      : (STATUS_STEPS[statusIndex(justChanged)]?.headline ??
+                        "Order updated")}
+                  </p>
+                  <p className="mt-0.5 text-xs leading-snug text-white/55">
+                    {STATUS_STEPS[statusIndex(justChanged)]?.blurb}
+                  </p>
+                </div>
+              </div>
+            </motion.div>
+          )}
+        </AnimatePresence>
+
         <div className="relative mx-auto max-w-xl px-5 text-center sm:px-8">
-          <div className="mx-auto flex size-20 items-center justify-center rounded-full border border-[#d4af37]/40 bg-[#d4af37]/10">
-            <Check className="size-9 text-[#d4af37]" />
+          <div
+            className={cn(
+              "mx-auto flex size-20 items-center justify-center rounded-full border transition-colors duration-500",
+              current === "cancelled"
+                ? "border-rose-400/40 bg-rose-500/10"
+                : finished
+                  ? "border-emerald-400/40 bg-emerald-500/10"
+                  : "border-[#d4af37]/40 bg-[#d4af37]/10"
+            )}
+          >
+            {current === "cancelled" ? (
+              <X className="size-9 text-rose-300" />
+            ) : current === "completed" ? (
+              <PartyPopper className="size-9 text-emerald-300" />
+            ) : current === "preparing" ? (
+              <Flame className="size-9 text-[#d4af37]" />
+            ) : (
+              <Check className="size-9 text-[#d4af37]" />
+            )}
           </div>
+
           <h1 className="mt-6 font-[family-name:var(--font-display)] text-3xl text-white">
-            Order #{placed.orderNumber}
+            {current === "cancelled"
+              ? "Order cancelled"
+              : (STATUS_STEPS[currentIndex]?.headline ?? "Order is in")}
           </h1>
+
           <p className="mt-3 text-white/55">
-            Sent to the floor for table{" "}
-            <span className="text-[#d4af37]">{placed.tableCode}</span>. A server will
-            confirm shortly.
+            {current === "cancelled" ? (
+              "Talk to your server and we will sort it out."
+            ) : (
+              <>
+                {STATUS_STEPS[currentIndex]?.blurb}{" "}
+                {live?.serverName && current !== "placed" && (
+                  <span className="text-[#d4af37]">{live.serverName} has you.</span>
+                )}
+              </>
+            )}
           </p>
+
+          <p className="mt-2 text-xs text-white/35">
+            Order #{live?.orderNumber ?? placed?.orderNumber} · Table{" "}
+            <span className="text-white/55">{live?.tableCode ?? placed?.tableCode}</span>
+          </p>
+
+          {/* Progress. Live, so nobody has to wonder whether it went through. */}
+          {current !== "cancelled" && (
+            <ol className="mt-7 flex items-start justify-between gap-1">
+              {STATUS_STEPS.map((st, i) => {
+                const done = i <= currentIndex;
+                const now = i === currentIndex;
+                return (
+                  <li key={st.id} className="flex flex-1 flex-col items-center gap-2">
+                    <div className="flex w-full items-center">
+                      <span
+                        className={cn(
+                          "h-px flex-1",
+                          i === 0 ? "opacity-0" : done ? "bg-[#d4af37]/50" : "bg-white/10"
+                        )}
+                      />
+                      <span
+                        className={cn(
+                          "flex size-6 shrink-0 items-center justify-center rounded-full border text-[10px] transition-colors duration-500",
+                          done
+                            ? "border-[#d4af37] bg-[#d4af37] text-[#050505]"
+                            : "border-white/15 text-white/30",
+                          now && "ring-4 ring-[#d4af37]/20"
+                        )}
+                      >
+                        {done ? <Check className="size-3" /> : i + 1}
+                      </span>
+                      <span
+                        className={cn(
+                          "h-px flex-1",
+                          i === STATUS_STEPS.length - 1
+                            ? "opacity-0"
+                            : i < currentIndex
+                              ? "bg-[#d4af37]/50"
+                              : "bg-white/10"
+                        )}
+                      />
+                    </div>
+                    <span
+                      className={cn(
+                        "text-center text-[10px] leading-tight",
+                        now ? "text-[#d4af37]" : done ? "text-white/50" : "text-white/25"
+                      )}
+                    >
+                      {st.label}
+                    </span>
+                  </li>
+                );
+              })}
+            </ol>
+          )}
+
+          {!finished && (
+            <p className="mt-5 flex items-center justify-center gap-2 text-xs text-white/35">
+              <span className="relative flex size-1.5">
+                <span className="absolute inline-flex size-full animate-ping rounded-full bg-[#d4af37] opacity-70" />
+                <span className="relative inline-flex size-1.5 rounded-full bg-[#d4af37]" />
+              </span>
+              Updating live — keep this open
+            </p>
+          )}
+
           <p className="mt-3 text-xs text-white/35">
             Have photo ID ready — we verify 21+ for all tobacco service.
           </p>
 
           <div className="mt-8 rounded-2xl border border-white/[0.08] bg-[#0c0c0e]/70 p-5 text-left">
-            {placed.items.map((it, i) => (
+            {(live?.items ?? placed?.items ?? []).map((it, i) => (
               <div key={i} className="flex justify-between py-1.5 text-sm text-white/70">
                 <span>
                   <span className="text-white/40">{it.quantity}×</span> {it.title}
@@ -462,7 +748,7 @@ export function OrderPageContent() {
             <div className="mt-3 border-t border-white/[0.08] pt-3 text-sm">
               <div className="flex justify-between font-[family-name:var(--font-display)] text-lg text-[#d4af37]">
                 <span>Total</span>
-                <span>${placed.total.toFixed(2)}</span>
+                <span>${(live?.total ?? placed?.total ?? 0).toFixed(2)}</span>
               </div>
               <p className="mt-1 text-[11px] text-white/35">
                 Tax is added on your final bill at the table.
@@ -471,33 +757,61 @@ export function OrderPageContent() {
           </div>
 
           <div className="mt-8 flex flex-col items-center gap-3">
-            <button
-              type="button"
-              onClick={() => {
-                setCart([]);
-                setPlaced(null);
-                setNotes("");
-                setStep("menu");
-              }}
-              className="rounded-full border border-[#d4af37]/40 px-6 py-3 font-[family-name:var(--font-accent)] text-xs tracking-[0.18em] text-[#f5e6c8] uppercase transition-colors hover:bg-[#d4af37]/10"
-            >
-              Order more
-            </button>
-            <button
-              type="button"
-              onClick={() => {
-                clear();
-                deleteCookie(SEAT_KEY);
-                deleteCookie(CART_KEY);
-                setCart([]);
-                setPlaced(null);
-                setTable(null);
-                setStep("table");
-              }}
-              className="text-xs text-white/35 transition-colors hover:text-white/60"
-            >
-              Leaving? Start a new table
-            </button>
+            {finished ? (
+              <>
+                {/* The tab is closed. Without this the screen sat on a paid
+                    order forever with no way forward. */}
+                <p className="max-w-sm text-sm text-white/50">
+                  {current === "completed"
+                    ? "That is the tab closed and settled. Come back soon — the coals will be ready."
+                    : "Nothing was charged."}
+                </p>
+                <button
+                  type="button"
+                  onClick={startFresh}
+                  className="rounded-full bg-gradient-to-r from-[#8b6914] via-[#d4af37] to-[#8b6914] px-7 py-3 font-[family-name:var(--font-accent)] text-xs tracking-[0.18em] text-[#050505] uppercase"
+                >
+                  Start a new tab
+                </button>
+              </>
+            ) : (
+              <>
+                <button
+                  type="button"
+                  onClick={() => {
+                    setCart([]);
+                    setPlaced(null);
+                    setNotes("");
+                    setStep("menu");
+                  }}
+                  className="rounded-full border border-[#d4af37]/40 px-6 py-3 font-[family-name:var(--font-accent)] text-xs tracking-[0.18em] text-[#f5e6c8] uppercase transition-colors hover:bg-[#d4af37]/10"
+                >
+                  Order more
+                </button>
+
+                {/* Groups move. The tab should follow them rather than
+                    stranding the floor plan on the wrong table. */}
+                <button
+                  type="button"
+                  onClick={() => {
+                    setSwitching(true);
+                    setStep("table");
+                  }}
+                  className="flex items-center gap-2 rounded-full border border-white/12 px-5 py-2.5 text-xs text-white/60 transition-colors hover:border-[#d4af37]/40 hover:text-white/85"
+                >
+                  <ArrowLeftRight className="size-3.5" />
+                  We moved table
+                </button>
+
+                <button
+                  type="button"
+                  onClick={startFresh}
+                  className="text-xs text-white/35 transition-colors hover:text-white/60"
+                >
+                  Leaving? Start a new table
+                </button>
+              </>
+            )}
           </div>
 
           {/* Everything they have not tried yet, one rail per part of the menu.
@@ -573,14 +887,43 @@ export function OrderPageContent() {
     <div className="cinematic-backdrop relative min-h-screen pt-24 pb-32 pb-mobile-cta">
       <div className="relative mx-auto max-w-7xl px-5 sm:px-8 md:px-12 lg:px-20">
         <SectionHeading
-          eyebrow={step === "table" ? "Step 1 of 2" : "Step 2 of 2"}
-          title={step === "table" ? "Where Are You Sitting?" : "Build Your Order"}
+          eyebrow={switching ? "Moving tables" : step === "table" ? "Step 1 of 2" : "Step 2 of 2"}
+          title={
+            switching
+              ? "Where Did You Move To?"
+              : step === "table"
+                ? "Where Are You Sitting?"
+                : "Build Your Order"
+          }
           subtitle={
-            step === "table"
-              ? "Pick your table so we know where to bring it."
-              : `Table ${table?.code}. Add what you want, then review.`
+            switching
+              ? placed
+                ? `Tab #${placed?.orderNumber ?? live?.orderNumber} moves with you — nothing is lost.`
+                : "Your cart stays exactly as it is."
+              : step === "table"
+                ? "Pick your table so we know where to bring it."
+                : `Table ${table?.code}. Add what you want, then review.`
           }
         />
+
+        {switching && (
+          <div className="mx-auto mt-6 flex max-w-lg items-center justify-between gap-3 rounded-2xl border border-[#d4af37]/25 bg-[#d4af37]/[0.05] px-4 py-3">
+            <p className="text-sm text-white/65">
+              Currently at <span className="text-[#d4af37]">{table?.code}</span>
+            </p>
+            <button
+              type="button"
+              onClick={() => {
+                setSwitching(false);
+                setError(null);
+                setStep(placed ? "done" : "menu");
+              }}
+              className="shrink-0 text-xs text-white/40 transition-colors hover:text-white/75"
+            >
+              Never mind
+            </button>
+          </div>
+        )}
 
         {error && (
           <p role="alert" className="mx-auto mt-6 max-w-lg rounded-xl border border-rose-500/30 bg-rose-500/10 px-4 py-3 text-center text-sm text-rose-300">
@@ -592,15 +935,31 @@ export function OrderPageContent() {
         {step === "table" && (
           <div className="mt-10 grid grid-cols-3 gap-3 sm:grid-cols-4 md:grid-cols-6 lg:grid-cols-7">
             {tables.map((t) => {
-              const taken = t.status === "occupied" || t.status === "reserved";
+              // The seat they are already at reads as occupied to everyone —
+              // including them. While moving, show it as theirs rather than
+              // as a locked table they cannot choose.
+              const mine = table?.id === t.id;
+              const taken =
+                !mine && (t.status === "occupied" || t.status === "reserved");
+              const busy = moveBusy;
               return (
                 <button
                   key={t.id}
                   type="button"
-                  disabled={taken}
-                  title={taken ? "In use — ask a server" : undefined}
+                  disabled={taken || busy || mine}
+                  title={
+                    mine
+                      ? "You are here"
+                      : taken
+                        ? "In use — ask a server"
+                        : undefined
+                  }
                   onClick={() => {
-                    if (taken) return;
+                    if (taken || busy || mine) return;
+                    if (switching) {
+                      void moveToTable(t);
+                      return;
+                    }
                     setTable(t);
                     setStep("menu");
                     // Persist immediately. Reloading or pressing Back used to
@@ -610,9 +969,12 @@ export function OrderPageContent() {
                   }}
                   className={cn(
                     "group rounded-xl border p-3 text-center transition-all",
-                    taken
-                      ? "cursor-not-allowed border-white/[0.06] bg-white/[0.02] opacity-50"
-                      : "border-[#d4af37]/25 bg-[#d4af37]/[0.04] hover:border-[#d4af37] hover:bg-[#d4af37]/10"
+                    mine
+                      ? "border-[#d4af37] bg-[#d4af37]/15"
+                      : taken
+                        ? "cursor-not-allowed border-white/[0.06] bg-white/[0.02] opacity-50"
+                        : "border-[#d4af37]/25 bg-[#d4af37]/[0.04] hover:border-[#d4af37] hover:bg-[#d4af37]/10",
+                    busy && !mine && "pointer-events-none opacity-40"
                   )}
                 >
                   <span className="block font-[family-name:var(--font-display)] text-lg text-white">
@@ -621,11 +983,15 @@ export function OrderPageContent() {
                   <span className="mt-0.5 block text-[10px] tracking-[0.14em] text-white/40 uppercase">
                     {t.seats} seats
                   </span>
-                  {taken && (
+                  {mine ? (
+                    <span className="mt-1 flex items-center justify-center gap-1 text-[9px] tracking-[0.12em] text-[#d4af37] uppercase">
+                      <Check className="size-2.5" /> You are here
+                    </span>
+                  ) : taken ? (
                     <span className="mt-1 flex items-center justify-center gap-1 text-[9px] tracking-[0.12em] text-amber-400/80 uppercase">
                       <Lock className="size-2.5" /> In use
                     </span>
-                  )}
+                  ) : null}
                 </button>
               );
             })}
@@ -723,6 +1089,18 @@ export function OrderPageContent() {
                 })}
               </div>
               <p className="mt-3 text-center text-xs text-white/40">{stage.blurb}</p>
+
+              <button
+                type="button"
+                onClick={() => {
+                  setSwitching(true);
+                  setStep("table");
+                }}
+                className="mx-auto mt-3 flex items-center gap-2 rounded-full border border-white/10 px-4 py-2 text-[11px] text-white/45 transition-colors hover:border-[#d4af37]/40 hover:text-white/80"
+              >
+                <ArrowLeftRight className="size-3.5" />
+                Sitting at {table?.code} — change
+              </button>
 
               {combos.length > 0 && !combosOpen && (
                 <button
@@ -1137,7 +1515,62 @@ export function OrderPageContent() {
                     <X className="size-4" />
                   </button>
                 </div>
-                <p className="mt-1 text-xs text-white/40">Table {table?.code}</p>
+                <div className="mt-1 flex items-center justify-between gap-3">
+                  <p className="text-xs text-white/40">Table {table?.code}</p>
+                  <div className="flex items-center gap-3">
+                    <button
+                      type="button"
+                      onClick={() => {
+                        setCartOpen(false);
+                        setSwitching(true);
+                        setStep("table");
+                      }}
+                      className="flex items-center gap-1.5 text-[11px] text-white/40 transition-colors hover:text-[#d4af37]"
+                    >
+                      <ArrowLeftRight className="size-3" /> Change table
+                    </button>
+                    {cart.length > 0 && (
+                      <button
+                        type="button"
+                        onClick={() => setConfirmClear(true)}
+                        className="flex items-center gap-1.5 text-[11px] text-white/40 transition-colors hover:text-rose-300"
+                      >
+                        <Trash2 className="size-3" /> Clear all
+                      </button>
+                    )}
+                  </div>
+                </div>
+
+                {/* Emptying a cart is destructive and easy to hit by accident,
+                    so it asks once rather than offering an undo that would have
+                    to survive a reload. */}
+                {confirmClear && (
+                  <div className="mt-3 rounded-xl border border-rose-500/30 bg-rose-500/[0.07] p-3">
+                    <p className="text-sm text-white/80">
+                      Empty the whole cart? Nothing has been sent yet.
+                    </p>
+                    <div className="mt-2.5 flex gap-2">
+                      <button
+                        type="button"
+                        onClick={() => {
+                          setCart([]);
+                          setConfirmClear(false);
+                          setCartOpen(false);
+                        }}
+                        className="rounded-lg bg-rose-500/90 px-3 py-1.5 text-xs font-medium text-white"
+                      >
+                        Yes, empty it
+                      </button>
+                      <button
+                        type="button"
+                        onClick={() => setConfirmClear(false)}
+                        className="rounded-lg border border-white/12 px-3 py-1.5 text-xs text-white/60"
+                      >
+                        Keep it
+                      </button>
+                    </div>
+                  </div>
+                )}
 
                 <ul className="mt-4 space-y-3">
                   {cart.map((l) => (
@@ -1160,14 +1593,26 @@ export function OrderPageContent() {
                             : "Included with hookah"}
                         </p>
                       </div>
-                      <div className="flex items-center gap-1 rounded-full border border-[#d4af37]/40 p-0.5">
-                        <IconBtn onClick={() => changeQty(l.item.id, -1)} label="Remove one">
-                          <Minus className="size-3" />
-                        </IconBtn>
-                        <span className="w-5 text-center text-sm text-[#d4af37]">{l.quantity}</span>
-                        <IconBtn onClick={() => addItem(l.item)} label="Add one">
-                          <Plus className="size-3" />
-                        </IconBtn>
+                      <div className="flex items-center gap-2">
+                        <div className="flex items-center gap-1 rounded-full border border-[#d4af37]/40 p-0.5">
+                          <IconBtn onClick={() => changeQty(l.item.id, -1)} label="One fewer">
+                            <Minus className="size-3" />
+                          </IconBtn>
+                          <span className="w-5 text-center text-sm text-[#d4af37]">{l.quantity}</span>
+                          <IconBtn onClick={() => addItem(l.item)} label="One more">
+                            <Plus className="size-3" />
+                          </IconBtn>
+                        </div>
+                        {/* Tapping minus eight times to drop a line is not a
+                            plan. This removes it outright. */}
+                        <button
+                          type="button"
+                          onClick={() => removeLine(l.item.id)}
+                          aria-label={`Remove ${l.item.name}`}
+                          className="flex size-8 shrink-0 items-center justify-center rounded-full border border-white/10 text-white/35 transition-colors hover:border-rose-400/50 hover:text-rose-300"
+                        >
+                          <Trash2 className="size-3.5" />
+                        </button>
                       </div>
                     </li>
                   ))}
