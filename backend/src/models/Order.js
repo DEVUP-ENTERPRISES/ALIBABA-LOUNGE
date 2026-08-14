@@ -53,6 +53,22 @@ const orderSchema = new mongoose.Schema(
     assignedTo: { type: mongoose.Schema.Types.ObjectId, ref: "Admin", default: null, index: true },
     assignedName: { type: String, trim: true, default: "" },
 
+    // How this tab is getting on with the terminal. Kept on the order so a
+    // failed push is visible to staff rather than silently lost — Clover is
+    // never allowed to block a guest ordering, so failures are expected and
+    // have to be recoverable.
+    clover: {
+      orderId: { type: String, default: null, index: { sparse: true } },
+      state: {
+        type: String,
+        enum: ["pending", "synced", "failed", "skipped"],
+        default: "pending",
+      },
+      syncedAt: { type: Date, default: null },
+      attempts: { type: Number, default: 0 },
+      lastError: { type: String, default: "" },
+    },
+
     subtotal: { type: Number, required: true, min: 0, default: 0 },
     // Tax is settled at the till, not here. Clover is the system of record for
     // payment and computes the real rate on the receipt; showing a second

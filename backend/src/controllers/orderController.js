@@ -7,6 +7,7 @@ const User = require("../models/User");
 const { AppError } = require("../utils/AppError");
 const { asyncHandler } = require("../utils/asyncHandler");
 const { buildPagination, paginationPayload } = require("../utils/query");
+const clover = require("../services/clover");
 
 const OPEN_STATUSES = ["placed", "accepted", "preparing", "served"];
 
@@ -31,6 +32,15 @@ function formatOrder(order) {
     tax: order.tax,
     total: order.total,
     platformFee: order.platformFee,
+    // Surfaced so a tab that never reached the till is visible to staff
+    // rather than discovered at closing time.
+    clover: order.clover
+      ? {
+          state: order.clover.state,
+          orderId: order.clover.orderId,
+          lastError: order.clover.lastError,
+        }
+      : null,
     notes: order.notes,
     placedAt: order.placedAt,
     acceptedAt: order.acceptedAt,
@@ -65,6 +75,54 @@ async function buildItems(rawItems) {
 }
 
 /** Customer places an order against a table. */
+
+/**
+ * Send a tab to the Clover terminal.
+ *
+ * Never awaited by a request. Clover being down, slow or simply not
+ * configured must not stop a guest ordering — the order is ours first and the
+ * terminal's second. Whatever happens is written to the order so the floor can
+ * see it and retry, rather than a tab quietly never appearing on the till.
+ */
+async function syncToClover(orderId) {
+  const order = await Order.findById(orderId);
+  if (!order || order.clover?.orderId) return;
+
+  if (!clover.isConfigured()) {
+    order.clover = { ...(order.clover || {}), state: "skipped" };
+    await order.save();
+    return;
+  }
+
+  // Map our menu items to Clover inventory, so the tab reports against real
+  // products instead of ad-hoc lines.
+  const ids = order.items.map((i) => i.menuItem);
+  const menu = await Menu.find({ _id: { $in: ids }, cloverItemId: { $ne: null } })
+    .select("cloverItemId")
+    .lean();
+  const itemMap = new Map(menu.map((m) => [String(m._id), m.cloverItemId]));
+
+  try {
+    const result = await clover.pushOrder(order, itemMap);
+    order.clover = {
+      orderId: result.cloverOrderId || null,
+      state: result.skipped ? "skipped" : "synced",
+      syncedAt: new Date(),
+      attempts: (order.clover?.attempts || 0) + 1,
+      lastError: "",
+    };
+  } catch (err) {
+    order.clover = {
+      ...(order.clover?.toObject?.() || order.clover || {}),
+      state: "failed",
+      attempts: (order.clover?.attempts || 0) + 1,
+      lastError: String(err.message || err).slice(0, 500),
+    };
+    console.error(`[clover] order #${order.orderNumber}: ${err.message}`);
+  }
+  await order.save();
+}
+
 const createOrder = asyncHandler(async (req, res) => {
   const table = await Table.findById(req.body.table);
   if (!table || !table.isActive) throw new AppError("Table not found.", 404);
@@ -171,6 +229,10 @@ const createOrder = asyncHandler(async (req, res) => {
     table.status = "occupied";
     await table.save();
   }
+
+  // Deliberately not awaited: the guest gets their confirmation now, and
+  // the terminal catches up a moment later.
+  void syncToClover(order._id);
 
   res.status(201).json({ success: true, merged: false, order: formatOrder(order) });
 });
