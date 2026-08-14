@@ -13,6 +13,7 @@ import { gsap } from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { registerScrollTrigger } from "@/animations/scroll";
 import { NAVBAR_OFFSET } from "@/lib/navigation";
+import { releaseAllScrollLocks } from "@/hooks/useBodyScrollLock";
 
 type ScrollTarget = string | number | HTMLElement;
 
@@ -110,6 +111,17 @@ export function SmoothScrollProvider({
 
   useEffect(() => {
     const hash = window.location.hash;
+
+    // Arriving on a new page, nothing should still be holding the old one.
+    //
+    // Both of these are belt and braces for the failure that is hardest to
+    // spot from the outside: a page that will not scroll while taps and
+    // navigation carry on working, with nothing on screen to explain it. An
+    // overlay that unmounted without its cleanup, or a paused Lenis that was
+    // never resumed, would otherwise stay that way for the rest of the
+    // session — and a guest cannot fix it without knowing to force-quit.
+    releaseAllScrollLocks();
+    lenisRef.current?.start();
 
     // No hash means a plain page change. Lenis keeps its own scroll offset
     // across route changes, so without this you land on the new page at

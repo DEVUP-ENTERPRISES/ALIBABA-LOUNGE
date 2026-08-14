@@ -6,6 +6,7 @@ import { useEffect, useState } from "react";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { TablePicker } from "@/components/reservations/TablePicker";
+import { useBodyScrollLock } from "@/hooks/useBodyScrollLock";
 
 interface ReservationModalProps {
   open: boolean;
@@ -39,6 +40,9 @@ export function ReservationModal({ open, onClose, onConfirm }: ReservationModalP
   const [submitted, setSubmitted] = useState(false);
   const [reference, setReference] = useState<string | null>(null);
   const [copied, setCopied] = useState(false);
+
+  // The page behind used to scroll under the open modal.
+  useBodyScrollLock(open);
   const [error, setError] = useState<string | null>(null);
   const [submitting, setSubmitting] = useState(false);
 

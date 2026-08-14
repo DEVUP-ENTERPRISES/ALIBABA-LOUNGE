@@ -17,6 +17,7 @@ import {
 import { navLinks } from "@/lib/theme";
 import { useScrollState } from "@/hooks/useScrollState";
 import { useReservations } from "@/components/providers/ReservationProvider";
+import { useBodyScrollLock } from "@/hooks/useBodyScrollLock";
 import { useAuth } from "@/contexts/AuthContext";
 import { cn } from "@/lib/utils";
 
@@ -163,14 +164,13 @@ export function Navbar() {
   useEffect(() => {
     setMobileOpen(false);
   }, [pathname]);
+  useBodyScrollLock(mobileOpen);
   useEffect(() => {
-    document.body.style.overflow = mobileOpen ? "hidden" : "";
     // The fixed Reserve bar sits at z-8000, above the drawer. Flag the open
     // state so CSS can hide it — otherwise it covers the drawer's own
     // actions and shows a second, duplicate "Reserve a Table".
     document.body.dataset.menuOpen = mobileOpen ? "true" : "false";
     return () => {
-      document.body.style.overflow = "";
       delete document.body.dataset.menuOpen;
     };
   }, [mobileOpen]);

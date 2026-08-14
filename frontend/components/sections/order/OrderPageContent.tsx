@@ -28,6 +28,7 @@ import { resolveImageUrl } from "@/lib/image-url";
 import { useAuth } from "@/contexts/AuthContext";
 import { useSmoothScroll } from "@/contexts/SmoothScrollContext";
 import { useNudgeDue, useOpenTab } from "@/hooks/useOpenTab";
+import { useBodyScrollLock } from "@/hooks/useBodyScrollLock";
 import { STATUS_STEPS, statusIndex, useOrderStatus } from "@/hooks/useOrderStatus";
 import { getCookie, setCookie, getJsonCookie, setJsonCookie, deleteCookie } from "@/lib/cookies";
 import { cn } from "@/lib/utils";
@@ -186,13 +187,10 @@ export function OrderPageContent() {
 
   // Pause smooth scroll and lock the page while the cart sheet is open, so
   // wheel and touch reach the sheet instead of the document behind it.
+  useBodyScrollLock(cartOpen);
   useEffect(() => {
     setPaused(cartOpen);
-    document.body.style.overflow = cartOpen ? "hidden" : "";
-    return () => {
-      setPaused(false);
-      document.body.style.overflow = "";
-    };
+    return () => setPaused(false);
   }, [cartOpen, setPaused]);
 
   // A seat chosen earlier in this session, even if nothing was ordered yet.

@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect } from "react";
+import { useBodyScrollLock } from "@/hooks/useBodyScrollLock";
 import { motion, AnimatePresence } from "framer-motion";
 import { X } from "lucide-react";
 
@@ -19,15 +20,12 @@ export function AdminModal({
   children,
   wide,
 }: AdminModalProps) {
+  useBodyScrollLock(open);
   useEffect(() => {
     if (!open) return;
     const onKey = (e: KeyboardEvent) => e.key === "Escape" && onClose();
-    document.body.style.overflow = "hidden";
     window.addEventListener("keydown", onKey);
-    return () => {
-      document.body.style.overflow = "";
-      window.removeEventListener("keydown", onKey);
-    };
+    return () => window.removeEventListener("keydown", onKey);
   }, [open, onClose]);
 
   return (

@@ -166,9 +166,10 @@ html.lenis body {
 .lenis.lenis-smooth [data-lenis-prevent] {
   overscroll-behavior: contain;
 }
-.lenis.lenis-stopped {
-  overflow: hidden;
-}
+/* Deliberately NOT including Lenis's `.lenis-stopped { overflow: hidden }`.
+   Pausing Lenis for an overlay would then hard-lock the whole document, and
+   if the resume never ran the page could not scroll again for the rest of the
+   session. Overlays lock the body themselves through useBodyScrollLock. */
 
 /* iOS zooms the page when a font smaller than 16px receives focus. */
 @media (max-width: 767px) {
