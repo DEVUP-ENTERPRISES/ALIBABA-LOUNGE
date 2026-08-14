@@ -9,8 +9,15 @@ const RESERVATION_STATUSES = [
   "no-show",
 ];
 
-/** Statuses that still hold a table for the evening. */
-const HOLDING = ["confirmed", "seated"];
+/**
+ * Statuses that hold a table for the evening.
+ *
+ * Pending counts. Guests pick their own table now, so the moment one is
+ * chosen it has to disappear from everyone else's floor — otherwise the
+ * availability shown to the next guest is a lie and two parties turn up for
+ * the same booth.
+ */
+const HOLDING = ["pending", "confirmed", "seated"];
 
 /**
  * A short code the guest can quote.

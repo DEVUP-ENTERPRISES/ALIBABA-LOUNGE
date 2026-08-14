@@ -17,6 +17,8 @@ interface NewReservationPayload {
   date: string;
   time: string;
   notes?: string;
+  /** Chosen by the guest from the live floor. */
+  table?: string;
 }
 
 interface ReservationContextValue {

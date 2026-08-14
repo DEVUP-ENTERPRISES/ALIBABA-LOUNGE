@@ -4,6 +4,7 @@ const { body, param, query } = require("express-validator");
 const {
   createReservation,
   lookupReservation,
+  changeTableByReference,
   deleteReservation,
   getReservation,
   getReservations,
@@ -30,6 +31,33 @@ const floor = [protect, requireRole("super-admin", "admin", "manager")];
 // ── Guest ────────────────────────────────────────────────────
 
 router.post("/", reservationCreateValidator, validateRequest, createReservation);
+
+// The live floor, as a guest picking a seat sees it: which tables fit the
+// party and which are taken. Deliberately public — a guest has to see what is
+// free before they can choose. The handler withholds who holds a table unless
+// the caller is staff, so this exposes the layout and nothing about anyone.
+router.get(
+  "/availability/open",
+  query("date").trim().notEmpty().withMessage("Pick a date."),
+  query("time").trim().notEmpty().withMessage("Pick a time."),
+  query("guests").optional().isInt({ min: 1, max: 100 }),
+  query("reservation").optional().isMongoId(),
+  validateRequest,
+  getAvailability
+);
+
+// Guests move themselves. Same trust model as the lookup — whoever holds the
+// reference code — since that is all an unsigned-in guest has.
+router.put(
+  "/lookup/:reference/table",
+  param("reference")
+    .trim()
+    .matches(/^AB-[A-Z0-9]{6}$/i)
+    .withMessage("That does not look like a reservation code."),
+  body("table").isMongoId().withMessage("Choose a table."),
+  validateRequest,
+  changeTableByReference
+);
 
 // Look up a booking by the code on the confirmation. Public — nobody books
 // while signed in — and answers only for an exact reference.

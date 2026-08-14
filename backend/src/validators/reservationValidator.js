@@ -33,6 +33,9 @@ const reservationCreateValidator = [
     .withMessage("Use a time like 20:00."),
   body("guests").isInt({ min: 1, max: 100 }).withMessage("Guests must be between 1 and 100."),
   body("specialRequest").optional({ values: "falsy" }).trim().isLength({ max: 1000 }),
+  // The guest picks their own table from the live floor. Optional so a
+  // booking taken over the phone can still be created without one.
+  body("table").optional({ values: "falsy" }).isMongoId().withMessage("Choose a table."),
 ];
 
 // Status and table are deliberately absent: both move the floor plan and have

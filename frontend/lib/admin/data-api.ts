@@ -77,6 +77,8 @@ export const reservationApi = {
     time: string;
     notes?: string;
     specialRequest?: string;
+    /** The table the guest picked from the live floor. */
+    table?: string;
   }) {
     const data = await request<{ reservation: AdminReservation }>(
       "/reservations",
@@ -90,6 +92,7 @@ export const reservationApi = {
           date: payload.date,
           time: payload.time,
           specialRequest: payload.specialRequest ?? payload.notes ?? "",
+          ...(payload.table ? { table: payload.table } : {}),
         }),
       }
     );
@@ -111,6 +114,35 @@ export const reservationApi = {
     const data = await request<{ reservation: ReservationView }>(
       `/reservations/lookup/${encodeURIComponent(reference.trim().toUpperCase())}`
     );
+    return data.reservation;
+  },
+
+  /**
+   * The floor as a guest picking a seat sees it.
+   *
+   * Public: a guest has to see what is free before they can choose. The
+   * server withholds who holds a table from this route.
+   */
+  async openAvailability(params: { date: string; time: string; guests?: number; reservation?: string }) {
+    const q = new URLSearchParams({
+      date: params.date,
+      time: params.time,
+      ...(params.guests ? { guests: String(params.guests) } : {}),
+      ...(params.reservation ? { reservation: params.reservation } : {}),
+    });
+    return request<{ tables: TableOption[]; recommended: string[]; holdMinutes: number }>(
+      `/reservations/availability/open?${q.toString()}`
+    );
+  },
+
+  /** Let the guest move their own booking, using the code they hold. */
+  async changeTableByCode(reference: string, table: string) {
+    const data = await request<{
+      reservation: { reference: string; tableCode: string; status: string };
+    }>(`/reservations/lookup/${encodeURIComponent(reference.trim().toUpperCase())}/table`, {
+      method: "PUT",
+      body: JSON.stringify({ table }),
+    });
     return data.reservation;
   },
 

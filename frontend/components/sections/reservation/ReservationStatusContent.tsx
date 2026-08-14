@@ -3,8 +3,10 @@
 import { useEffect, useState } from "react";
 import { useSearchParams } from "next/navigation";
 import { AnimatePresence, motion } from "framer-motion";
-import { Calendar, Check, PartyPopper, Search, Users, X } from "lucide-react";
+import { ArrowLeftRight, Calendar, Check, PartyPopper, Search, Users, X } from "lucide-react";
 import { SectionHeading } from "@/components/ui/SectionHeading";
+import { TablePicker } from "@/components/reservations/TablePicker";
+import { reservationApi } from "@/lib/admin/data-api";
 import { Input } from "@/components/ui/input";
 import {
   RESERVATION_STEPS,
@@ -30,8 +32,11 @@ export function ReservationStatusContent() {
   const params = useSearchParams();
   const [code, setCode] = useState<string | null>(null);
   const [draft, setDraft] = useState("");
+  const [moving, setMoving] = useState(false);
+  const [moveBusy, setMoveBusy] = useState(false);
+  const [moveError, setMoveError] = useState<string | null>(null);
 
-  const { reservation, error, loading, justChanged, acknowledge } =
+  const { reservation, error, loading, justChanged, acknowledge, refresh } =
     useReservationStatus(code);
 
   // A code from the link wins; otherwise fall back to the last one looked up.
@@ -280,6 +285,79 @@ export function ReservationStatusContent() {
                 Bring photo ID — we verify 21+ for all tobacco service.
               </p>
             </div>
+
+            {/* Plans change. A guest who booked the wrong corner should not
+                have to ring the venue to move three feet. */}
+            {(status === "pending" || status === "confirmed") && (
+              <div className="mt-6">
+                {!moving ? (
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setMoving(true);
+                      setMoveError(null);
+                    }}
+                    className="mx-auto flex items-center gap-2 rounded-full border border-white/12 px-5 py-2.5 text-xs text-white/60 transition-colors hover:border-[#d4af37]/45 hover:text-white/90"
+                  >
+                    <ArrowLeftRight className="size-3.5" />
+                    {reservation.tableCode ? "Change table" : "Choose a table"}
+                  </button>
+                ) : (
+                  <div className="rounded-2xl border border-white/[0.08] bg-[#0c0c0e]/70 p-4">
+                    <div className="mb-3 flex items-center justify-between gap-3">
+                      <p className="text-sm text-white/70">Move to another table</p>
+                      <button
+                        type="button"
+                        onClick={() => {
+                          setMoving(false);
+                          setMoveError(null);
+                        }}
+                        className="text-xs text-white/40 transition-colors hover:text-white/75"
+                      >
+                        Never mind
+                      </button>
+                    </div>
+
+                    {moveError && (
+                      <p
+                        role="alert"
+                        className="mb-3 rounded-xl border border-rose-500/30 bg-rose-500/10 px-3 py-2 text-xs text-rose-300"
+                      >
+                        {moveError}
+                      </p>
+                    )}
+
+                    <TablePicker
+                      date={reservation.date}
+                      time={reservation.time}
+                      guests={reservation.guests}
+                      value={null}
+                      compact
+                      onChange={(id) => {
+                        if (moveBusy) return;
+                        setMoveBusy(true);
+                        setMoveError(null);
+                        reservationApi
+                          .changeTableByCode(reservation.reference, id)
+                          .then(() => {
+                            setMoving(false);
+                            void refresh();
+                            if (typeof navigator !== "undefined" && "vibrate" in navigator) {
+                              navigator.vibrate(40);
+                            }
+                          })
+                          .catch((err) =>
+                            setMoveError(
+                              err instanceof Error ? err.message : "Could not move your table."
+                            )
+                          )
+                          .finally(() => setMoveBusy(false));
+                      }}
+                    />
+                  </div>
+                )}
+              </div>
+            )}
 
             <div className="mt-6 text-center">
               <a

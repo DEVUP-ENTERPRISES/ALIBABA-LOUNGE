@@ -5,6 +5,7 @@ import { Check, Copy, Search, X } from "lucide-react";
 import { useEffect, useState } from "react";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
+import { TablePicker } from "@/components/reservations/TablePicker";
 
 interface ReservationModalProps {
   open: boolean;
@@ -17,7 +18,8 @@ interface ReservationModalProps {
     date: string;
     time: string;
     notes?: string;
-  }) => Promise<{ reference?: string } | void> | void;
+    table?: string;
+  }) => Promise<{ reference?: string; tableCode?: string } | void> | void;
 }
 
 const defaultFormState = {
@@ -28,6 +30,8 @@ const defaultFormState = {
   date: "",
   time: "20:00",
   notes: "",
+  table: "",
+  tableCode: "",
 };
 
 export function ReservationModal({ open, onClose, onConfirm }: ReservationModalProps) {
@@ -78,6 +82,14 @@ export function ReservationModal({ open, onClose, onConfirm }: ReservationModalP
       return;
     }
 
+    // The whole point of showing the floor is that the guest chooses. Without
+    // a table there is nothing to hold, and the booking is just a request into
+    // the void again.
+    if (!form.table) {
+      setError("Pick a table from the floor above.");
+      return;
+    }
+
     setSubmitting(true);
     try {
       const created = await onConfirm(form);
@@ -100,12 +112,16 @@ export function ReservationModal({ open, onClose, onConfirm }: ReservationModalP
           className="fixed inset-0 z-50 flex items-center justify-center p-4"
         >
           <div className="absolute inset-0 bg-black/75 backdrop-blur-xl" onClick={onClose} />
+          {/* Scrollable and capped to the screen. The floor picker made this
+              panel tall enough to push the submit button off a phone, where
+              overflow-hidden left it unreachable with no way to scroll to it. */}
           <motion.div
             initial={{ opacity: 0, y: 30, scale: 0.98 }}
             animate={{ opacity: 1, y: 0, scale: 1 }}
             exit={{ opacity: 0, y: 20, scale: 0.98 }}
             transition={{ duration: 0.25 }}
-            className="relative z-10 w-full max-w-3xl overflow-hidden rounded-[2rem] border border-white/10 bg-[#070707]/95 p-6 shadow-[0_0_80px_rgba(0,0,0,0.55)] backdrop-blur-xl sm:p-10"
+            data-lenis-prevent
+            className="hide-scrollbar relative z-10 max-h-[90dvh] w-full max-w-3xl overflow-y-auto overscroll-contain rounded-[2rem] border border-white/10 bg-[#070707]/95 p-6 shadow-[0_0_80px_rgba(0,0,0,0.55)] backdrop-blur-xl sm:p-10"
           >
             <button
               type="button"
@@ -125,14 +141,15 @@ export function ReservationModal({ open, onClose, onConfirm }: ReservationModalP
                   Book a table
                 </h2>
                 <p className="font-[family-name:var(--font-body)] text-sm leading-7 text-white/60">
-                  Tell us when you are coming and how many. We will hold your table and confirm by phone.
+                  Tell us when you are coming and how many, then pick your own table
+                  from what is free. We hold it the moment you book.
                 </p>
                 <div className="space-y-3 rounded-3xl border border-white/10 bg-white/5 p-5 text-sm text-white/70">
                   <p className="font-semibold text-white">What to expect</p>
                   <ul className="space-y-2">
-                    <li>• Private luxury seating when available</li>
-                    <li>• Exclusive date and time selection</li>
-                    <li>• Smooth confirmation flow in the dashboard</li>
+                    <li>• See the real floor and choose your own seat</li>
+                    <li>• Your table is held for two hours</li>
+                    <li>• Track it any time with your booking code</li>
                   </ul>
                 </div>
               </div>
@@ -152,7 +169,9 @@ export function ReservationModal({ open, onClose, onConfirm }: ReservationModalP
                         We have your table request
                       </h3>
                       <p className="mt-2 text-sm text-white/60">
-                        Our floor team will assign you a table and confirm shortly.
+                        {form.tableCode
+                          ? `Table ${form.tableCode} is held for you. We will confirm shortly.`
+                          : "Our floor team will confirm shortly."}
                       </p>
                     </div>
 
@@ -270,6 +289,23 @@ export function ReservationModal({ open, onClose, onConfirm }: ReservationModalP
                       </label>
                     </div>
 
+                    {/* Guests choose their own seat from the live floor rather
+                        than being assigned one afterwards, so they can see what
+                        is actually free before committing. */}
+                    <div className="rounded-2xl border border-white/[0.07] bg-white/[0.02] p-4">
+                      <TablePicker
+                        date={form.date}
+                        time={form.time}
+                        guests={Number(form.partySize) || 1}
+                        value={form.table || null}
+                        onChange={(id, table) => {
+                          setError(null);
+                          setForm((state) => ({ ...state, table: id, tableCode: table.code }));
+                        }}
+                        compact
+                      />
+                    </div>
+
                     <label className="space-y-2 text-sm text-white/70">
                       <span>Special request</span>
                       <Textarea
@@ -291,7 +327,11 @@ export function ReservationModal({ open, onClose, onConfirm }: ReservationModalP
                       disabled={submitting}
                       className="inline-flex w-full items-center justify-center rounded-full bg-gradient-to-r from-[#8b6914] via-[#d4af37] to-[#8b6914] px-6 py-3 text-sm font-semibold uppercase tracking-[0.15em] text-[#050505] transition hover:brightness-95"
                     >
-                      {submitting ? "Sending..." : "Request reservation"}
+                      {submitting
+                        ? "Sending..."
+                        : form.tableCode
+                          ? `Request table ${form.tableCode}`
+                          : "Request reservation"}
                     </button>
                   </form>
                 )}
