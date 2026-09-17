@@ -6,6 +6,7 @@ const { AppError } = require("../utils/AppError");
 const { asyncHandler } = require("../utils/asyncHandler");
 const { buildPagination, buildSort, paginationPayload } = require("../utils/query");
 const { formatReservation } = require("../services/formatters");
+const floorState = require("../services/floorState");
 
 /**
  * How long a booking holds its table.
@@ -173,6 +174,19 @@ async function claimTable({ tableId, date, time, guests, exceptId }) {
       `Table ${table.code} was just taken for that time. Please pick another.`,
       409
     );
+  }
+
+  // Someone is sitting there right now. The availability list already hides
+  // these, but that is only display — this is the gate, and a request that
+  // skips the UI has to hit the same wall.
+  if (date === today()) {
+    const claim = await floorState.tableClaim(table._id);
+    if (claim?.occupied) {
+      throw new AppError(
+        `Table ${table.code} is in use right now. Please pick another.`,
+        409
+      );
+    }
   }
 
   return table;
@@ -368,9 +382,18 @@ const getAvailability = asyncHandler(async (req, res) => {
   const guests = Number(req.query.guests) || 1;
   const exceptId = req.query.reservation || null;
 
-  const [tables, holds] = await Promise.all([
+  // Walk-ins only matter for tonight. A table someone is sitting at right now
+  // is not bookable for tonight, but says nothing about next Friday.
+  const isToday = date === today();
+
+  const [tables, holds, liveTabs] = await Promise.all([
     Table.find({ isActive: true }).sort({ code: 1 }).lean(),
     holdsOn(date, exceptId),
+    // Every table with someone at it right now — a website order OR a tab
+    // rung up on the terminal. Checking only our own orders meant a table
+    // full of walk-ins still showed as bookable, and most of the venue's
+    // trade goes through the till rather than the website.
+    isToday ? floorState.occupiedTableIds() : new Set(),
   ]);
 
   const takenBy = new Map();
@@ -378,23 +401,34 @@ const getAvailability = asyncHandler(async (req, res) => {
     if (overlaps(h.time, time)) takenBy.set(String(h.table), h);
   }
 
+  // A live tab blocks the table outright — there is no "until" to compare
+  // against, the party is there now and nobody knows when they will leave.
+  // Without this the floor showed a table as free to book while people were
+  // sitting at it, because only reservations were being checked.
+  const occupiedNow = liveTabs;
+
   // Staff see who holds a table; a guest picking one sees only that it is
   // taken. The same handler serves both routes, so this is the only gate.
   const detailed = Boolean(req.admin);
 
   const options = tables.map((t) => {
     const clash = takenBy.get(String(t._id));
+    const inUse = occupiedNow.has(String(t._id));
     return {
       id: t._id,
       code: t.code,
       section: t.section,
       seats: t.seats,
       fits: t.seats >= guests,
-      free: !clash,
-      heldBy:
-        clash && detailed
+      free: !clash && !inUse,
+      // Staff get told which of the two it is; a guest just sees it is gone.
+      heldBy: detailed
+        ? clash
           ? { reference: clash.reference, time: clash.time, name: clash.name.split(" ")[0] }
-          : null,
+          : inUse
+            ? { reference: "walk-in", time: "now", name: "seated party" }
+            : null
+        : null,
     };
   });
 

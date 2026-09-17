@@ -19,7 +19,8 @@
     "seed:reviews": "node src/scripts/updateReviews.js",
     "seed:tables": "node src/scripts/seedTables.js",
     "menu:flavours": "node src/scripts/zeroFlavourPrices.js",
-    "backfill:reservations": "node src/scripts/backfillReservationRefs.js"
+    "backfill:reservations": "node src/scripts/backfillReservationRefs.js",
+    "clover:check": "node src/scripts/cloverCheck.js"
   },
   "keywords": [
     "express",

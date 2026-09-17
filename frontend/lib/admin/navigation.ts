@@ -20,6 +20,8 @@ export const adminNavItems = [
   { href: `${BASE}/floor`,        label: "Floor Plan",             icon: "layout-grid",      roles: ALL },
   { href: `${BASE}/dashboard`,    label: "Dashboard",              icon: "layout-dashboard", roles: MANAGER_UP },
   { href: `${BASE}/reservations`, label: "Reservations",           icon: "book-open",        roles: MANAGER_UP },
+  { href: `${BASE}/insights`,     label: "Trade",                  icon: "calendar-days",    roles: MANAGER_UP },
+  { href: `${BASE}/audit`,        label: "Audit",                  icon: "shield-alert",     roles: MANAGER_UP },
   { href: `${BASE}/menu`,         label: "Menu Management",        icon: "utensils",         roles: ADMIN_UP },
   { href: `${BASE}/events`,       label: "Event Management",       icon: "calendar",         roles: ADMIN_UP },
   { href: `${BASE}/gallery`,      label: "Gallery",                icon: "image",            roles: ADMIN_UP },

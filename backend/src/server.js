@@ -3,12 +3,22 @@ const http = require("http");
 const app = require("./app");
 const env = require("./config/env");
 const { connectDatabase, disconnectDatabase } = require("./config/database");
+const terminalSync = require("./services/terminalSync");
+const orderJanitor = require("./services/orderJanitor");
 
 let server;
 
 async function startServer() {
   try {
     await connectDatabase();
+
+    // Mirror the Clover terminal into the floor view. Started after the
+    // database is up, and a no-op when Clover is not configured.
+    terminalSync.start();
+
+    // Close off tabs nobody closed, so one forgotten order does not hold
+    // a table out of service indefinitely.
+    orderJanitor.start();
 
     server = http.createServer(app);
     server.listen(env.port, () => {

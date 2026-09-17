@@ -18,6 +18,8 @@ import {
   LayoutGrid,
   UserCog,
   Heart,
+  CalendarDays,
+  ShieldAlert,
 } from "lucide-react";
 import { navItemsFor, ADMIN_BASE } from "@/lib/admin/navigation";
 import { cn } from "@/lib/utils";
@@ -27,6 +29,8 @@ const icons: Record<string, React.ComponentType<{ className?: string }>> = {
   "layout-dashboard": LayoutDashboard,
   utensils: UtensilsCrossed,
   calendar: Calendar,
+  "calendar-days": CalendarDays,
+  "shield-alert": ShieldAlert,
   "book-open": BookOpen,
   "concierge-bell": ClipboardList,
   building: Building2,

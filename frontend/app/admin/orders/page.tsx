@@ -1,9 +1,15 @@
 "use client";
 
 import { useCallback, useEffect, useMemo, useState } from "react";
-import { Bell, BellOff, Check, ChefHat, Clock, Lock, RefreshCw, Trophy, Utensils, X } from "lucide-react";
+import { Bell, BellOff, Check, ChefHat, Clock, CloudOff, Lock, Monitor, RefreshCw, Trophy, Utensils, X } from "lucide-react";
 import { orderApi } from "@/lib/admin/data-api";
-import type { Order, OrderStatus } from "@/lib/admin/types";
+import type {
+  CloverSyncState,
+  Order,
+  OrderStatus,
+  TerminalOrder,
+  TerminalSyncStatus,
+} from "@/lib/admin/types";
 import { formatUsTime } from "@/lib/format";
 import { useOrderAlerts } from "@/hooks/useOrderAlerts";
 import { cn } from "@/lib/utils";
@@ -39,12 +45,25 @@ export default function AdminOrdersPage() {
   const [tick, setTick] = useState(0);
   const [freshCount, setFreshCount] = useState(0);
   const [stats, setStats] = useState<Awaited<ReturnType<typeof orderApi.stats>> | null>(null);
+  const [terminal, setTerminal] = useState<TerminalOrder[]>([]);
+  const [termSync, setTermSync] = useState<TerminalSyncStatus | null>(null);
+  const [staleTabs, setStaleTabs] = useState(0);
   const alerts = useOrderAlerts();
 
   const load = useCallback(async (showSpinner = false) => {
     if (showSpinner) setLoading(true);
     try {
       const next = await orderApi.list("?scope=open&limit=200");
+      // Tabs from the terminal — a busy night is mostly these, and without
+      // them the floor view looks empty while the room is full.
+      void orderApi
+        .terminal("?scope=open&limit=100")
+        .then((t) => {
+          setTerminal(t.orders);
+          setTermSync(t.sync);
+          setStaleTabs(t.staleOpen ?? 0);
+        })
+        .catch(() => {});
       setOrders(next);
       // Stats are decorative; the queue must render even if they fail or the
       // API has not been redeployed with the endpoint yet.
@@ -203,6 +222,73 @@ export default function AdminOrdersPage() {
         </p>
       )}
 
+      {/* Tabs opened on the Clover terminal.
+          On a normal night most of the floor is here rather than in the
+          columns below — anything a server rang up at the till never touched
+          the website. Read-only: the terminal owns these. */}
+      {(terminal.length > 0 || termSync?.configured) && (
+        <section className="rounded-2xl border border-white/[0.07] bg-[#0c0c0e]/60 p-3">
+          <div className="flex items-center justify-between gap-3 px-1 pb-2">
+            <div className="flex items-center gap-2">
+              <Monitor className="size-3.5 text-[#d4af37]" />
+              <h2 className="text-[11px] font-medium tracking-[0.16em] text-white/70 uppercase">
+                On the terminal
+              </h2>
+              <span className="rounded-full bg-white/[0.06] px-2 py-0.5 text-[10px] text-white/50">
+                {terminal.length}
+              </span>
+            </div>
+            <TerminalSyncNote sync={termSync} />
+          </div>
+
+          {staleTabs > 0 && (
+            <p className="mb-2 rounded-lg border border-amber-500/25 bg-amber-500/[0.06] px-2.5 py-1.5 text-[10px] text-amber-200/80">
+              {staleTabs} tab{staleTabs === 1 ? "" : "s"} left open on the terminal from
+              a previous day — worth closing off at the till.
+            </p>
+          )}
+
+          {terminal.length === 0 ? (
+            <p className="px-1 pb-1 text-[11px] text-white/35">
+              No open tabs on the terminal right now.
+            </p>
+          ) : (
+            <ul className="grid gap-2 sm:grid-cols-2 lg:grid-cols-4">
+              {terminal.map((t) => (
+                <li
+                  key={t.id}
+                  className="rounded-xl border border-white/[0.07] bg-[#050505]/70 p-3"
+                >
+                  <div className="flex items-center justify-between gap-2">
+                    <span className="font-[family-name:var(--font-display)] text-lg text-[#d4af37]">
+                      {t.tableCode || t.title || "—"}
+                    </span>
+                    <span className="text-[11px] text-white/35">
+                      ${t.total.toFixed(2)}
+                    </span>
+                  </div>
+
+                  <ul className="mt-2 space-y-1">
+                    {t.items.map((it, i) => (
+                      <li key={i} className="flex justify-between gap-2 text-xs text-white/70">
+                        <span className="truncate">
+                          <span className="text-white/40">{it.quantity}×</span> {it.name}
+                        </span>
+                      </li>
+                    ))}
+                  </ul>
+
+                  <p className="mt-2 flex items-center gap-1.5 text-[10px] text-white/30">
+                    <Monitor className="size-3" />
+                    Rung up at the till
+                  </p>
+                </li>
+              ))}
+            </ul>
+          )}
+        </section>
+      )}
+
       <div className="grid gap-4 lg:grid-cols-4">
         {COLUMNS.map((col) => {
           const list = grouped.get(col.status) ?? [];
@@ -270,6 +356,18 @@ export default function AdminOrdersPage() {
                           </p>
                         )}
 
+                        {o.clover && (
+                          <CloverBadge
+                            state={o.clover.state}
+                            lastError={o.clover.lastError}
+                            paymentState={o.clover.paymentState}
+                            busy={busy}
+                            onRetry={() =>
+                              act(o.id, () => orderApi.retryClover(o.id))
+                            }
+                          />
+                        )}
+
                         <div className="mt-3">
                           {o.status === "placed" && (
                             <ActionButton busy={busy} onClick={() => act(o.id, () => orderApi.accept(o.id))}>
@@ -299,13 +397,15 @@ export default function AdminOrdersPage() {
                               type="button"
                               disabled={busy}
                               onClick={() => {
-                                if (
-                                  window.confirm(
-                                    `Cancel order #${o.orderNumber} for table ${o.tableCode}? This cannot be undone.`
-                                  )
-                                ) {
-                                  act(o.id, () => orderApi.setStatus(o.id, "cancelled"));
-                                }
+                                const reason = window.prompt(
+                                  `Cancel order #${o.orderNumber} for table ${o.tableCode} ($${o.total.toFixed(2)})?
+
+Reason (kept in the audit log):`
+                                );
+                                // Cancelling the prompt must not cancel the order — only an
+                                // explicit reason, even a short one, confirms the action.
+                                if (reason === null) return;
+                                act(o.id, () => orderApi.setStatus(o.id, "cancelled", reason));
                               }}
                               className="mt-2 flex w-full items-center justify-center gap-1.5 rounded-lg border border-white/10 py-1.5 text-[11px] text-white/35 transition-colors hover:border-rose-500/40 hover:text-rose-300 disabled:opacity-40"
                             >
@@ -322,6 +422,125 @@ export default function AdminOrdersPage() {
           );
         })}
       </div>
+    </div>
+  );
+}
+
+/**
+ * Is the terminal mirror actually alive?
+ *
+ * Quiet when it is working. It only speaks up when the floor view might be
+ * out of date, because a stale mirror looks exactly like a quiet night.
+ */
+function TerminalSyncNote({ sync }: { sync: TerminalSyncStatus | null }) {
+  if (!sync) return null;
+
+  if (!sync.configured) {
+    return <span className="text-[10px] text-white/30">Clover not connected</span>;
+  }
+  if (sync.lastError) {
+    return (
+      <span className="flex items-center gap-1 text-[10px] text-amber-300" title={sync.lastError}>
+        <CloudOff className="size-3" />
+        Sync failing
+      </span>
+    );
+  }
+  const stale =
+    sync.lastRun && Date.now() - new Date(sync.lastRun).getTime() > sync.pollMs * 3;
+  if (stale) {
+    return (
+      <span className="flex items-center gap-1 text-[10px] text-amber-300">
+        <CloudOff className="size-3" />
+        Last synced {new Date(sync.lastRun!).toLocaleTimeString()}
+      </span>
+    );
+  }
+  return (
+    <span className="flex items-center gap-1 text-[10px] text-emerald-400/60">
+      <RefreshCw className="size-3" />
+      Live
+    </span>
+  );
+}
+
+/**
+ * Whether this tab actually reached the Clover terminal.
+ *
+ * Silent when everything is fine and Clover is not in use — a venue running
+ * without the POS integration should not see a badge on every order. It only
+ * speaks up when there is something a human needs to act on, because the
+ * failure this guards against is discovering at close-out that the till and
+ * the app disagree.
+ */
+function CloverBadge({
+  state,
+  lastError,
+  paymentState,
+  onRetry,
+  busy,
+}: {
+  state: CloverSyncState;
+  lastError?: string;
+  paymentState?: string;
+  onRetry: () => void;
+  busy: boolean;
+}) {
+  // Not configured on this server — nothing to report.
+  if (state === "skipped") return null;
+
+  // The till told us, on a later poll, that this got paid — nothing pushes
+  // that to us, so seeing it here means the sync actually caught it.
+  const paid = paymentState === "PAID";
+
+  if (state === "synced") {
+    return (
+      <span
+        className={cn(
+          "mt-2 flex items-center gap-1.5 text-[10px]",
+          paid ? "text-emerald-400" : "text-emerald-400/70"
+        )}
+      >
+        {paid ? <Check className="size-3" /> : <Monitor className="size-3" />}
+        {paid ? "Paid at the till" : "On the terminal"}
+      </span>
+    );
+  }
+
+  if (state === "voided") {
+    return (
+      <span className="mt-2 flex items-center gap-1.5 text-[10px] text-white/35">
+        <CloudOff className="size-3" />
+        Voided on the terminal
+      </span>
+    );
+  }
+
+  // pending or failed — both mean the till does not have this tab yet.
+  return (
+    <div className="mt-2 rounded-lg border border-amber-500/30 bg-amber-500/[0.07] px-2 py-1.5">
+      <p className="flex items-center gap-1.5 text-[10px] font-medium text-amber-300">
+        <CloudOff className="size-3" />
+        {state === "failed" ? "Not on the terminal" : "Reaching the terminal…"}
+      </p>
+      {state === "failed" && (
+        <>
+          {lastError && (
+            <p className="mt-1 line-clamp-2 text-[10px] leading-snug text-amber-200/60">
+              {lastError}
+            </p>
+          )}
+          <button
+            type="button"
+            disabled={busy}
+            onClick={onRetry}
+            className="mt-1.5 flex items-center gap-1 text-[10px] font-medium text-amber-300 underline underline-offset-2 disabled:opacity-40"
+          >
+            <RefreshCw className={cn("size-2.5", busy && "animate-spin")} />
+            {busy ? "Retrying…" : "Retry"}
+          </button>
+        </>
+      )}
     </div>
   );
 }

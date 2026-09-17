@@ -20,10 +20,19 @@ const env = require("../config/env");
  * tested.
  */
 
-const BASE = process.env.CLOVER_BASE_URL || "https://sandbox.dev.clover.com";
+// apisandbox, not sandbox: sandbox.dev.clover.com is the merchant
+// dashboard you log into, and answers 401 to every API call, which reads
+// exactly like a bad token. The REST host is a different name.
+const BASE = process.env.CLOVER_BASE_URL || "https://apisandbox.dev.clover.com";
 const MERCHANT_ID = process.env.CLOVER_MERCHANT_ID || "";
 const TOKEN = process.env.CLOVER_API_TOKEN || "";
-const TIMEOUT_MS = 8000;
+/**
+ * Generous on purpose. Reads from outside the US measure 1-3s, and a write is
+ * slower still — 8s was tight enough that a create succeeded on Clover while
+ * we gave up waiting, which orphaned a tab on the live till. Overridable for
+ * a very slow link.
+ */
+const TIMEOUT_MS = Number(process.env.CLOVER_TIMEOUT_MS || 25000);
 
 /** Nothing is configured until all three are present. */
 function isConfigured() {
@@ -157,11 +166,22 @@ async function pushOrder(order, itemMap) {
   if (!created?.id) throw new Error("Clover did not return an order id.");
 
   // Bulk, so a ten-item round is one round trip rather than ten.
+  //
+  // Creating the tab and filling it are two calls and cannot be made atomic.
+  // If the second fails we must still hand the caller the id of the tab we
+  // just opened, or it is orphaned on the till: empty, uncloseable from here,
+  // and invisible to a retry, which would cheerfully open another one.
   if (payload.lineItems.length > 0) {
-    await call(
-      `/v3/merchants/${MERCHANT_ID}/orders/${created.id}/bulk_line_items`,
-      { method: "POST", body: { items: payload.lineItems } }
-    );
+    try {
+      await call(
+        `/v3/merchants/${MERCHANT_ID}/orders/${created.id}/bulk_line_items`,
+        { method: "POST", body: { items: payload.lineItems } }
+      );
+    } catch (err) {
+      err.cloverOrderId = created.id;
+      err.partial = true;
+      throw err;
+    }
   }
 
   return {
@@ -185,13 +205,112 @@ async function appendLineItems(cloverOrderId, items, itemMap) {
   return { skipped: false, lineItemCount: lineItems.length };
 }
 
+/**
+ * Void a tab that was cancelled on our side after it had already reached
+ * Clover.
+ *
+ * Without this a cancelled order leaves a ghost tab sitting open on the
+ * terminal — nothing tells staff it is dead, and it stays chargeable. A 404
+ * here (someone already deleted it by hand on the terminal) is treated as
+ * success rather than an error, since the end state either way is "gone".
+ */
+async function deleteOrder(cloverOrderId) {
+  if (!isConfigured() || !cloverOrderId) return { skipped: true };
+  try {
+    await call(`/v3/merchants/${MERCHANT_ID}/orders/${cloverOrderId}`, {
+      method: "DELETE",
+    });
+    return { skipped: false, deleted: true };
+  } catch (err) {
+    if (err.status === 404) return { skipped: false, deleted: true, alreadyGone: true };
+    throw err;
+  }
+}
+
+/**
+ * Clover's title for a terminal tab is "VIP5 - Main Dining Room". The part
+ * before the dash is the table, which is how a mirrored tab finds its way onto
+ * our floor plan. Anything we cannot parse is left blank rather than guessed —
+ * a tab on the wrong table is worse than a tab with no table.
+ */
+function tableCodeFromTitle(title) {
+  if (!title) return "";
+  const [first] = String(title).split(" - ");
+  const code = (first || "").trim();
+  // Codes are short and alphanumeric (M6, VIP5, W4). Anything else is a label
+  // someone typed by hand, not a table.
+  return /^[A-Za-z]{1,4}\d{1,3}$/.test(code) ? code.toUpperCase() : "";
+}
+
+/**
+ * Collapse Clover's repeated line items back into quantities.
+ *
+ * Clover models four waters as four identical rows. Mirroring that verbatim
+ * would give the floor a wall of duplicate lines, so identical name+price
+ * pairs are counted instead.
+ */
+function groupLineItems(elements = []) {
+  const byKey = new Map();
+  for (const l of elements) {
+    const price = (l.price || 0) / 100;
+    const key = `${l.name}::${price}::${l.item?.id || ""}`;
+    const existing = byKey.get(key);
+    if (existing) {
+      existing.quantity += 1;
+    } else {
+      byKey.set(key, {
+        name: l.name || "Item",
+        price,
+        quantity: 1,
+        cloverItemId: l.item?.id || null,
+      });
+    }
+  }
+  return [...byKey.values()];
+}
+
+/**
+ * Recent orders from the terminal, so the admin floor can show tabs that were
+ * never placed through the website.
+ *
+ * Pulls a window of recent orders rather than only open ones: a tab that gets
+ * paid between two polls has to be seen closing, or our mirror would show it
+ * live forever.
+ */
+async function fetchRecentOrders(limit = 50) {
+  if (!isConfigured()) return { skipped: true, orders: [] };
+
+  const data = await call(
+    `/v3/merchants/${MERCHANT_ID}/orders?limit=${limit}` +
+      `&expand=lineItems&orderBy=modifiedTime%20DESC`
+  );
+
+  const orders = (data?.elements || []).map((o) => ({
+    cloverOrderId: o.id,
+    title: o.title || "",
+    tableCode: tableCodeFromTitle(o.title),
+    state: o.state || "open",
+    paymentState: o.paymentState || "",
+    total: (o.total || 0) / 100,
+    items: groupLineItems(o.lineItems?.elements),
+    openedAt: o.createdTime ? new Date(o.createdTime) : null,
+    cloverModifiedAt: o.modifiedTime ? new Date(o.modifiedTime) : null,
+  }));
+
+  return { skipped: false, orders };
+}
+
 module.exports = {
   isConfigured,
+  tableCodeFromTitle,
+  groupLineItems,
+  fetchRecentOrders,
   toCents,
   orderTitle,
   buildCloverOrder,
   pushOrder,
   appendLineItems,
+  deleteOrder,
   // exposed for diagnostics
   config: () => ({ base: BASE, merchantId: MERCHANT_ID, hasToken: Boolean(TOKEN) }),
 };

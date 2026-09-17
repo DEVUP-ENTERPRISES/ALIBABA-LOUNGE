@@ -61,12 +61,23 @@ const orderSchema = new mongoose.Schema(
       orderId: { type: String, default: null, index: { sparse: true } },
       state: {
         type: String,
-        enum: ["pending", "synced", "failed", "skipped"],
+        enum: ["pending", "synced", "failed", "skipped", "voided"],
         default: "pending",
       },
       syncedAt: { type: Date, default: null },
       attempts: { type: Number, default: 0 },
       lastError: { type: String, default: "" },
+      // How many of order.items have already reached Clover. Items are only
+      // ever appended, never removed or edited, so re-syncing means sending
+      // items[syncedItemCount:] — never the whole array again. Without this a
+      // second round would double up every item from the first round on the
+      // terminal.
+      syncedItemCount: { type: Number, default: 0 },
+      // What Clover itself says about payment, learned on the next poll after
+      // staff charge the card at the till — nothing pushes this to us, we
+      // have to notice it.
+      paymentState: { type: String, default: "" },
+      paidAt: { type: Date, default: null },
     },
 
     subtotal: { type: Number, required: true, min: 0, default: 0 },
@@ -94,6 +105,7 @@ const orderSchema = new mongoose.Schema(
     acceptedAt: { type: Date, default: null },
     servedAt: { type: Date, default: null },
     completedAt: { type: Date, default: null },
+    cancelledAt: { type: Date, default: null },
   },
   { timestamps: true }
 );

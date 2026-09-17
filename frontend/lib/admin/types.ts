@@ -213,7 +213,98 @@ export interface Order {
   acceptedAt?: string | null;
   servedAt?: string | null;
   completedAt?: string | null;
+  /**
+   * How this tab is getting on with the Clover terminal. Only present on
+   * staff-facing responses — guest endpoints never return it.
+   */
+  clover?: {
+    state: CloverSyncState;
+    orderId: string | null;
+    lastError: string;
+    /** What Clover says about payment — "" until the till reports one. */
+    paymentState?: string;
+    paidAt?: string | null;
+  } | null;
 }
+
+/**
+ * A tab rung up on the Clover terminal, mirrored here for the floor view.
+ * Read-only — the terminal drives these, not us.
+ */
+export interface TerminalOrder {
+  id: string;
+  cloverOrderId: string;
+  title: string;
+  tableCode: string;
+  table: string | null;
+  /** Clover's own states: "open" is live, "locked" is paid and closed. */
+  state: string;
+  paymentState: string;
+  total: number;
+  items: { name: string; price: number; quantity: number; cloverItemId: string | null }[];
+  openedAt: string | null;
+  lastSeenAt: string;
+}
+
+export interface TerminalSyncStatus {
+  configured: boolean;
+  running: boolean;
+  pollMs: number;
+  lastRun: string | null;
+  lastError: string;
+  lastCount: number;
+}
+
+/** One service day's trade, counting the website and the till separately. */
+export interface TradeDay {
+  day: string;
+  webCount: number;
+  webRevenue: number;
+  terminalCount: number;
+  terminalRevenue: number;
+  totalCount: number;
+  totalRevenue: number;
+}
+
+export interface TradeAnalytics {
+  days: number;
+  timezone: string;
+  today: TradeDay;
+  totals: { webCount: number; terminalCount: number; totalCount: number; totalRevenue: number };
+  busiest: TradeDay | null;
+  rows: TradeDay[];
+}
+
+/** One entry in the money audit trail. */
+export interface AuditEntry {
+  id: string;
+  action:
+    | "order.cancelled"
+    | "order.auto-cancelled"
+    | "order.completed"
+    | "reservation.cancelled"
+    | "reservation.no-show";
+  orderNumber: number | null;
+  tableCode: string;
+  amount: number;
+  itemCount: number;
+  reason: string;
+  actor: { kind: "staff" | "system" | "guest"; id: string | null; name: string };
+  meta: Record<string, unknown>;
+  at: string;
+}
+
+export interface AuditSummary {
+  count: number;
+  amount: number;
+}
+
+export type CloverSyncState =
+  | "pending"
+  | "synced"
+  | "failed"
+  | "skipped"
+  | "voided";
 
 export type StaffRole = "super-admin" | "admin" | "manager" | "server";
 

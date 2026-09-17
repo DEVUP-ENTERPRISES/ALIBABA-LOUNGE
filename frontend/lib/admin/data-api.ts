@@ -12,6 +12,11 @@ import type {
   OrderStatus,
   OrderStatusView,
   StaffMember,
+  TerminalOrder,
+  TerminalSyncStatus,
+  TradeAnalytics,
+  AuditEntry,
+  AuditSummary,
 } from "@/lib/admin/types";
 import type { MenuItem } from "@/lib/menu/types";
 
@@ -381,14 +386,47 @@ export const orderApi = {
     });
     return data;
   },
+  /** The money audit trail — cancellations, auto-closes, completions. */
+  async audit(params = "?limit=100") {
+    return request<{
+      entries: AuditEntry[];
+      summary: Record<string, AuditSummary>;
+      pagination: { page: number; limit: number; total: number };
+    }>(`/orders/audit${params}`);
+  },
+  /** Trade per day across both the website and the till. Manager only. */
+  async analytics(days = 30) {
+    return request<TradeAnalytics>(`/orders/analytics?days=${days}`);
+  },
+  /** Tabs rung up on the Clover terminal, mirrored for the floor view. */
+  async terminal(params = "?scope=open&limit=100") {
+    return request<{
+      orders: TerminalOrder[];
+      sync: TerminalSyncStatus;
+      staleOpen: number;
+    }>(`/orders/terminal${params}`);
+  },
+  /** Pull from the terminal now rather than waiting for the next poll. */
+  async refreshTerminal() {
+    return request<{ sync: TerminalSyncStatus }>("/orders/terminal/refresh", {
+      method: "POST",
+    });
+  },
+  /** Re-push a tab that never reached the Clover terminal. Manager only. */
+  async retryClover(id: string) {
+    const data = await request<{ order: Order }>(`/orders/${id}/clover/retry`, {
+      method: "POST",
+    });
+    return data.order;
+  },
   async accept(id: string) {
     const data = await request<{ order: Order }>(`/orders/${id}/accept`, { method: "PUT" });
     return data.order;
   },
-  async setStatus(id: string, status: OrderStatus) {
+  async setStatus(id: string, status: OrderStatus, reason?: string) {
     const data = await request<{ order: Order }>(`/orders/${id}/status`, {
       method: "PUT",
-      body: JSON.stringify({ status }),
+      body: JSON.stringify({ status, ...(reason ? { reason } : {}) }),
     });
     return data.order;
   },
