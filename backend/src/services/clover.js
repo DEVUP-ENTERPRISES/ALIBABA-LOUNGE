@@ -47,12 +47,32 @@ function toCents(amount) {
 /**
  * What the terminal shows in its list of open orders.
  *
- * Table first because that is what staff are looking for when they walk the
- * floor; the order number is for matching against this app.
+ * Clover has no writable link from an order to a table — tested three ways
+ * against the live merchant (PATCH, POST-time, and reading a device order's
+ * raw fields) and every one is silently dropped. A web order can only ever
+ * land in Clover Dining's "Non-table Orders" bucket, never on a table tile,
+ * so the title is the only thing standing between a server and missing it.
+ *
+ * The tile truncates aggressively — "Table VIP1 · #1042" already clips to
+ * "Table VIP1..." in testing — so "Table " is dropped to buy back characters
+ * and the table code leads without competing for space.
  */
 function orderTitle(order) {
-  const table = order.tableCode ? `Table ${order.tableCode}` : "Web order";
+  const table = order.tableCode || "WEB";
   return `${table} · #${order.orderNumber}`;
+}
+
+/**
+ * The subtitle Clover shows under the title — mapped to `note`, which
+ * truncates far less than the title does. This is where "this came from the
+ * website, not the till" actually has room to say so.
+ */
+function orderSubtitle(order) {
+  const parts = ["WEB ORDER"];
+  if (order.customerName) parts.push(order.customerName);
+  if (order.customerPhone) parts.push(order.customerPhone);
+  if (order.notes) parts.push(order.notes);
+  return parts.join(" · ");
 }
 
 /**
@@ -86,16 +106,11 @@ function buildCloverOrder(order, itemMap = new Map()) {
     }
   }
 
-  const noteParts = [];
-  if (order.customerName) noteParts.push(order.customerName);
-  if (order.customerPhone) noteParts.push(order.customerPhone);
-  if (order.notes) noteParts.push(order.notes);
-
   return {
     order: {
       state: "open",
       title: orderTitle(order),
-      note: noteParts.join(" · ").slice(0, 255),
+      note: orderSubtitle(order).slice(0, 255),
     },
     lineItems,
     // For assertions and logging: what the tab should come to, in cents.
@@ -347,6 +362,7 @@ module.exports = {
   fetchRecentOrders,
   toCents,
   orderTitle,
+  orderSubtitle,
   buildCloverOrder,
   pushOrder,
   appendLineItems,
