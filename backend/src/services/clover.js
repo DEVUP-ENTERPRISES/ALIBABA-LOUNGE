@@ -145,6 +145,40 @@ async function call(path, { method = "GET", body } = {}) {
 }
 
 /**
+ * The merchant's default order type, cached for the process.
+ *
+ * This is not cosmetic. The Register app on the physical devices lists open
+ * orders by order type, so an order created over REST with no type matches no
+ * tab and is invisible on every terminal — while looking perfectly fine in
+ * the API and the web dashboard. That is exactly how a web order can be
+ * "synced" here and still never reach the staff standing at the till.
+ *
+ * Resolved at runtime rather than hardcoded: the id differs per merchant, and
+ * between sandbox and production.
+ */
+let orderTypeCache = { id: null, at: 0 };
+const ORDER_TYPE_TTL_MS = 60 * 60 * 1000;
+
+async function defaultOrderTypeId() {
+  if (!isConfigured()) return null;
+  if (orderTypeCache.id && Date.now() - orderTypeCache.at < ORDER_TYPE_TTL_MS) {
+    return orderTypeCache.id;
+  }
+  try {
+    const data = await call(`/v3/merchants/${MERCHANT_ID}/order_types`);
+    const types = (data?.elements || []).filter((t) => !t.isDeleted && !t.isHidden);
+    const chosen = types.find((t) => t.isDefault) || types[0];
+    if (chosen?.id) orderTypeCache = { id: chosen.id, at: Date.now() };
+    return chosen?.id || null;
+  } catch (err) {
+    // Not fatal — the order still reaches Clover, it just may not surface on
+    // the devices. Better a hard-to-see order than no order.
+    console.error(`[clover] could not read order types: ${err.message}`);
+    return null;
+  }
+}
+
+/**
  * Push one order to the terminal.
  *
  * Deliberately never called in a way that can block a guest. Clover being
@@ -159,9 +193,14 @@ async function pushOrder(order, itemMap) {
 
   const payload = buildCloverOrder(order, itemMap);
 
+  // Without an order type the devices will not list it — see the note on
+  // defaultOrderTypeId.
+  const orderTypeId = await defaultOrderTypeId();
   const created = await call(`/v3/merchants/${MERCHANT_ID}/orders`, {
     method: "POST",
-    body: payload.order,
+    body: orderTypeId
+      ? { ...payload.order, orderType: { id: orderTypeId } }
+      : payload.order,
   });
   if (!created?.id) throw new Error("Clover did not return an order id.");
 
@@ -302,6 +341,7 @@ async function fetchRecentOrders(limit = 50) {
 
 module.exports = {
   isConfigured,
+  defaultOrderTypeId,
   tableCodeFromTitle,
   groupLineItems,
   fetchRecentOrders,

@@ -15,6 +15,7 @@ const suggestionRoutes = require("./suggestionRoutes");
 const tableRoutes = require("./tableRoutes");
 const reviewRoutes = require("./reviewRoutes");
 const userRoutes = require("./userRoutes");
+const waiterCallRoutes = require("./waiterCallRoutes");
 
 const router = express.Router();
 
@@ -40,5 +41,6 @@ router.use("/suggestions", suggestionRoutes);
 router.use("/combos", comboRoutes);
 router.use("/tables", tableRoutes);
 router.use("/reviews", reviewRoutes);
+router.use("/calls", waiterCallRoutes);
 
 module.exports = router;

@@ -78,6 +78,78 @@ export function useOrderAlerts() {
   }, []);
 
   /**
+   * A guest pressing the call button.
+   *
+   * Deliberately a different shape from the order chime — three insistent
+   * falling tones rather than two rising ones. Across a loud room staff have
+   * to be able to tell "an order came in" from "a table is waiting for you"
+   * without looking at the screen.
+   */
+  const callChime = useCallback(() => {
+    const ctx = audioCtx.current;
+    if (!ctx) return;
+    [1320, 1100, 880].forEach((freq, i) => {
+      const osc = ctx.createOscillator();
+      const gain = ctx.createGain();
+      osc.type = "triangle";
+      osc.frequency.value = freq;
+      const start = ctx.currentTime + i * 0.14;
+      gain.gain.setValueAtTime(0.0001, start);
+      gain.gain.exponentialRampToValueAtTime(0.32, start + 0.02);
+      gain.gain.exponentialRampToValueAtTime(0.0001, start + 0.26);
+      osc.connect(gain).connect(ctx.destination);
+      osc.start(start);
+      osc.stop(start + 0.28);
+    });
+  }, []);
+
+  const seenCallIds = useRef<Set<string> | null>(null);
+
+  /**
+   * Call on every poll with the open waiter calls.
+   * Returns how many are newly waiting.
+   */
+  const checkCalls = useCallback(
+    (calls: { id: string; tableCode: string; reasonLabel: string }[]) => {
+      if (seenCallIds.current === null) {
+        seenCallIds.current = new Set(calls.map((c) => c.id));
+        return 0;
+      }
+      const fresh = calls.filter((c) => !seenCallIds.current!.has(c.id));
+      calls.forEach((c) => seenCallIds.current!.add(c.id));
+      if (fresh.length === 0 || !enabled) return fresh.length;
+
+      try {
+        // Longer than the order buzz — a person is sitting there waiting.
+        navigator.vibrate?.([200, 80, 200, 80, 200]);
+      } catch {
+        /* unsupported */
+      }
+      callChime();
+
+      if ("Notification" in window && Notification.permission === "granted") {
+        const first = fresh[0];
+        new Notification(
+          fresh.length === 1
+            ? `Table ${first.tableCode} needs you`
+            : `${fresh.length} tables are waiting`,
+          {
+            body:
+              fresh.length === 1
+                ? first.reasonLabel
+                : fresh.map((f) => `Table ${f.tableCode}`).join(", "),
+            icon: "/alibaba-logo.png",
+            tag: "alibaba-call",
+            requireInteraction: true,
+          }
+        );
+      }
+      return fresh.length;
+    },
+    [enabled, callChime]
+  );
+
+  /**
    * Call on every poll with the current open orders.
    * Returns how many were new, so the caller can show a banner.
    */
@@ -120,5 +192,5 @@ export function useOrderAlerts() {
     [enabled, chime]
   );
 
-  return { enabled, permission, enable, disable, check };
+  return { enabled, permission, enable, disable, check, checkCalls };
 }

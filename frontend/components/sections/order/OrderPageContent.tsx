@@ -28,6 +28,7 @@ import { resolveImageUrl } from "@/lib/image-url";
 import { useAuth } from "@/contexts/AuthContext";
 import { useSmoothScroll } from "@/contexts/SmoothScrollContext";
 import { useNudgeDue, useOpenTab } from "@/hooks/useOpenTab";
+import { CallServerButton } from "@/components/order/CallServerButton";
 import { useBodyScrollLock } from "@/hooks/useBodyScrollLock";
 import { STATUS_STEPS, statusIndex, useOrderStatus } from "@/hooks/useOrderStatus";
 import { getCookie, setCookie, getJsonCookie, setJsonCookie, deleteCookie } from "@/lib/cookies";
@@ -1099,6 +1100,12 @@ export function OrderPageContent() {
                 <ArrowLeftRight className="size-3.5" />
                 Sitting at {table?.code} — change
               </button>
+
+              {/* A guest can get someone's attention without waving into the
+                  dark. Only once a table is known — there is nobody to send. */}
+              {table && (
+                <CallServerButton tableId={table.id} tableCode={table.code} />
+              )}
 
               {combos.length > 0 && !combosOpen && (
                 <button

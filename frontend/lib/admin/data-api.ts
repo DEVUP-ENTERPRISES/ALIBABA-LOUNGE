@@ -17,6 +17,7 @@ import type {
   TradeAnalytics,
   AuditEntry,
   AuditSummary,
+  WaiterCall,
 } from "@/lib/admin/types";
 import type { MenuItem } from "@/lib/menu/types";
 
@@ -191,6 +192,41 @@ export const reservationApi = {
       { method: "PUT", body: JSON.stringify({ status, ...extra }) }
     );
     return data.reservation;
+  },
+};
+
+/**
+ * A guest asking for a server. Public on purpose — the same trust model as
+ * ordering, whoever is sitting at the table.
+ */
+export const callApi = {
+  async raise(table: string, reason: WaiterCall["reason"] = "service") {
+    const data = await request<{ call: WaiterCall; alreadyWaiting: boolean }>("/calls", {
+      method: "POST",
+      body: JSON.stringify({ table, reason }),
+    });
+    return data;
+  },
+  async status(id: string) {
+    const data = await request<{ call: WaiterCall }>(`/calls/${id}`);
+    return data.call;
+  },
+  async cancel(id: string) {
+    const data = await request<{ call: WaiterCall }>(`/calls/${id}/cancel`, { method: "PUT" });
+    return data.call;
+  },
+  /** Staff: everyone currently waiting, oldest first. */
+  async list() {
+    const data = await request<{ calls: WaiterCall[] }>("/calls");
+    return data.calls;
+  },
+  async acknowledge(id: string) {
+    const data = await request<{ call: WaiterCall }>(`/calls/${id}/acknowledge`, { method: "PUT" });
+    return data.call;
+  },
+  async resolve(id: string) {
+    const data = await request<{ call: WaiterCall }>(`/calls/${id}/resolve`, { method: "PUT" });
+    return data.call;
   },
 };
 

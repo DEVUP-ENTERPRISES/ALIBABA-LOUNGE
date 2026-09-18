@@ -299,6 +299,22 @@ export interface AuditSummary {
   amount: number;
 }
 
+/** A guest asking for someone to come to their table. */
+export interface WaiterCall {
+  id: string;
+  table: string;
+  tableCode: string;
+  order: string | null;
+  reason: "service" | "bill" | "coals" | "water";
+  reasonLabel: string;
+  status: "open" | "acknowledged" | "resolved" | "expired";
+  createdAt: string;
+  acknowledgedAt: string | null;
+  acknowledgedName: string;
+  resolvedAt: string | null;
+  responseSeconds: number | null;
+}
+
 export type CloverSyncState =
   | "pending"
   | "synced"

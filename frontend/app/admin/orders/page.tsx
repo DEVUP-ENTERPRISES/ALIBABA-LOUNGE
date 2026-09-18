@@ -1,14 +1,15 @@
 "use client";
 
 import { useCallback, useEffect, useMemo, useState } from "react";
-import { Bell, BellOff, Check, ChefHat, Clock, CloudOff, Lock, Monitor, RefreshCw, Trophy, Utensils, X } from "lucide-react";
-import { orderApi } from "@/lib/admin/data-api";
+import { Bell, BellOff, BellRing, Check, ChefHat, Clock, CloudOff, Lock, Monitor, RefreshCw, Trophy, Utensils, X } from "lucide-react";
+import { orderApi, callApi } from "@/lib/admin/data-api";
 import type {
   CloverSyncState,
   Order,
   OrderStatus,
   TerminalOrder,
   TerminalSyncStatus,
+  WaiterCall,
 } from "@/lib/admin/types";
 import { formatUsTime } from "@/lib/format";
 import { useOrderAlerts } from "@/hooks/useOrderAlerts";
@@ -48,6 +49,8 @@ export default function AdminOrdersPage() {
   const [terminal, setTerminal] = useState<TerminalOrder[]>([]);
   const [termSync, setTermSync] = useState<TerminalSyncStatus | null>(null);
   const [staleTabs, setStaleTabs] = useState(0);
+  const [calls, setCalls] = useState<WaiterCall[]>([]);
+  const [callBusy, setCallBusy] = useState<string | null>(null);
   const alerts = useOrderAlerts();
 
   const load = useCallback(async (showSpinner = false) => {
@@ -73,6 +76,16 @@ export default function AdminOrdersPage() {
         /* ignore */
       }
       const n = alerts.check(next.filter((o) => o.status === "placed"));
+
+      // A guest waving for someone matters more than a new order — poll it in
+      // the same cycle rather than a second timer drifting out of step.
+      void callApi
+        .list()
+        .then((c) => {
+          setCalls(c);
+          alerts.checkCalls(c);
+        })
+        .catch(() => {});
       if (n > 0) setFreshCount(n);
       setError(null);
     } catch (err) {
@@ -193,6 +206,100 @@ export default function AdminOrdersPage() {
               ))}
             </div>
           )}
+        </div>
+      )}
+
+      {/* A table waiting for a server outranks everything else on this
+          screen — it goes first, above even a fresh order. */}
+      {calls.length > 0 && (
+        <div className="space-y-2">
+          {calls.map((call) => {
+            const claimed = call.status === "acknowledged";
+            const busy = callBusy === call.id;
+            const waitedMin = Math.max(0, Math.round((Date.now() - new Date(call.createdAt).getTime()) / 60000));
+            return (
+              <div
+                key={call.id}
+                className={cn(
+                  "flex items-center justify-between gap-3 rounded-xl border px-4 py-3",
+                  claimed
+                    ? "border-sky-400/35 bg-sky-500/[0.07]"
+                    : "border-[#d4af37]/50 bg-[#d4af37]/[0.1]"
+                )}
+              >
+                <div className="flex items-center gap-3">
+                  <span className="relative flex size-9 shrink-0 items-center justify-center">
+                    {!claimed && (
+                      <span className="absolute inline-flex size-9 animate-ping rounded-full bg-[#d4af37]/35" />
+                    )}
+                    <span
+                      className={cn(
+                        "relative flex size-9 items-center justify-center rounded-full",
+                        claimed ? "bg-sky-500/20" : "bg-[#d4af37]/25"
+                      )}
+                    >
+                      <BellRing className={cn("size-4", claimed ? "text-sky-300" : "text-[#d4af37]")} />
+                    </span>
+                  </span>
+                  <div>
+                    <p className="text-sm font-medium text-white">
+                      Table {call.tableCode} · {call.reasonLabel}
+                    </p>
+                    <p className="text-[11px] text-white/45">
+                      {claimed
+                        ? `${call.acknowledgedName || "Claimed"} is on it`
+                        : `Waiting ${waitedMin < 1 ? "just now" : `${waitedMin} min`}`}
+                    </p>
+                  </div>
+                </div>
+                <div className="flex shrink-0 gap-2">
+                  {!claimed && (
+                    <button
+                      type="button"
+                      disabled={busy}
+                      onClick={async () => {
+                        setCallBusy(call.id);
+                        try {
+                          const updated = await callApi.acknowledge(call.id);
+                          setCalls((prev) => prev.map((c) => (c.id === call.id ? updated : c)));
+                        } catch {
+                          /* another server may have claimed it first; next poll corrects the list */
+                        } finally {
+                          setCallBusy(null);
+                        }
+                      }}
+                      className="rounded-lg bg-[#d4af37] px-3 py-1.5 text-[11px] font-medium text-[#050505] disabled:opacity-50"
+                    >
+                      I've got it
+                    </button>
+                  )}
+                  <button
+                    type="button"
+                    disabled={busy}
+                    onClick={async () => {
+                      setCallBusy(call.id);
+                      try {
+                        await callApi.resolve(call.id);
+                        setCalls((prev) => prev.filter((c) => c.id !== call.id));
+                      } catch {
+                        /* leave it showing; the next poll will reflect reality */
+                      } finally {
+                        setCallBusy(null);
+                      }
+                    }}
+                    className={cn(
+                      "rounded-lg border px-3 py-1.5 text-[11px]",
+                      claimed
+                        ? "border-sky-400/40 text-sky-200"
+                        : "border-[#d4af37]/40 text-[#f5e6c8]"
+                    )}
+                  >
+                    Done
+                  </button>
+                </div>
+              </div>
+            );
+          })}
         </div>
       )}
 
